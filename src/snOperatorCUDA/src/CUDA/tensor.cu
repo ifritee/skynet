@@ -41,7 +41,7 @@ Tensor& Tensor::operator=(const Tensor& other){
 
 Tensor& Tensor::operator+=(const Tensor& other){
 
-    ASSERT_MESS(other == *this, "");
+    ASSERT_MESS(other == *this, "Tensor::operator+=: other == *this");
        
     summ(sz_, dataGPU_, other.getDataGPU());
    
@@ -50,7 +50,7 @@ Tensor& Tensor::operator+=(const Tensor& other){
 
 Tensor& Tensor::operator-=(const Tensor& other){
 
-    ASSERT_MESS(other == *this, "");
+    ASSERT_MESS(other == *this, "Tensor::operator-=: other == *this");
 
     difference(sz_, dataGPU_, other.getDataGPU());
     
@@ -60,7 +60,7 @@ Tensor& Tensor::operator-=(const Tensor& other){
 void Tensor::setDataGPU(const snFloat* data, const snSize& nsz){
 
     size_t nnsz = nsz.size();
-    ASSERT_MESS(data && (nnsz > 0), "");
+    ASSERT_MESS(data && (nnsz > 0), "Tensor::setDataGPU: data && (nnsz > 0)");
 
     if (sz_.size() < nnsz){
      
@@ -77,7 +77,7 @@ void Tensor::setDataGPU(const snFloat* data, const snSize& nsz){
 void Tensor::setDataCPU(const snFloat* data, const snSize& nsz){
 
     size_t nnsz = nsz.size();
-    ASSERT_MESS(data && (nnsz > 0), "");
+    ASSERT_MESS(data && (nnsz > 0), "Tensor::setDataCPU: data && (nnsz > 0)");
 
     if (sz_.size() < nnsz){
 
@@ -110,7 +110,7 @@ snFloat* Tensor::getDataCPU() const{
 void Tensor::resize(const snSize& nsz){
 
     size_t nnsz = nsz.size(), csz = sz_.size();
-    ASSERT_MESS(nnsz > 0, "");
+    ASSERT_MESS(nnsz > 0, "Tensor::resize: nnsz > 0");
 
     if (csz < nnsz){
              

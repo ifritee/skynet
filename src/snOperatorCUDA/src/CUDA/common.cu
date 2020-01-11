@@ -82,7 +82,7 @@ snFloat* cuMemRealloc(const snSize& csz, const snSize& nsz, snFloat* data, snFlo
     size_t tcsz = csz.size(),
            tnsz = nsz.size();
 
-    ASSERT_MESS(tnsz > 0, "");
+    ASSERT_MESS(tnsz > 0, "cuMemRealloc: tnsz > 0");
 
     if (tcsz < tnsz){
 

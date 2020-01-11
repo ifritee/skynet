@@ -55,13 +55,14 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;SN_AVX;_DEBUG;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;SNN_AVX;_DEBUG;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)../../src</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
       <MinimalRebuild>true</MinimalRebuild>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalOptions>/arch:AVX</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -100,7 +101,7 @@
     </CudaCompile>
     <Lib>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(OutDir);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libopenblas.lib; snSimd.lib</AdditionalDependencies>
+      <AdditionalDependencies>libopenblas.lib;</AdditionalDependencies>
     </Lib>
     <CudaLink>
       <PerformDeviceLink>true</PerformDeviceLink>
@@ -124,12 +125,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;SN_AVX; NDEBUG;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;SNN_AVX; NDEBUG;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(CudaToolkitIncludeDir);$(SolutionDir)../../src</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
-      <AdditionalOptions>/arch:AVX</AdditionalOptions>
+      <AdditionalOptions>
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,7 +170,7 @@
     </CudaCompile>
     <Lib>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(OutDir);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libopenblas.lib; snSimd.lib</AdditionalDependencies>
+      <AdditionalDependencies>libopenblas.lib;</AdditionalDependencies>
     </Lib>
     <CudaLink>
       <PerformDeviceLink>true</PerformDeviceLink>
