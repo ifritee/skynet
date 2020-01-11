@@ -70,7 +70,7 @@ for n in range(1000):
 
 * pip install libskynet     -  CPU
 
-* pip install libskynet-cu  -  CUDA + cuDNN7.3.1
+* pip install libskynet-cu  -  CUDA9.2 + cuDNN7.3.1
 
  
 ## [Wiki](https://github.com/Tyill/skynet/wiki) 

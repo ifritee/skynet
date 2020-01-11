@@ -7,5 +7,9 @@ mswin/VS12/Release*
 mswin/VS12/x64*
 mswin/VS12/snSharpClient
 mswin/VS12/My Amplifier Results*
-example/*
+example/autoEncoder
+example/cifar10
+example/mnist
+example/resnet50
+example/unet
 convert2TF
