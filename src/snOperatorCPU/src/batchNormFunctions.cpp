@@ -23,6 +23,8 @@
 // THE SOFTWARE.
 //
 
+#include <math.h>
+
 #include "stdafx.h"
 #include "batchNormFunctions.h"
 

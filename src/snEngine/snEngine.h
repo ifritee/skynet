@@ -25,6 +25,7 @@
 #pragma once
 
 #include <mutex>
+#include <functional>
 #include "snBase/snBase.h"
 #include "src/threadPool.h"
 

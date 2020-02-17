@@ -22,6 +22,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+
+#include <math.h>
+
 #include "../stdafx.h"
 #include "snOperatorCPU/src/Operator/lossFunction.h"
 #include "snOperatorCPU/src/activationFunctions.h"
