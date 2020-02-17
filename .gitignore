@@ -1,4 +1,5 @@
 .svn*
+*.user
 src/Lib/OpenCV_3.3.0*
 mswin/VS12/Debug*
 mswin/VS12/*.sdf
