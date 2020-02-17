@@ -25,6 +25,7 @@
 #include <thread>
 #include <chrono>
 #include <cstring>
+#include <string>
 #include <vector>
 #include <algorithm>
 #include <cctype>

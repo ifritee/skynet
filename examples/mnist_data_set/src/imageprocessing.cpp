@@ -1,6 +1,9 @@
 #include <iostream>
+#if defined (WIN32)
+#include <WinSock2.h>
+#else 
 #include <arpa/inet.h>
-
+#endif //WIN32
 #include "imageprocessing.h"
 
 using namespace std;
@@ -84,7 +87,7 @@ namespace cpp_keras {
 
   TImagesData ImageProcessing::extractImages(const std::string & file, uint32_t & num, uint32_t & rows, uint32_t & cols)
   {
-    ifstream is(file);
+    ifstream is(file, std::ios::binary);
     if (!is) {
       throw logic_error("can't open file: " + file);
     }
@@ -118,7 +121,7 @@ namespace cpp_keras {
 
   std::vector<uint8_t> ImageProcessing::extractLabels(const string& file)
   {
-    ifstream is(file);
+    ifstream is(file, std::ios::binary);
     if (!is) {
       throw logic_error("can't open file: " + file);
     }
@@ -138,8 +141,8 @@ namespace cpp_keras {
   uint8_t ImageProcessing::readUint8(ifstream & is)
   {
     uint8_t data = 0;
-    auto read_count = is.readsome(reinterpret_cast<char*>(&data), 1);
-    if (read_count != 1) {
+    is.read(reinterpret_cast<char*>(&data), 1);
+    if (is.gcount() != 1) {
       throw logic_error("can't read 1 byte");
     }
     return data;
@@ -148,8 +151,8 @@ namespace cpp_keras {
   uint32_t ImageProcessing::readUint32(ifstream & is)
   {
     uint32_t data = 0;
-    auto read_count = is.readsome(reinterpret_cast<char*>(&data), 4);
-    if (read_count != 4) {
+    is.read(reinterpret_cast<char*>(&data), 4);
+    if (is.gcount() != 4) {
       throw logic_error("can't read 4 bytes");
     }
     return ntohl(data);
