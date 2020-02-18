@@ -13,6 +13,7 @@ SOURCES += \
     src/snType.cpp
 
 HEADERS += \
+    ../../src/skynet/skyNet.h \
     src/keras.h \
     src/snNet.h \
     src/snOperator.h \
@@ -24,3 +25,12 @@ INCLUDEPATH += \
 
 DEPENDPATH += \
     $$PWD/src
+
+LIBS += -L$$PWD/../../examples/libs -lskynet
+
+#include(ext/snaux.pri)
+#include(ext/snbase.pri)
+#include(ext/snengine.pri)
+#include(ext/snoperatorcpu.pri)
+#include(ext/snsimd.pri)
+#include(ext/skynet.pri)
