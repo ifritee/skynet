@@ -30,13 +30,14 @@
 #include <sstream>
 #include "snType.h"
 #include "../../src/skynet/skyNet.h"
+#include "keras_lib_global.h"
 
 namespace SN_API{
        
     /*
     Input layer.
     */
-    class Input{
+    class KERAS_EXPORT Input{
 
     public:
 
@@ -52,7 +53,7 @@ namespace SN_API{
     /*
     Fully connected layer
     */
-    class FullyConnected {
+    class KERAS_EXPORT FullyConnected {
 
     public:
 
@@ -89,7 +90,7 @@ namespace SN_API{
     /*
     Convolution layer
     */
-    class Convolution{
+    class KERAS_EXPORT Convolution{
 
     public:
         
@@ -141,7 +142,7 @@ namespace SN_API{
     /*
     Deconvolution layer
     */
-    class Deconvolution{
+    class KERAS_EXPORT Deconvolution{
 
     public:
 
@@ -183,7 +184,7 @@ namespace SN_API{
     /*
     Pooling layer
     */
-    class Pooling{
+    class KERAS_EXPORT Pooling{
 
     public:
             
@@ -208,7 +209,7 @@ namespace SN_API{
     It is designed for the ability to dynamically disconnect the parallel
     branches of the network during operation.
     */
-    class Lock{
+    class KERAS_EXPORT Lock{
 
     public:
              
@@ -227,7 +228,7 @@ namespace SN_API{
     Operator for transferring data to several nodes at once.
     Data can only be received from one node.
     */
-    class Switch{
+    class KERAS_EXPORT Switch{
 
     public:
 
@@ -247,7 +248,7 @@ namespace SN_API{
     The consolidation can be performed by the following options: "summ", "diff", "mean".
     The dimensions of the input layers must be the same.
     */
-    class Summator{
+    class KERAS_EXPORT Summator{
 
     public:
          
@@ -265,7 +266,7 @@ namespace SN_API{
     /*
     The operator connects the channels with multiple layers
     */
-    class Concat{
+    class KERAS_EXPORT Concat{
 
     public:
               
@@ -283,7 +284,7 @@ namespace SN_API{
     /*
     Change the number of channels
     */
-    class Resize{
+    class KERAS_EXPORT Resize{
 
     public:
                
@@ -301,7 +302,7 @@ namespace SN_API{
     /*
     ROI clipping in each image of each channel
     */
-    class Crop{
+    class KERAS_EXPORT Crop{
 
     public:
         
@@ -319,7 +320,7 @@ namespace SN_API{
     /*
     Activation function operator
     */
-    class Activation{
+    class KERAS_EXPORT Activation{
 
     public:
 
@@ -337,7 +338,7 @@ namespace SN_API{
     /*
     Custom layer
     */
-    class UserLayer{
+    class KERAS_EXPORT UserLayer{
 
     public:
        
@@ -355,7 +356,7 @@ namespace SN_API{
     /*
     Error function calculation layer
     */
-    class LossFunction{
+    class KERAS_EXPORT LossFunction{
 
     public:
            
@@ -373,7 +374,7 @@ namespace SN_API{
     /*
     Batch norm
     */
-    class BatchNormLayer{
+    class KERAS_EXPORT BatchNormLayer{
 
     public:
       

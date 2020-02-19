@@ -29,12 +29,13 @@
 #include <string>
 #include <vector>
 #include "../../src/skynet/skyNet.h"
+#include "keras_lib_global.h"
 
 namespace SN_API {
   /**
    * @brief The Tensor class Описание тензора
    */
-  class Tensor {
+  class KERAS_EXPORT Tensor {
 
   public:
     /**

@@ -1,19 +1,9 @@
 #ifndef KERAS_H
 #define KERAS_H
 
-#ifdef _WIN32
-#ifdef KERASDLL_EXPORTS
-#define KERAS_API __declspec(dllexport)
-#else //KERASDLL_EXPORTS
-#define KERAS_API __declspec(dllimport)
-#endif //KERASDLL_EXPORTS
-#else //_WIN32
-#define KERAS_API
-#endif
-
-#if defined(__cplusplus)
-extern "C" {
-#endif //__cplusplus
+//#if defined(__cplusplus)
+//extern "C" {
+//#endif //__cplusplus
 
 #define STATUS_OK 0 ///< Успешное выполнение задачи
 #define STATUS_FAILURE 1 ///< Критическая ошибка
@@ -54,7 +44,7 @@ typedef int LossType; ///< @brief Типы функции потерь
  * @brief CreateModel Создание модели
  * @return Статус создания модели
  */
-KERAS_API Status createModel();
+Status createModel();
 
 /**
  * @brief addInput Добавляет сходной слой
@@ -62,7 +52,7 @@ KERAS_API Status createModel();
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления входного слоя в модель
  */
-KERAS_API Status addInput(const char * name, const char * nodes);
+Status addInput(const char * name, const char * nodes);
 
 /**
  * @brief addConvolution Добавляет сверточный слой
@@ -70,7 +60,7 @@ KERAS_API Status addInput(const char * name, const char * nodes);
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления слоя в модель
  */
-KERAS_API Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
+Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
                                 Activation act_ = ACTIV_RELU,
                                 Optimizer opt_ = OPTIM_ADAM,
                                 float dropOut_ = 0.0,
@@ -88,7 +78,7 @@ KERAS_API Status addConvolution(const char *name, const char *nodes, unsigned in
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления слоя в модель
  */
-KERAS_API Status addDense(const char *name, const char *nodes, unsigned int units_,
+Status addDense(const char *name, const char *nodes, unsigned int units_,
                           Activation act_ = ACTIV_RELU,
                           Optimizer opt_ = OPTIM_ADAM,
                           float dropOut_ = 0.0,
@@ -102,10 +92,10 @@ KERAS_API Status addDense(const char *name, const char *nodes, unsigned int unit
  * @param loss_ тип функции потерь
  * @return Статус добавления слоя в модель
  */
-KERAS_API Status addLossFunction(const char *name, const char *nodes, LossType loss_);
+Status addLossFunction(const char *name, const char *nodes, LossType loss_);
 
-#if defined(__cplusplus)
-}
-#endif /* __cplusplus */
+//#if defined(__cplusplus)
+//}
+//#endif /* __cplusplus */
 
 #endif // KERAS_H

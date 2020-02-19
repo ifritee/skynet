@@ -32,6 +32,7 @@
 #include <algorithm>
 #include "../../src/skynet/skyNet.h"
 #include "snTensor.h"
+#include "keras_lib_global.h"
 
 namespace SN_API{
       
@@ -39,7 +40,7 @@ namespace SN_API{
     /// @return version
     std::string versionLib();
    
-    class Net{
+    class KERAS_EXPORT Net{
                
     public:
 
@@ -60,14 +61,32 @@ namespace SN_API{
         /// @param[in] nextNodes - next nodes through a space
         /// @return ref Net
         template<typename Operator>
-        Net& addNode(const std::string& name, Operator nd, const std::string& nextNodes);
+        Net& addNode(const std::string& name, Operator nd, const std::string& nextNodes) {
+          nodes_.push_back(node{ name, nd.name(), nd.getParamsJn(), nextNodes });
+          return *this;
+        }
 
         /// update param node (layer)
         /// @param[in] name - name node in architecture of net
         /// @param[in] nd - tensor node
         /// @return true - ok
         template<typename Operator>
-        bool updateNode(const std::string& name, Operator nd);
+        bool updateNode(const std::string& name, Operator nd) {
+          bool ok = false;
+          if (net_)
+            ok = snSetParamNode(net_, name.c_str(), nd.getParamsJn().c_str());
+          else{
+            for (auto& n : nodes_){
+              if (n.name == name){
+                n.params = nd.getParamsJn();
+                ok = true;
+                break;
+              }
+            }
+          }
+
+          return ok;
+        }
 
         /// forward action
         /// @param[in] isLern - is lerning ?

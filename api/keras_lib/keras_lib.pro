@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += console c++11
 CONFIG -= qt
 
-DEFINES += KERAS_LIB
+DEFINES += QT_DEPRECATED_WARNINGS KERAS_LIBRARY
 
 SOURCES += \
     src/dllmain.cpp \
@@ -15,6 +15,7 @@ SOURCES += \
 HEADERS += \
     ../../src/skynet/skyNet.h \
     src/keras.h \
+    src/keras_lib_global.h \
     src/snNet.h \
     src/snOperator.h \
     src/snTensor.h \
@@ -26,7 +27,7 @@ INCLUDEPATH += \
 DEPENDPATH += \
     $$PWD/src
 
-LIBS += -L$$PWD/../../examples/libs -lskynet
+#LIBS += -L$$PWD/../../examples/libs -lskynet
 
 #include(ext/snaux.pri)
 #include(ext/snbase.pri)
