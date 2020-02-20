@@ -27,8 +27,9 @@ int main()
 
   //----- Тренировка ----------------
 #define __TRAINING__
-  MnistDATA trainData = mnistTrainParams();
   LayerSize layerDataSize, layerLabelSize;
+#if defined(__TRAINING__)
+  MnistDATA trainData = mnistTrainParams();
   layerDataSize.bsz = trainData.quantity;
   layerDataSize.ch = 1;
   layerDataSize.w = trainData.rows;
@@ -38,13 +39,21 @@ int main()
   layerLabelSize.h = 1;
   layerLabelSize.ch = 1;
 
-  KR_CHECK(fit(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 100, 0.001f));
+  KR_CHECK(fit(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 10, 0.001f));
 
-#if defined(__TRAINING__)
   //----- Тестирование --------------
 #elif defined(__TESTING__)
   MnistDATA testData = mnistTestParams();
+  layerDataSize.bsz = testData.quantity;
+  layerDataSize.ch = 1;
+  layerDataSize.w = testData.rows;
+  layerDataSize.h = testData.cols;
+  layerLabelSize.bsz = testData.quantity;
+  layerLabelSize.w = classCnt;
+  layerLabelSize.h = 1;
+  layerLabelSize.ch = 1;
 
+  KR_CHECK(evaluate(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 2));
 
 #endif //__TRAINING__ or __TESTING__
 

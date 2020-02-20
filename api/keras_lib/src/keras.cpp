@@ -120,6 +120,9 @@ void printLastError(Status status)
 Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
            unsigned int epochs, float learningRate)
 {
+  if(!model) {
+    return STATUS_FAILURE;
+  }
   if (labelsSize.bsz != dataSize.bsz) {
     return STATUS_FAILURE;
   }
@@ -158,5 +161,30 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
 
     std::cout << epoch << " accurate " << accuratSumm / epoch << " " << model->getLastErrorStr() << std::endl;
   }
+  return STATUS_OK;
+}
+
+Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
+                unsigned int /*verbose*/)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if (labelsSize.bsz != dataSize.bsz) {
+    return STATUS_FAILURE;
+  }
+  sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
+  sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  model->forward(false, inputLayer, outputLayer);
+  uint32_t errors = 0;
+  sn::snFloat* outData = outputLayer.data();
+  for (size_t i = 0; i < dataSize.bsz; ++i) {
+    float* refOutput = outData + i * labelsSize.w;
+    int maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + labelsSize.w));
+    if(label[i] != maxOutInx) {
+      ++errors;
+    }
+  }
+  std::cout<<"ERRORS QTY = "<<errors<<std::endl;
   return STATUS_OK;
 }

@@ -115,17 +115,29 @@ KERAS_EXPORT Status netArchitecture(char * buffer, unsigned int length);
 
 /**
  * @brief fit Запуск упрощенной тренировки для известных наборов
- * @param data  ///< @brief тренировочные данные
- * @param dataSize ///< @brief количество тренировочных данных
- * @param label ///< @brief метки тренировочных данных
- * @param labelsSize ///< @brief количество меток
- * @param epochs  ///< @brief Эпохи
- * @param classes ///< @brief вероятностное распределения на N классов
+ * @param data тренировочные данные
+ * @param dataSize количество тренировочных данных
+ * @param label метки тренировочных данных
+ * @param labelsSize количество меток
+ * @param epochs @brief Эпохи
+ * @param classes вероятностное распределения на N классов
  * @return Статус тренировки
  */
 KERAS_EXPORT Status fit(float * data, LayerSize dataSize, unsigned char * label,
                         LayerSize labelsSize, unsigned int epochs,
                         float learningRate);
+
+/**
+ * @brief evaluate Проверка с тестовым сетом
+ * @param data тестовые данные
+ * @param dataSize количество тестовых данных
+ * @param label метки тестовые данных
+ * @param labelsSize количество меток
+ * @param verbose уровень подробности
+ * @return Статус тестирования
+ */
+KERAS_EXPORT Status evaluate(float * data, LayerSize dataSize, unsigned char * label,
+                             LayerSize labelsSize, unsigned int verbose);
 
 /**
  * @brief lastError Вывод последней ошибки в буфер
