@@ -26,7 +26,7 @@ int main()
   int classCnt = 10;  // выход: вероятностное распределение на 10 классов
 
   //----- Тренировка ----------------
-#define __TRAINING__
+#define __TESTING__
   LayerSize layerDataSize, layerLabelSize;
 #if defined(__TRAINING__)
   MnistDATA trainData = mnistTrainParams();
@@ -40,6 +40,7 @@ int main()
   layerLabelSize.ch = 1;
 
   KR_CHECK(fit(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 10, 0.001f));
+  KR_CHECK(saveModel("w.dat"));
 
   //----- Тестирование --------------
 #elif defined(__TESTING__)
@@ -53,7 +54,8 @@ int main()
   layerLabelSize.h = 1;
   layerLabelSize.ch = 1;
 
-  KR_CHECK(evaluate(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 2));
+  KR_CHECK(loadModel("w.dat"));
+  KR_CHECK(evaluate(testData.data, layerDataSize, testData.labels, layerLabelSize, 2));
 
 #endif //__TRAINING__ or __TESTING__
 

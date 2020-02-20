@@ -188,3 +188,25 @@ Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize
   std::cout<<"ERRORS QTY = "<<errors<<std::endl;
   return STATUS_OK;
 }
+
+Status saveModel(const char *filename)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if(!model->saveAllWeightToFile(filename)) {
+    return STATUS_FAILURE;
+  }
+  return STATUS_OK;
+}
+
+Status loadModel(const char *filename)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if(!model->loadAllWeightFromFile(filename)) {
+    return STATUS_FAILURE;
+  }
+  return STATUS_OK;
+}

@@ -140,6 +140,20 @@ KERAS_EXPORT Status evaluate(float * data, LayerSize dataSize, unsigned char * l
                              LayerSize labelsSize, unsigned int verbose);
 
 /**
+ * @brief saveModel Сохраняет модель с весами
+ * @param filename имя с путем
+ * @return Статус сохранения
+ */
+KERAS_EXPORT Status saveModel(const char * filename);
+
+/**
+ * @brief loadModel Загружает модель с весами
+ * @param filename имя с путем
+ * @return Статус загрузки
+ */
+KERAS_EXPORT Status loadModel(const char * filename);
+
+/**
  * @brief lastError Вывод последней ошибки в буфер
  * @param buffer Буфер для текста ошибки
  * @param length размер буфера
