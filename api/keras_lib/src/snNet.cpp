@@ -30,38 +30,13 @@ namespace SN_API {
   std::string Net::getLastErrorStr()
   {
     if (net_) {
-      char err[256]; err[0] = '\0';
+      char err[256];
+      err[0] = '\0';
       snGetLastErrorStr(net_, err);
       err_ = err;
     }
     return err_;
   }
-
-//  template<typename Operator>
-//  Net& Net::addNode(const std::string& name, Operator nd, const std::string& nextNodes)
-//  {
-//    nodes_.push_back(node{ name, nd.name(), nd.getParamsJn(), nextNodes });
-//    return *this;
-//  }
-
-//  template<typename Operator>
-//  bool Net::updateNode(const std::string& name, Operator nd)
-//  {
-//    bool ok = false;
-//    if (net_)
-//      ok = snSetParamNode(net_, name.c_str(), nd.getParamsJn().c_str());
-//    else{
-//      for (auto& n : nodes_){
-//        if (n.name == name){
-//          n.params = nd.getParamsJn();
-//          ok = true;
-//          break;
-//        }
-//      }
-//    }
-
-//    return ok;
-//  }
 
   bool Net::forward(bool isLern, Tensor& inTns, Tensor& outTns)
   {

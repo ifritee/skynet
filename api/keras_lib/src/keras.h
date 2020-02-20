@@ -1,9 +1,11 @@
 #ifndef KERAS_H
 #define KERAS_H
 
-//#if defined(__cplusplus)
-//extern "C" {
-//#endif //__cplusplus
+#include "keras_lib_global.h"
+
+#if defined(__cplusplus)
+extern "C" {
+#endif //__cplusplus
 
 #define STATUS_OK 0 ///< Успешное выполнение задачи
 #define STATUS_FAILURE 1 ///< Критическая ошибка
@@ -40,11 +42,20 @@ typedef int BatchNormType; ///< @brief Типы нормализации наб�
 
 typedef int LossType; ///< @brief Типы функции потерь
 
+/** @brief Размер данных в слое */
+struct LayerSize
+{
+  unsigned int w; ///< @brief Ширина
+  unsigned int h; ///< @brief Длина
+  unsigned int ch;  ///< @brief Канальность
+  unsigned int bsz; ///< @brief Количество данных  в наборе
+};
+
 /**
  * @brief CreateModel Создание модели
  * @return Статус создания модели
  */
-Status createModel();
+KERAS_EXPORT Status createModel();
 
 /**
  * @brief addInput Добавляет сходной слой
@@ -52,7 +63,7 @@ Status createModel();
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления входного слоя в модель
  */
-Status addInput(const char * name, const char * nodes);
+KERAS_EXPORT Status addInput(const char * name, const char * nodes);
 
 /**
  * @brief addConvolution Добавляет сверточный слой
@@ -60,7 +71,7 @@ Status addInput(const char * name, const char * nodes);
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления слоя в модель
  */
-Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
+KERAS_EXPORT Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
                                 Activation act_ = ACTIV_RELU,
                                 Optimizer opt_ = OPTIM_ADAM,
                                 float dropOut_ = 0.0,
@@ -78,7 +89,7 @@ Status addConvolution(const char *name, const char *nodes, unsigned int filters_
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления слоя в модель
  */
-Status addDense(const char *name, const char *nodes, unsigned int units_,
+KERAS_EXPORT Status addDense(const char *name, const char *nodes, unsigned int units_,
                           Activation act_ = ACTIV_RELU,
                           Optimizer opt_ = OPTIM_ADAM,
                           float dropOut_ = 0.0,
@@ -92,10 +103,44 @@ Status addDense(const char *name, const char *nodes, unsigned int units_,
  * @param loss_ тип функции потерь
  * @return Статус добавления слоя в модель
  */
-Status addLossFunction(const char *name, const char *nodes, LossType loss_);
+KERAS_EXPORT Status addLossFunction(const char *name, const char *nodes, LossType loss_);
 
-//#if defined(__cplusplus)
-//}
-//#endif /* __cplusplus */
+/**
+ * @brief netArchitecture Записывает архитектуру сети в JSON виде
+ * @param buffer Буфер для записи
+ * @param length Размер буфера
+ * @return Статус вывода архитектуры
+ */
+KERAS_EXPORT Status netArchitecture(char * buffer, unsigned int length);
+
+/**
+ * @brief fit Запуск упрощенной тренировки для известных наборов
+ * @param data  ///< @brief тренировочные данные
+ * @param dataSize ///< @brief количество тренировочных данных
+ * @param label ///< @brief метки тренировочных данных
+ * @param labelsSize ///< @brief количество меток
+ * @param epochs  ///< @brief Эпохи
+ * @param classes ///< @brief вероятностное распределения на N классов
+ * @return Статус тренировки
+ */
+KERAS_EXPORT Status fit(float * data, LayerSize dataSize, unsigned char * label,
+                        LayerSize labelsSize, unsigned int epochs,
+                        float learningRate);
+
+/**
+ * @brief lastError Вывод последней ошибки в буфер
+ * @param buffer Буфер для текста ошибки
+ * @param length размер буфера
+ */
+KERAS_EXPORT void lastError(char * buffer, unsigned int length);
+
+/**
+ * @brief printLastError Вывод последней ошибки в stdout
+ */
+KERAS_EXPORT void printLastError(Status);
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus */
 
 #endif // KERAS_H

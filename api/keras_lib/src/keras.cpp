@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include <map>
 
 #include "snNet.h"
@@ -79,5 +80,83 @@ Status addLossFunction(const char *name, const char *nodes, LossType loss_)
     return STATUS_FAILURE;
   }
   model->addNode(name, sn::LossFunction(static_cast<sn::lossType>(loss_)), nodes);
+  return STATUS_OK;
+}
+
+Status netArchitecture(char * buffer, unsigned int length)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  std::string architecture = model->getArchitecNetJN();
+  if(architecture.size() > length) {
+    return STATUS_FAILURE;
+  } else if (architecture.empty()) {
+    return STATUS_WARNING;
+  }
+  strcpy(buffer, architecture.c_str());
+  return STATUS_OK;
+}
+
+void lastError(char *buffer, unsigned int length)
+{
+  if(model) {
+    std::string error = model->getLastErrorStr();
+    if(length >= error.size()) {
+      strcpy(buffer, error.c_str());
+    }
+  }
+}
+
+void printLastError(Status status)
+{
+  if(model && status == STATUS_WARNING) {
+    std::cout<<"MODEL WARNING: "<<model->getLastErrorStr()<<std::endl;
+  } else if (model && status == STATUS_FAILURE) {
+    std::cout<<"MODEL ERROR: "<<model->getLastErrorStr()<<std::endl;
+  }
+}
+
+Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
+           unsigned int epochs, float learningRate)
+{
+  if (labelsSize.bsz != dataSize.bsz) {
+    return STATUS_FAILURE;
+  }
+  sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
+  sn::Tensor targetLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  float accuratSumm = 0;
+  int classes = labelsSize.w;
+  for(unsigned int epoch = 0; epoch < epochs; ++epoch) {
+    for (unsigned int i = 0; i < dataSize.bsz; ++i) { // Запись распределения ответов по нейронам выходным
+      float* tarData = targetLayer.data() + classes * i;
+      tarData[label[i]] = 1;
+    }
+    // Запуск тренировки -----
+    float accurat = 0;
+
+    model->training(learningRate, inputLayer, outputLayer, targetLayer, accurat);
+    // Расчет ошибки -----
+    sn::snFloat* targetData = targetLayer.data();
+    sn::snFloat* outData = outputLayer.data();
+    size_t accCnt = 0, bsz = dataSize.bsz;
+    for (size_t i = 0; i < bsz; ++i) {
+      float* refTarget = targetData + i * classes;
+      float* refOutput = outData + i * classes;
+
+      // Вычисление правдивости предположения -----
+      int maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + classes));
+      int maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + classes));
+
+      if (maxTargInx == maxOutInx) {  // Если угадали
+        ++accCnt;
+      }
+    }
+
+    accuratSumm += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
+
+    std::cout << epoch << " accurate " << accuratSumm / epoch << " " << model->getLastErrorStr() << std::endl;
+  }
   return STATUS_OK;
 }
