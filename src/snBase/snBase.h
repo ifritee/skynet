@@ -155,7 +155,12 @@ namespace SN_Base{
         /// @param node - the name of the node in the NN structure
         /// @param prms - params. Key - name param
         OperatorBase(void* Net_, const std::string& name, const std::string& node, std::map<std::string, std::string>& prms) :
-            Net(Net_), name_(name), node_(node), basePrms_(prms){}
+            Net(Net_),
+            node_(node),
+            name_(name),
+            basePrms_(prms)
+        {}
+
         virtual ~OperatorBase(){} 
     public:
         

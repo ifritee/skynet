@@ -87,7 +87,7 @@ namespace SN_SIMD{
                     const snFloat* pW = weight + wStepByD * d;
                     pdW = wBuff + wStepByD * d;
 
-                    for (int z = 0; z < wStepByD / 8; ++z)
+                    for (unsigned int z = 0; z < wStepByD / 8; ++z)
                         arGOut[z] = _mm256_setzero_ps();
 
                     for (size_t c = 0; c < wStepByD; ++c){
@@ -109,7 +109,7 @@ namespace SN_SIMD{
 
                         __m256 arGIn = _mm256_set1_ps(gin);
 
-                        for (int z = 0; z < wStepByD / 8; ++z){
+                        for (unsigned int z = 0; z < wStepByD / 8; ++z){
 
                             __m256 arW = _mm256_loadu_ps(W + z * 8);
 
@@ -139,7 +139,7 @@ namespace SN_SIMD{
                         pdW += wStepByK;
                     }
 
-                    for (int z = 0; z < wStepByD / 8; ++z)
+                    for (unsigned int z = 0; z < wStepByD / 8; ++z)
                         _mm256_storeu_ps(mGOut + z * 8, arGOut[z]);
 
                     for (size_t c = 0; c < (wStepByD - 1); ++c){
@@ -176,7 +176,7 @@ namespace SN_SIMD{
         const size_t kernel = outsz.d,
                      wStepByD = M * M,                      // step weight by input
                      wStepByK = wStepByD * insz.d,          // step weight by output
-                     wStepByN = wStepByK * kernel + kernel, // step weight by batch
+//                     wStepByN = wStepByK * kernel + kernel, // step weight by batch
                      inStepByD = insz.w * insz.h,           // step in by input
                      inStepByN = inStepByD * insz.d,        // step in by batch
                      outStepByD = outsz.w * outsz.h,        // step out by input
@@ -208,7 +208,7 @@ namespace SN_SIMD{
 
                     const snFloat* pW = weight + wStepByD * d;
 
-                    for (int z = 0; z < wStepByD / 8; ++z)
+                    for (unsigned int z = 0; z < wStepByD / 8; ++z)
                         arGOut[z] = _mm256_setzero_ps();
 
                     // on all out layers
@@ -224,7 +224,7 @@ namespace SN_SIMD{
 
                         __m256 arGIn = _mm256_set1_ps(gin);
 
-                        for (int z = 0; z < wStepByD / 8; ++z){
+                        for (unsigned int z = 0; z < wStepByD / 8; ++z){
 
                             __m256 arW = _mm256_loadu_ps(W + z * 8);
 
@@ -238,7 +238,7 @@ namespace SN_SIMD{
                         pW += wStepByK;
                     }
 
-                    for (int z = 0; z < wStepByD / 8; ++z)
+                    for (unsigned int z = 0; z < wStepByD / 8; ++z)
                         _mm256_storeu_ps(mGOut + z * 8, arGOut[z]);
 
                     for (size_t c = 0; c < (wStepByD - 1); ++c){

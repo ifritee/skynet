@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 #include "../../src/skynet/skyNet.h"
-#include "keras_lib_global.h"
+#include "snkeras_global.h"
 
 namespace SN_API {
   /**

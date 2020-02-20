@@ -277,7 +277,7 @@ namespace SN_SIMD{
 
                         __m256 arOut = _mm256_setzero_ps();
 
-                        for (int z = 0; z < wStepByD / 8; ++z){
+                        for (unsigned int z = 0; z < wStepByD / 8; ++z){
 
                             __m256 arIn = _mm256_loadu_ps(In + z * 8);
 

@@ -1,7 +1,7 @@
 #ifndef KERAS_H
 #define KERAS_H
 
-#include "keras_lib_global.h"
+#include "snkeras_global.h"
 
 #if defined(__cplusplus)
 extern "C" {
