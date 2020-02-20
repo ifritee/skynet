@@ -29,7 +29,7 @@
 #include "snBase/snBase.h"
 #include "skyNet.h"
 #include "snEngine/snEngine.h"
-#include "Lib/rapidjson/document.h"
+#include "../third_party/rapidjson/document.h"
 
 class SNet
 {

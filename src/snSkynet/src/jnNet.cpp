@@ -26,9 +26,9 @@
 #include <algorithm>
 #include "snBase/snBase.h"
 #include "snAux/auxFunc.h"
-#include "Lib/rapidjson/document.h"
-#include "Lib/rapidjson/stringbuffer.h"
-#include "Lib/rapidjson/writer.h"
+#include "../third_party/rapidjson/document.h"
+#include "../third_party/rapidjson/stringbuffer.h"
+#include "../third_party/rapidjson/writer.h"
 #include "snet.h"
 
 using namespace std;

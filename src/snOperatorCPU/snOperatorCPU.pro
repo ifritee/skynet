@@ -4,7 +4,6 @@ CONFIG -= qt
 
 QMAKE_CXXFLAGS += -mavx -fopenmp
 QMAKE_LFLAGS += -fopenmp
-
 DEFINES += SN_AVX
 
 HEADERS += \

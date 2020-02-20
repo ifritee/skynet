@@ -24,7 +24,7 @@
 //
 
 #include "../stdafx.h"
-#include "Lib/OpenBLAS/cblas.h"
+#include "../third_party/OpenBLAS/cblas.h"
 #include "snOperatorCPU/src/Operator/fullyConnected.h"
 
 using namespace std;

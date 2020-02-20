@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "../src/keras.h"
-#include "../src/dataset.h"
+#include "keras.h"
+#include "dataset.h"
 
 #define KR_CHECK(A) printLastError(A)
 

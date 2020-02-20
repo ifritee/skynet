@@ -7,8 +7,9 @@ SOURCES += \
         main.cpp
 
 HEADERS += \
-        ../src/keras.h
+        ../../src/snKeras/src/keras.h
 
-unix:!macx: LIBS += -L$$PWD/../../../../build-keras_lib-Desktop_Qt_5_12_6_GCC_64bit-Debug/ -lkeras_lib
+INCLUDEPATH += $$PWD/../../builds/include
 
-unix:!macx: LIBS += -L$$PWD/../../../../build-src-Desktop_Qt_5_12_6_GCC_64bit-Debug/Builds/Debug/ -lskynet
+LIBS += -L$$PWD/../../builds/_nix/ -lsnKeras
+

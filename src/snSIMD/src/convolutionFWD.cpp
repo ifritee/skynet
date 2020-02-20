@@ -29,7 +29,7 @@
 #include <iostream>
 #include <cstring>
 #include "snBase/snBase.h"
-#include "Lib/OpenBLAS/cblas.h"
+#include "../third_party/OpenBLAS/cblas.h"
 
 using namespace std;
 using namespace SN_Base;
