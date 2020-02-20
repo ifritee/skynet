@@ -6,9 +6,6 @@ CONFIG -= qt
 SOURCES += \
         main.cpp
 
-HEADERS += \
-        ../../src/snKeras/src/keras.h
-
 INCLUDEPATH += $$PWD/../../builds/include
 
 LIBS += -L$$PWD/../../builds/_nix/ -lsnKeras
