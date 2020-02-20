@@ -56,7 +56,37 @@ Status addConvolution(const char * name, const char * nodes, unsigned int filter
   return STATUS_OK;
 }
 
+Status addDeconvolution(const char *name, const char *nodes, unsigned int filters_, Activation act_,
+                        Optimizer opt_, float dropOut_, BatchNormType bnorm_, unsigned int fWidth_,
+                        unsigned int fHeight_, unsigned int stride_, unsigned int gpuDeviceId_)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  model->addNode(name, sn::Deconvolution(filters_,
+                                         static_cast<sn::active>(act_),
+                                         static_cast<sn::optimizer>(opt_),
+                                         dropOut_,
+                                         static_cast<sn::batchNormType>(bnorm_),
+                                         fWidth_, fHeight_, stride_, gpuDeviceId_),
+                 nodes);
+  return STATUS_OK;
+}
 
+
+Status addPooling(const char *name, const char *nodes, unsigned int kernel_, unsigned int stride_,
+                  PoolType pool_, unsigned int gpuDeviceId_)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if(gpuDeviceId_ == 0) {
+    model->addNode(name, sn::Pooling(kernel_, stride_, static_cast<sn::poolType>(pool_)), nodes);
+  } else {
+    model->addNode(name, sn::Pooling(gpuDeviceId_), nodes);
+  }
+  return STATUS_OK;
+}
 
 Status addDense(const char *name, const char *nodes, unsigned int units_, Activation act_, Optimizer opt_,
                 float dropOut_, BatchNormType bnorm_, unsigned int gpuDeviceId_)

@@ -37,7 +37,7 @@ namespace SN_API{
     /*
     Input layer.
     */
-    class KERAS_EXPORT Input{
+    class Input{
 
     public:
 
@@ -53,7 +53,7 @@ namespace SN_API{
     /*
     Fully connected layer
     */
-    class KERAS_EXPORT FullyConnected {
+    class FullyConnected {
 
     public:
 
@@ -90,7 +90,7 @@ namespace SN_API{
     /*
     Convolution layer
     */
-    class KERAS_EXPORT Convolution{
+    class Convolution{
 
     public:
         
@@ -142,7 +142,7 @@ namespace SN_API{
     /*
     Deconvolution layer
     */
-    class KERAS_EXPORT Deconvolution{
+    class Deconvolution{
 
     public:
 
@@ -184,7 +184,7 @@ namespace SN_API{
     /*
     Pooling layer
     */
-    class KERAS_EXPORT Pooling{
+    class Pooling{
 
     public:
             
@@ -209,7 +209,7 @@ namespace SN_API{
     It is designed for the ability to dynamically disconnect the parallel
     branches of the network during operation.
     */
-    class KERAS_EXPORT Lock{
+    class Lock{
 
     public:
              
@@ -228,7 +228,7 @@ namespace SN_API{
     Operator for transferring data to several nodes at once.
     Data can only be received from one node.
     */
-    class KERAS_EXPORT Switch{
+    class Switch{
 
     public:
 
@@ -248,7 +248,7 @@ namespace SN_API{
     The consolidation can be performed by the following options: "summ", "diff", "mean".
     The dimensions of the input layers must be the same.
     */
-    class KERAS_EXPORT Summator{
+    class Summator{
 
     public:
          
@@ -266,7 +266,7 @@ namespace SN_API{
     /*
     The operator connects the channels with multiple layers
     */
-    class KERAS_EXPORT Concat{
+    class Concat{
 
     public:
               
@@ -284,7 +284,7 @@ namespace SN_API{
     /*
     Change the number of channels
     */
-    class KERAS_EXPORT Resize{
+    class Resize{
 
     public:
                
@@ -302,7 +302,7 @@ namespace SN_API{
     /*
     ROI clipping in each image of each channel
     */
-    class KERAS_EXPORT Crop{
+    class Crop{
 
     public:
         
@@ -320,7 +320,7 @@ namespace SN_API{
     /*
     Activation function operator
     */
-    class KERAS_EXPORT Activation{
+    class Activation{
 
     public:
 
@@ -338,7 +338,7 @@ namespace SN_API{
     /*
     Custom layer
     */
-    class KERAS_EXPORT UserLayer{
+    class UserLayer{
 
     public:
        
@@ -356,7 +356,7 @@ namespace SN_API{
     /*
     Error function calculation layer
     */
-    class KERAS_EXPORT LossFunction{
+    class LossFunction{
 
     public:
            
@@ -374,7 +374,7 @@ namespace SN_API{
     /*
     Batch norm
     */
-    class KERAS_EXPORT BatchNormLayer{
+    class BatchNormLayer{
 
     public:
       

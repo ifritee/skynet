@@ -42,6 +42,11 @@ typedef int BatchNormType; ///< @brief Типы нормализации наб�
 
 typedef int LossType; ///< @brief Типы функции потерь
 
+#define POOL_MAX 0
+#define POOL_AVG 1
+
+typedef int PoolType; ///< @brief Типы объединения
+
 /** @brief Размер данных в слое */
 struct LayerSize
 {
@@ -68,7 +73,7 @@ KERAS_EXPORT Status addInput(const char * name, const char * nodes);
 /**
  * @brief addConvolution Добавляет сверточный слой
  * @param name Имя слоя
- * @param nodes узли с которыми связан слой (через пробел)
+ * @param nodes узлы с которыми связан слой (через пробел)
  * @return Статус добавления слоя в модель
  */
 KERAS_EXPORT Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
@@ -82,6 +87,46 @@ KERAS_EXPORT Status addConvolution(const char *name, const char *nodes, unsigned
                                 unsigned int stride_ = 1,
                                 unsigned int dilate_ = 1,
                                 unsigned int gpuDeviceId_ = 0);
+
+/**
+ * @brief addDeconvolution Добавляет анти-сверточный слой
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param filters_ Количество нейронов
+ * @param act_ функция активации
+ * @param opt_ Оптимизатор
+ * @param dropOut_
+ * @param bnorm_
+ * @param fWidth_
+ * @param fHeight_
+ * @param stride_
+ * @param gpuDeviceId_ ID видеокарты для рсчетов
+ * @return
+ */
+KERAS_EXPORT Status addDeconvolution(const char *name, const char *nodes, unsigned int filters_,
+                                     Activation act_ = ACTIV_RELU,
+                                     Optimizer opt_ = OPTIM_ADAM,
+                                     float dropOut_ = 0.0,
+                                     BatchNormType bnorm_ = BATCH_NONE,
+                                     unsigned int fWidth_ = 3,
+                                     unsigned int fHeight_ = 3,
+                                     unsigned int stride_ = 2,
+                                     unsigned int gpuDeviceId_ = 0);
+
+/**
+ * @brief addPooling Добавляет слой объединения
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param kernel_
+ * @param stride_
+ * @param pool_
+ * @param gpuDeviceId_ ID видеокарты для рсчетов
+ * @return
+ */
+KERAS_EXPORT Status addPooling(const char *name, const char *nodes, unsigned int kernel_,
+                               unsigned int stride_,
+                               PoolType pool_ = POOL_MAX,
+                               unsigned int gpuDeviceId_ = 0);
 
 /**
  * @brief addDense Добавляет плотный слой
