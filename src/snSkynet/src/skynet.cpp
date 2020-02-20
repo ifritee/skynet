@@ -24,8 +24,8 @@
 //
 
 #include "snBase/snBase.h"
-#include "skynet/skyNet.h"
-#include "skynet/src/snet.h"
+#include "skyNet.h"
+#include "snet.h"
 
 #define SN_VERSION "1.0.4" // 29.07.2019 a.medvedev
 // -add snOperatorCUDA project - everything related to CUDA ferried there

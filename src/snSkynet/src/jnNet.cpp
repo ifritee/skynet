@@ -29,7 +29,7 @@
 #include "Lib/rapidjson/document.h"
 #include "Lib/rapidjson/stringbuffer.h"
 #include "Lib/rapidjson/writer.h"
-#include "skynet/src/snet.h"
+#include "snet.h"
 
 using namespace std;
 using namespace SN_Aux;
@@ -112,7 +112,7 @@ bool jnCheckJDoc(rapidjson::Document& jnDoc, string& err){
             err = "!Node.HasMember('OperatorName') || !Node['OperatorName'].IsString()"; return false;
         }
 
-        if (node["OperatorName"].GetString() == "Output") continue;
+        if (node["OperatorName"].GetString() == std::string("Output")) continue;
 
         if (!node.HasMember("NextNodes") || !node["NextNodes"].IsString()){
             err = "!Node.HasMember('NextNodes') || !Node['NextNodes'].IsString()"; return false;

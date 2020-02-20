@@ -30,7 +30,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
-#include "../../src/skynet/skyNet.h"
+#include "../snSkynet/skyNet.h"
 #include "snTensor.h"
 #include "snkeras_global.h"
 

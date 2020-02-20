@@ -29,7 +29,7 @@
 #include <string>
 #include <sstream>
 #include "snType.h"
-#include "../../src/skynet/skyNet.h"
+#include "../snSkynet/skyNet.h"
 #include "snkeras_global.h"
 
 namespace SN_API{

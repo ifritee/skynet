@@ -193,8 +193,10 @@ bool SNet::createNet(Net& inout_net, std::string& out_err){
 }
 
 SNet::SNet(const char* jnNet, char* out_err /*sz 256*/,
-    SN_API::snStatusCBack sts, SN_API::snUData ud) : stsCBack_(sts), udata_(ud){
-
+    SN_API::snStatusCBack sts, SN_API::snUData ud) :
+  udata_(ud),
+  stsCBack_(sts)
+{
     string err;  
     SN_Base::Net net;
     if (!jnParseNet(jnNet, net, err) || !createNet(net, err)){

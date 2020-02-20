@@ -27,7 +27,7 @@
 
 #include <mutex>
 #include "snBase/snBase.h"
-#include "skynet/skyNet.h"
+#include "skyNet.h"
 #include "snEngine/snEngine.h"
 #include "Lib/rapidjson/document.h"
 
