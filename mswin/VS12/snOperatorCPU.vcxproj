@@ -99,7 +99,7 @@
       </Include>
     </CudaCompile>
     <Lib>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);E:\skynet\mswin\Dependences\x64;E:\skynet\mswin\VS12\Debug\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);E:\skynet\mswin\VS12\Debug\x64;E:\skynet\third_party\win_libs\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>libopenblas.lib; snSimd.lib</AdditionalDependencies>
     </Lib>
     <CudaLink>
@@ -241,6 +241,9 @@
     <ClCompile Include="..\..\src\snOperatorCPU\src\random.cpp" />
     <ClCompile Include="..\..\src\snOperatorCPU\src\snOperator.cpp" />
     <ClCompile Include="..\..\src\snOperatorCPU\src\weightInit.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="snKeras.vcxproj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

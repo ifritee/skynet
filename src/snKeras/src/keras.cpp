@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <string.h>
 
 #include "snNet.h"
 #include "snOperator.h"
@@ -179,8 +180,8 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
       float* refOutput = outData + i * classes;
 
       // Вычисление правдивости предположения -----
-      int maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + classes));
-      int maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + classes));
+      auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + classes));
+      auto maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + classes));
 
       if (maxTargInx == maxOutInx) {  // Если угадали
         ++accCnt;
@@ -210,7 +211,7 @@ Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize
   sn::snFloat* outData = outputLayer.data();
   for (size_t i = 0; i < dataSize.bsz; ++i) {
     float* refOutput = outData + i * labelsSize.w;
-    int maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + labelsSize.w));
+    auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + labelsSize.w));
     if(label[i] != maxOutInx) {
       ++errors;
     }

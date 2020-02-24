@@ -40,7 +40,7 @@ namespace SN_API{
     /// @return version
     std::string versionLib();
    
-    class KERAS_EXPORT Net{
+    class Net{
                
     public:
 

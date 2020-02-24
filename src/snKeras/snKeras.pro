@@ -40,11 +40,14 @@ LIBS += -L$$PWD/../../builds/_nix -lsnSkynet \
         -L$$PWD/../../builds/_nix -lsnSIMD \
         -L$$PWD/../../builds/_nix -lsnAux
 
-LIBS += -lopenblas
-
 unix {
+    LIBS += -lopenblas
     QMAKE_POST_LINK += mkdir -p $$PWD/../../builds/_nix;
     QMAKE_POST_LINK += mkdir -p $$PWD/../../builds/include;
     QMAKE_POST_LINK += cp -rf *.so* $$PWD/../../builds/_nix;
     QMAKE_POST_LINK += cp -rf $$PWD/src/dataset.h $$PWD/src/*keras*.h  $$PWD/../../builds/include;
+}
+
+win32 {
+    LIBS+=-lws2_32
 }

@@ -11,24 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\skynet\src\dllmain.cpp" />
-    <ClCompile Include="..\..\src\skynet\src\jnNet.cpp" />
-    <ClCompile Include="..\..\src\skynet\src\skynet.cpp" />
-    <ClCompile Include="..\..\src\skynet\src\snet.cpp" />
+    <ClInclude Include="..\..\src\snSkynet\skyNet.h" />
+    <ClInclude Include="..\..\src\snSkynet\src\snet.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\skynet\skyNet.h" />
-    <ClInclude Include="..\..\src\skynet\src\snet.h" />
+    <ClCompile Include="..\..\src\snSkynet\src\dllmain.cpp" />
+    <ClCompile Include="..\..\src\snSkynet\src\jnNet.cpp" />
+    <ClCompile Include="..\..\src\snSkynet\src\skynet.cpp" />
+    <ClCompile Include="..\..\src\snSkynet\src\snet.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{507A9B3C-E5E6-4CEC-A99D-729D2171DF81}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SkyNet</RootNamespace>
-    <ProjectName>skynet</ProjectName>
+    <RootNamespace>SNSkyNet</RootNamespace>
+    <ProjectName>snSkynet</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -53,13 +54,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
-    <TargetName>libskynet</TargetName>
+    <TargetName>snskynet</TargetName>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
-    <TargetName>libskynet</TargetName>
+    <TargetName>libsnskynet</TargetName>
     <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -67,8 +68,8 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;SKYNETDLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../src;$(SolutionDir)../../api/cpp</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;SKYNETLIB_EXPORTS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../src;$(SolutionDir)../../api/cpp;$(SolutionDir)../../src/snSkynet</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>

@@ -26,15 +26,15 @@
 #ifndef SKYNET_C_API_H_
 #define SKYNET_C_API_H_
 
-#ifdef _WIN32
-#ifdef SKYNETDLL_EXPORTS
-#define SKYNET_API __declspec(dllexport)
-#else
-#define SKYNET_API __declspec(dllimport)
-#endif
-#else
-#define SKYNET_API
-#endif
+//#if defined(_WIN32) && !defined(SKYNETLIB_EXPORTS)
+//    #ifdef SKYNETDLL_EXPORTS
+//        #define SKYNET_API __declspec(dllexport)
+//    #else
+//        #define SKYNET_API __declspec(dllimport)
+//    #endif
+//#else // _WIN32, SKYNETLIB_EXPORTS
+    #define SKYNET_API
+//#endif // _WIN32
 
 #if defined(__cplusplus)
 extern "C" {

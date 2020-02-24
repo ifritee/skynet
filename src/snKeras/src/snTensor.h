@@ -35,7 +35,7 @@ namespace SN_API {
   /**
    * @brief The Tensor class Описание тензора
    */
-  class KERAS_EXPORT Tensor {
+  class Tensor {
 
   public:
     /**

@@ -11,27 +11,41 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\examples\mnist_data_set\src\imageprocessing.cpp" />
-    <ClCompile Include="..\..\examples\mnist_data_set\src\main.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\dataset.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\dllmain.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\keras.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\mnistset.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\snNet.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\snOperator.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\snTensor.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\snType.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\examples\mnist_data_set\src\imageprocessing.h" />
+    <ClInclude Include="..\..\src\snKeras\src\dataset.h" />
+    <ClInclude Include="..\..\src\snKeras\src\keras.h" />
+    <ClInclude Include="..\..\src\snKeras\src\mnistset.h" />
+    <ClInclude Include="..\..\src\snKeras\src\snkeras_global.h" />
+    <ClInclude Include="..\..\src\snKeras\src\snNet.h" />
+    <ClInclude Include="..\..\src\snKeras\src\snOperator.h" />
+    <ClInclude Include="..\..\src\snKeras\src\snTensor.h" />
+    <ClInclude Include="..\..\src\snKeras\src\snType.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CDDE5523-2322-4C88-B4DE-C42942F2A957}</ProjectGuid>
+    <ProjectGuid>{6B29FC3D-F957-48E6-ADD8-15C33590D9B0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>SNExample</RootNamespace>
-    <ProjectName>snExample</ProjectName>
+    <RootNamespace>SNKeras</RootNamespace>
+    <ProjectName>snKeras</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -49,29 +63,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
+    <TargetName>snkeras</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <OutDir>$(SolutionDir)$(Configuration)\$(Platform)\</OutDir>
+    <TargetName>libsnkeras</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../src;$(SolutionDir)../../examples/mnist_data_set;$(SolutionDir)../../api/cpp;$(SolutionDir)../../examples/mnist_data_set/src</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_WINDOWS;_USRDLL;KERAS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../src;$(SolutionDir)../../api/cpp;$(SolutionDir)../../src/snKeras</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(OutDir);E:\skynet\mswin\Dependences\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libskynet.lib;snAux.lib;ws2_32.lib;libopenblas.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>snSkynet.lib;snEngine.lib;snOperatorCPU.lib;snSIMD.lib;snAux.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -81,18 +97,18 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)../../src;$(SolutionDir)../../src/Lib/OpenCV_3.3.0</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;_USRDLL;KERAS_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../src</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>
       </MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libskynet.lib;snAux.lib;opencv_world330.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>snOperatorCUDA.lib;snAux.lib;snEngine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
