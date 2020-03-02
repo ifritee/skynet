@@ -26,7 +26,7 @@ int main()
   int classCnt = 10;  // выход: вероятностное распределение на 10 классов
 
   //----- Тренировка ----------------
-#define __TESTING__
+#define __TRAINING__
   LayerSize layerDataSize, layerLabelSize;
 #if defined(__TRAINING__)
   MnistDATA trainData = mnistTrainParams();

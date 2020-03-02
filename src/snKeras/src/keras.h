@@ -23,11 +23,11 @@ typedef int Activation; ///< @brief Функции активации
 
 #define OPTIM_SGD 0
 #define OPTIM_SGD_MOMENT 1
-#define OPTIM_ADAGRAD 2
+#define OPTIM_ADAGRAD 2 // С накоплением импульсаа
 #define OPTIM_RMSPROP 3
-#define OPTIM_ADAM 4
+#define OPTIM_ADAM 4  // накопление движения
 
-typedef int Optimizer; ///< @brief Функции активации
+typedef int Optimizer; ///< @brief Функции Оптимизации
 
 #define BATCH_NONE -1 // Без нормализации
 #define BATCH_BEFORE_ACTIVE 0 // до активации
