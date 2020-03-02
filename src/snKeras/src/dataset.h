@@ -22,6 +22,21 @@ struct MnistDATA {
  * @return состояние
  */
 KERAS_EXPORT Status readMnist(const char * path);
+
+/**
+ * @brief readMnistData Чтение БД с данными MNIST
+ * @param fileName Имя файла с путем
+ * @return состояние
+ */
+KERAS_EXPORT Status readMnistData(const char * fileName);
+
+/**
+ * @brief readMnistData Чтение БД с метками MNIST
+ * @param fileName Имя файла с путем
+ * @return состояние
+ */
+KERAS_EXPORT Status readMnistLabel(const char * fileName);
+
 /**
  * @brief mnistTrainParams Возвращает данные тренировочного набора MNIST
  */

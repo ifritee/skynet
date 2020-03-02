@@ -27,6 +27,20 @@ Status readMnist(const char *path)
   return status;
 }
 
+Status readMnistData(const char * fileName)
+{
+  Status status = STATUS_OK;
+
+  return status;
+}
+
+Status readMnistLabel(const char * fileName)
+{
+  Status status = STATUS_OK;
+
+  return status;
+}
+
 MnistDATA mnistTrainParams()
 {
   MnistDATA mnistData;
