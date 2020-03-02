@@ -1,7 +1,5 @@
 unit keras;
 
-{$mode objfpc}{$H+}
-
 interface
 const
 {$ifdef FPC}
@@ -64,13 +62,13 @@ Function createModel(): TStatus;  cdecl; external KERAS_EXPORT;
 // name Имя слоя
 // nodes узли с которыми связан слой (через пробел)
 // Статус добавления входного слоя в модель
-Function addInput(name: PChar; nodes: PChar): TStatus; cdecl; external KERAS_EXPORT;
+Function addInput(name: PAnsiChar; nodes: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // addConvolution Добавляет сверточный слой
 // name Имя слоя
 // nodes узлы с которыми связан слой (через пробел)
 // return Статус добавления слоя в модель
-Function addConvolution(name: PChar; nodes: PChar; filters_: Cardinal;
+Function addConvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
                         act_: TActivation = ACTIV_RELU;
                         opt_: TOptimizer = OPTIM_ADAM;
                         dropOut_: Single = 0.0;
@@ -96,7 +94,7 @@ Function addConvolution(name: PChar; nodes: PChar; filters_: Cardinal;
  // stride_
  // gpuDeviceId_ ID видеокарты для рсчетов
  // return Статус добавления слоя в модель
-Function addDeconvolution(name: PChar; nodes: PChar; filters_: Cardinal;
+Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
                           act_: TActivation = ACTIV_RELU;
                           opt_: TOptimizer = OPTIM_ADAM;
                           dropOut_: Single = 0.0;
@@ -116,7 +114,7 @@ Function addDeconvolution(name: PChar; nodes: PChar; filters_: Cardinal;
 // pool_
 // gpuDeviceId_ ID видеокарты для рсчетов
 // return Статус добавления слоя в модель
-Function addPooling(name: PChar; nodes: PChar; kernel_: Cardinal;
+Function addPooling(name: PAnsiChar; nodes: PAnsiChar; kernel_: Cardinal;
                     stride_: Cardinal;
                     pool_: TPoolType = POOL_MAX;
                     gpuDeviceId_: Cardinal = 0
@@ -126,7 +124,7 @@ Function addPooling(name: PChar; nodes: PChar; kernel_: Cardinal;
 // name Имя слоя
 // nodes узли с которыми связан слой (через пробел)
 // return Статус добавления слоя в модель
-Function addDense(name: PChar; nodes: PChar; units_: Cardinal;
+Function addDense(name: PAnsiChar; nodes: PAnsiChar; units_: Cardinal;
                   act_: TActivation = ACTIV_RELU;
                   opt_: TOptimizer = OPTIM_ADAM;
                   dropOut_: Single = 0.0;
@@ -139,14 +137,14 @@ Function addDense(name: PChar; nodes: PChar; units_: Cardinal;
 // nodes  узли с которыми связан слой (через пробел)
 // loss_ тип функции потерь
 // return Статус добавления слоя в модель
-Function addLossFunction(name: PChar; nodes: PChar;
+Function addLossFunction(name: PAnsiChar; nodes: PAnsiChar;
                          loss_: TLossType): TStatus; cdecl; external KERAS_EXPORT;
 
 // netArchitecture Записывает архитектуру сети в JSON виде
 // buffer Буфер для записи
 // length Размер буфера
 //return Статус вывода архитектуры
-Function netArchitecture(buffer: PChar; length: Cardinal
+Function netArchitecture(buffer: PAnsiChar; length: Cardinal
                          ): TStatus; cdecl; external KERAS_EXPORT;
 
 // fit Запуск упрощенной тренировки для известных наборов
@@ -176,17 +174,17 @@ Function evaluate(data: Single; dataSize: TLayerSize;
 // saveModel Сохраняет модель с весами
 // filename имя с путем
 // return Статус сохранения
-Function saveModel(filename: PChar): TStatus; cdecl; external KERAS_EXPORT;
+Function saveModel(filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // saveModel Загружает модель с весами
 // filename имя с путем
 // return Статус загрузки
-Function loadModel(filename: PChar): TStatus; cdecl; external KERAS_EXPORT;
+Function loadModel(filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // lastError Вывод последней ошибки в буфер
 // buffer Буфер для текста ошибки
 // length размер буфера
-Procedure lastError(buffer: PChar; length: Cardinal); cdecl; external KERAS_EXPORT;
+Procedure lastError(buffer: PAnsiChar; length: Cardinal); cdecl; external KERAS_EXPORT;
 
 // printLastError Вывод последней ошибки в stdout
 Procedure printLastError(status: TStatus); cdecl; external KERAS_EXPORT;

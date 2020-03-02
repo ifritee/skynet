@@ -62,13 +62,13 @@ Function createModel(): TStatus;  cdecl; external KERAS_EXPORT;
 // name Имя слоя
 // nodes узли с которыми связан слой (через пробел)
 // Статус добавления входного слоя в модель
-Function addInput(name: PChar; nodes: PChar): TStatus; cdecl; external KERAS_EXPORT;
+Function addInput(name: PAnsiChar; nodes: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // addConvolution Добавляет сверточный слой
 // name Имя слоя
 // nodes узлы с которыми связан слой (через пробел)
 // return Статус добавления слоя в модель
-Function addConvolution(name: PChar; nodes: PChar; filters_: Cardinal;
+Function addConvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
                         act_: TActivation = ACTIV_RELU;
                         opt_: TOptimizer = OPTIM_ADAM;
                         dropOut_: Single = 0.0;

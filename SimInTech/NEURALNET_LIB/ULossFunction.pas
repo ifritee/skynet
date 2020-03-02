@@ -8,16 +8,16 @@ type
 
   TLossFunction = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); override;
-    // Функция для обеспечения изменения визуальных параметров блока
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -25,10 +25,10 @@ type
 
   private
     isCreate: Boolean;
-    m_lossType: NativeInt; // Тип функции потерь
+    m_lossType: NativeInt; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 0; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
 
   end;
 
@@ -64,14 +64,14 @@ procedure TLossFunction.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-  returnCode := addLossFunction(PChar(shortName), PChar(nodes), m_lossType);
+  returnCode := addLossFunction(PAnsiChar(shortName), PAnsiChar(nodes), m_lossType);
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added loss function', msError, VisualObject);
     Exit;
   end;
 end;
 
-//----- Редактирование свойств блока -----
+//----- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -----
 procedure TLossFunction.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -94,8 +94,8 @@ end;
 
 function   TLossFunction.RunFunc;
 var
-  rootLayer: TAbstractLayer; // Родительский слой
-  rootIndex: NativeInt;      // Индекс родительского слоя
+  rootLayer: TAbstractLayer; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+  rootIndex: NativeInt;      // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 begin
   Result:=0;
   case Action of

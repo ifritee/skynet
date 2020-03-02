@@ -8,14 +8,14 @@ type
 
   TOutputLayer = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); override;
 
   private
@@ -68,10 +68,10 @@ end;
 
 function   TOutputLayer.RunFunc;
 var
-  rootLayer, layer: TAbstractLayer; // Родительский слой
-  rootIndex: NativeInt;      // Индекс родительского слоя
+  rootLayer, layer: TAbstractLayer; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+  rootIndex: NativeInt;      // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
   i: integer;
-  netJSON: array[0..1024] of Char;
+  netJSON: array[0..1024] of AnsiChar;
   returnCode: TStatus;
 begin
   Result:=0;
@@ -91,7 +91,7 @@ begin
             rootLayer.appendNode(shortName);
 //            Y[0].Arr^[0] := getLayerNumber;
             isCreate := True;
-            //----- Проходим по всем слоям нейронной сети -----
+            //----- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ -----
             for i := 0 to LayersDict.Count - 1 do begin
                layer := TAbstractLayer(LayersDict[i]);
                layer.addLayerToModel;
@@ -102,6 +102,7 @@ begin
               ErrorEvent(netJSON, msError, VisualObject);
               Exit;
             end;
+            ErrorEvent(netJSON, msInfo, VisualObject);
           end;
         end;
       end;

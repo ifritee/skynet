@@ -16,15 +16,15 @@ type
     constructor Create(Owner: TObject); override;
     function getLayerNumber(): NativeInt;
     function getShortName(): String;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); virtual; abstract;
 
-    // Добавляет очередную ноду связи к слою
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ
     procedure appendNode(nodeName: String);
 
   protected
-   shortName: String;
-   nodes: String;
+   shortName: AnsiString;
+   nodes: AnsiString;
 
   private
     layerNumber: NativeInt;
@@ -59,7 +59,11 @@ end;
 
 procedure TAbstractLayer.appendNode(nodeName: String);
 begin
-  nodes := nodes + ' ' + nodeName;
+  if Length(nodes) > 0 then begin
+    nodes := nodes + ' ' + nodeName;
+  end else begin
+    nodes := nodeName;
+  end;
 end;
 
 initialization

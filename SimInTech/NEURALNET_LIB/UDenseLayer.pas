@@ -8,16 +8,16 @@ type
 
   TDenseLayer = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); override;
-    // Функция для обеспечения изменения визуальных параметров блока
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -25,15 +25,15 @@ type
     
   private
     isCreate: Boolean;
-    m_units: NativeInt; // Количество нейронов
-    m_activate: NativeInt; // Метод активации
-    m_opimized: NativeInt; // Функция оптимизации
-    m_dropout:  double;  // Отсев
-    m_batchnorm: NativeInt; // Нормализация наборов
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_units: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_activate: NativeInt; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_opimized: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_dropout:  double;  // пїЅпїЅпїЅпїЅпїЅ
+    m_batchnorm: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_outputQty: NativeInt;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)  
+    PortType = 0; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)  
   end;
 
 implementation
@@ -90,8 +90,8 @@ procedure TDenseLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-  returnCode := addDense(PChar(shortName), 
-                         PChar(nodes), 
+  returnCode := addDense(PAnsiChar(shortName),
+                         PAnsiChar(nodes),
                          m_units, 
                          m_activate, 
                          m_opimized,
@@ -103,7 +103,7 @@ begin
   end;
 end;
 
-//----- Редактирование свойств блока -----
+//----- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -----
 procedure TDenseLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -126,8 +126,8 @@ end;
 
 function   TDenseLayer.RunFunc;
 var
-  rootLayer: TAbstractLayer; // Родительский слой
-  rootIndex: NativeInt;      // Индекс родительского слоя
+  rootLayer: TAbstractLayer; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+  rootIndex: NativeInt;      // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 begin
   Result:=0;
   case Action of

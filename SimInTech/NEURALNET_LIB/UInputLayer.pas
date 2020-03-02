@@ -8,27 +8,27 @@ type
 
   TInputLayer = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); override;
-    // Функция для обеспечения изменения визуальных параметров блока
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
                        ExecutePropScript:TExecutePropScript);override;
 
   strict private
-    stepCount: NativeInt; // Счетчик шагов
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    stepCount: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    m_outputQty: NativeInt;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 0; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
 
  end;
 
@@ -60,7 +60,7 @@ begin
   end
 end;
 
-//----- Редактирование свойств блока -----
+//----- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -----
 procedure TInputLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -75,12 +75,12 @@ var
   returnCode: TStatus;
 begin
   returnCode:= createModel();
-  // Проверим состояние создания модели
+  // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not created', msError, VisualObject);
     Exit;
   end;
-  returnCode := addInput( PChar(shortName), PChar(nodes));
+  returnCode := addInput( PAnsiChar(shortName), PAnsiChar(nodes));
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added input layer', msError, VisualObject);
     Exit;
