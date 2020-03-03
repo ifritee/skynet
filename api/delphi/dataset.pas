@@ -19,7 +19,17 @@ type
   // Чтение БД с MNIST
   // path - Путь к файлам БД
   // return - состояние
-  Function readMnist(path: PChar): keras.TStatus; cdecl; external KERAS_EXPORT;
+  Function readMnist(path: PAnsiChar): keras.TStatus; cdecl; external KERAS_EXPORT;
+
+  // dataFile Полный путь к файлу БД с данным для тренировки
+  // labelFile Полный путь к файлу БД с метками для тренировки
+  // return состояние
+ Function readMnistTrain(dataFile: PAnsiChar; labelFile: PAnsiChar): keras.TStatus; cdecl; external KERAS_EXPORT;
+
+ // dataFile Полный путь к файлу БД с данным для тестирования
+ // labelFile Полный путь к файлу БД с метками для тестирования
+ // return состояние
+ Function readMnistTest(dataFile: PAnsiChar; labelFile: PAnsiChar): keras.TStatus; cdecl; external KERAS_EXPORT;
 
   // Возвращает данные тренировочного набора MNIST
   Function mnistTrainParams(): TMNIST_DATA; cdecl; external KERAS_EXPORT;

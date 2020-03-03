@@ -24,12 +24,12 @@ type
 
 implementation
 
-uses keras;
+uses keras, UNNConstants;
 
 constructor TOutputLayer.Create;
 begin
   inherited;
-  shortName := 'Output';// + IntToStr(getLayerNumber);
+  shortName := 'Output';
   isCreate := False;
 end;
 
@@ -80,6 +80,7 @@ begin
 
     end;
     f_InitState: begin
+      shortName := '';
       isCreate := False;
     end;
     f_GoodStep: begin
@@ -89,7 +90,6 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-//            Y[0].Arr^[0] := getLayerNumber;
             isCreate := True;
             //----- �������� �� ���� ����� ��������� ���� -----
             for i := 0 to LayersDict.Count - 1 do begin
@@ -97,12 +97,16 @@ begin
                layer.addLayerToModel;
             end;
             returnCode := netArchitecture(netJSON, 1024);
+            Y[0].Arr^[0] := UNN_NNMAGICWORD;
             if returnCode <> STATUS_OK then begin
               lastError(netJSON, 1024);
-              ErrorEvent(netJSON, msError, VisualObject);
+              ErrorEvent(String(netJSON), msError, VisualObject);
+              Y[0].Arr^[1] := 0; // ������, ��� ���� ��������
               Exit;
+            end else begin
+              Y[0].Arr^[1] := 1; // ������, ��� �������� ���� �������
             end;
-            ErrorEvent(netJSON, msInfo, VisualObject);
+            ErrorEvent(String(netJSON), msInfo, VisualObject);
           end;
         end;
       end;

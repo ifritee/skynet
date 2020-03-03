@@ -26,7 +26,8 @@ uses
   UTrainingBlock in 'UTrainingBlock.pas',
   UTestingBlock in 'UTestingBlock.pas',
   ULossFunction in 'ULossFunction.pas',
-  UAbstractLayer in 'UAbstractLayer.pas';
+  UAbstractLayer in 'UAbstractLayer.pas',
+  UNNConstants in 'UNNConstants.pas';
 
 {$R *.res}
 

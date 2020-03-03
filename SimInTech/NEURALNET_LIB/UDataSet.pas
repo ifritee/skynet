@@ -1,32 +1,76 @@
 //**************************************************************************//
- // Данный исходный код является составной частью системы             //
- // Программист:        Никишин Е. В.                                        //
+ // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ             //
+ // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:        пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ. пїЅ.                                        //
  //**************************************************************************//
 
 unit UDataSet;
 
 interface
 
-uses Windows, Classes, DataTypes, SysUtils, RunObjts, uExtMath;
+uses Windows, Classes, DataTypes, SysUtils, RunObjts;
 
 type
 
   TDataSet = class(TRunObject)
   public
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    constructor  Create(Owner: TObject); override;
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+
+  strict private
+     isCreate: Boolean;
+
+     m_datasetType: NativeInt;  /// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     m_trainData: String; /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     m_trainlabel: String;  /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+     m_testData: String;  /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+     m_testLabel: String; /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
   end;
 
 implementation
 
-uses dataset;
+uses dataset, keras, UNNConstants;
+
+constructor  TDataSet.Create;
+begin
+  inherited;
+  isCreate:= False;
+end;
+
+destructor   TDataSet.Destroy;
+begin
+  inherited;
+end;
 
 function    TDataSet.GetParamID;
 begin
   Result:=inherited GetParamId(ParamName,DataType,IsConst);
   if Result = -1 then begin
-
+     if StrEqu(ParamName,'TrainData') then begin
+      Result:=NativeInt(@m_trainData);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'TrainLabel') then begin
+      Result:=NativeInt(@m_trainlabel);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'TestData') then begin
+      Result:=NativeInt(@m_testData);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'TestLabel') then begin
+      Result:=NativeInt(@m_testLabel);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'DataSet') then begin
+      Result:=NativeInt(@m_datasetType);
+      DataType:=dtInteger;
+      Exit;
+    end;
 
   end
 end;
@@ -44,13 +88,45 @@ begin
 end;
 
 function   TDataSet.RunFunc;
+var
+  returnCode: TStatus;
+  trainData: TMNIST_DATA;
+  testData: TMNIST_DATA;
 begin
  Result:=0;
  case Action of
-   f_UpdateOuts,
-   f_InitState,
-   f_GoodStep:
-   ;
- end
+    f_UpdateOuts: begin
+
+    end;
+    f_InitState: begin
+      isCreate := False;
+      if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
+        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)), PAnsiChar(AnsiString(m_trainLabel)));
+        if returnCode <> STATUS_OK then begin
+          ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
+          Exit;
+        end;
+        trainData := mnistTrainParams;
+        ErrorEvent('Read MNIST train: ' + IntToStr(trainData.quantity), msInfo, VisualObject);
+      end;
+      if FileExists(m_testData) AND FileExists(m_testLabel) then begin
+        returnCode := dataset.readMnistTest(PAnsiChar(AnsiString(m_testData)), PAnsiChar(AnsiString(m_testLabel)));
+        if returnCode <> STATUS_OK then begin
+          ErrorEvent('Read MNIST test db is failure!', msError, VisualObject);
+          Exit;
+        end;
+        testData := mnistTestParams;
+        ErrorEvent('Read MNIST test: ' + IntToStr(testData.quantity), msInfo, VisualObject);
+      end;
+    end;
+    f_GoodStep: begin
+      if isCreate = False then begin
+        isCreate := True;
+        Y[0].Arr^[0] := UNN_DATASEMNIST;
+        Y[0].Arr^[1] := trainData.quantity;
+        Y[0].Arr^[2] := testData.quantity;
+      end;
+    end;
+  end
 end;
 end.

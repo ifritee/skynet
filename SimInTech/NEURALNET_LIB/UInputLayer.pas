@@ -114,23 +114,23 @@ end;
 
 function   TInputLayer.RunFunc;
 begin
- Result:=0;
- case Action of
-   f_UpdateOuts: begin
+  Result:=0;
+  case Action of
+    f_UpdateOuts: begin
 
-   end;
-   f_InitState: begin
-     stepCount:= 0;
-     ErrorEvent('f_InitState', msInfo, VisualObject);
-
-   end;
-   f_GoodStep: begin
+    end;
+    f_InitState: begin
+      stepCount:= 0;
+      shortName := '';
+      ErrorEvent('f_InitState', msInfo, VisualObject);
+    end;
+    f_GoodStep: begin
       if stepCount = 0 then begin
         Y[0].Arr^[0] := getLayerNumber;
         inc(stepCount);
       end;
-   end;
- end
+    end;
+  end
 end;
 
 end.

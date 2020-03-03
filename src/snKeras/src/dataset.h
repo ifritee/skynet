@@ -24,18 +24,18 @@ struct MnistDATA {
 KERAS_EXPORT Status readMnist(const char * path);
 
 /**
- * @brief readMnistData Чтение БД с данными MNIST
- * @param fileName Имя файла с путем
+ * @param dataFile Полный путь к файлу БД с данным для тренировки
+ * @param labelFile Полный путь к файлу БД с метками для тренировки
  * @return состояние
  */
-KERAS_EXPORT Status readMnistData(const char * fileName);
+KERAS_EXPORT Status readMnistTrain(const char * dataFile, const char * labelFile);
 
 /**
- * @brief readMnistData Чтение БД с метками MNIST
- * @param fileName Имя файла с путем
+ * @param dataFile Полный путь к файлу БД с данным для тестирования
+ * @param labelFile Полный путь к файлу БД с метками для тестирования
  * @return состояние
  */
-KERAS_EXPORT Status readMnistLabel(const char * fileName);
+KERAS_EXPORT Status readMnistTest(const char* dataFile, const char* labelFile);
 
 /**
  * @brief mnistTrainParams Возвращает данные тренировочного набора MNIST

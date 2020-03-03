@@ -135,6 +135,7 @@ begin
 
     end;
     f_InitState: begin
+      shortName := '';
       isCreate := False;
     end;
     f_GoodStep: begin

@@ -111,7 +111,7 @@ begin
           rootIndex := Round(U[0].Arr^[0]);
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-            rootLayer.appendNode(shortName);
+            rootLayer.appendNode(String(shortName));
             Y[0].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;

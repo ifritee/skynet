@@ -40,7 +40,9 @@ namespace cpp_keras {
     virtual ~MnistSet();
 
     bool readTrainData(const std::string & pathTo);
+    bool readTrainData(const std::string& pathToData, const std::string& pathToLabel);
     bool readTestData(const std::string & pathTo);
+    bool readTestData(const std::string& pathToData, const std::string& pathToLabel);
 
     float *trainData() const;
     uint8_t *trainLabel() const;

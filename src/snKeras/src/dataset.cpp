@@ -11,6 +11,9 @@ Status readMnist(const char *path)
 {
   Status status = STATUS_OK;
   try {
+    if (mnistSet != nullptr) {
+       delete mnistSet;
+    }
     mnistSet = new cpp_keras::MnistSet;
     if( !mnistSet->readTrainData(path) ) {
       cerr<<"Read MNIST training data crashed! "<<endl;
@@ -27,18 +30,42 @@ Status readMnist(const char *path)
   return status;
 }
 
-Status readMnistData(const char * fileName)
+Status readMnistTrain(const char* dataFile, const char* labelFile)
 {
-  Status status = STATUS_OK;
-
-  return status;
+    Status status = STATUS_OK;
+    try {
+        if (mnistSet == nullptr) {
+            mnistSet = new cpp_keras::MnistSet;
+        }
+        if (!mnistSet->readTrainData(dataFile, labelFile)) {
+            cerr << "Read MNIST training data crashed! " << endl;
+            status = STATUS_WARNING;
+        }
+    }
+    catch (std::logic_error & e) {
+        cerr << "READ MNIST ERROR: " << e.what() << endl;
+        return STATUS_FAILURE;
+    }
+    return status;
 }
 
-Status readMnistLabel(const char * fileName)
+Status readMnistTest(const char* dataFile, const char* labelFile)
 {
-  Status status = STATUS_OK;
-
-  return status;
+    Status status = STATUS_OK;
+    try {
+        if (mnistSet == nullptr) {
+            mnistSet = new cpp_keras::MnistSet;
+        }
+        if (!mnistSet->readTestData(dataFile, labelFile)) {
+            cerr << "Read MNIST training data crashed! " << endl;
+            status = STATUS_WARNING;
+        }
+    }
+    catch (std::logic_error & e) {
+        cerr << "READ MNIST ERROR: " << e.what() << endl;
+        return STATUS_FAILURE;
+    }
+    return status;
 }
 
 MnistDATA mnistTrainParams()

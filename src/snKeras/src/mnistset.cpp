@@ -63,10 +63,20 @@ namespace cpp_keras {
                     true, m_trainParameters);
   }
 
+  bool MnistSet::readTrainData(const std::string& pathToData, const std::string& pathToLabel)
+  {
+      return readData(pathToData, pathToLabel, true, m_trainParameters);
+  }
+
   bool MnistSet::readTestData(const string &pathTo)
   {
     return readData(pathTo + "/t10k-images-idx3-ubyte", pathTo + "/t10k-labels-idx1-ubyte",
                     false, m_testParameters);
+  }
+
+  bool MnistSet::readTestData(const std::string& pathToData, const std::string& pathToLabel)
+  {
+      return readData(pathToData, pathToLabel, false, m_testParameters);
   }
 
   bool MnistSet::readData(const string & pathToData, const string & pathToLabels,
