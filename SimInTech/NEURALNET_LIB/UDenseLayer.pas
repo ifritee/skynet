@@ -135,7 +135,7 @@ begin
 
     end;
     f_InitState: begin
-      shortName := '';
+      nodes := '';
       isCreate := False;
     end;
     f_GoodStep: begin

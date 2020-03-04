@@ -76,7 +76,7 @@ var
 begin
   returnCode:= createModel();
   // �������� ��������� �������� ������
-  if returnCode <> STATUS_OK then begin
+  if returnCode = STATUS_FAILURE then begin
     ErrorEvent('Neural model not created', msError, VisualObject);
     Exit;
   end;
@@ -94,18 +94,17 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      ErrorEvent('i_GetCount', msInfo, VisualObject);
       cY[0] := 1;
       stepCount := 0;
     end;
     i_GetInit: begin
-      ErrorEvent('i_GetInit', msInfo, VisualObject);
+
     end;
     i_ReconnectPorts: begin
-      ErrorEvent('i_ReconnectPorts', msInfo, VisualObject);
+
     end;
     i_HaveSpetialEditor: begin
-      ErrorEvent('i_HaveSpetialEditor', msInfo, VisualObject);
+
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -121,8 +120,7 @@ begin
     end;
     f_InitState: begin
       stepCount:= 0;
-      shortName := '';
-      ErrorEvent('f_InitState', msInfo, VisualObject);
+      nodes := '';
     end;
     f_GoodStep: begin
       if stepCount = 0 then begin

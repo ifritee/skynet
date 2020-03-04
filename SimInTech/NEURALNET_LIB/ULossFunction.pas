@@ -103,6 +103,7 @@ begin
 
     end;
     f_InitState: begin
+      nodes := '';
       isCreate := False;
     end;
     f_GoodStep: begin

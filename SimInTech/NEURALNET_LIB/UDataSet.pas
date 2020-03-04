@@ -7,7 +7,7 @@ unit UDataSet;
 
 interface
 
-uses Windows, Classes, DataTypes, SysUtils, RunObjts;
+uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset;
 
 type
 
@@ -29,11 +29,13 @@ type
      m_trainlabel: String;  /// ������������ ������������� �����
      m_testData: String;  /// ������������ �������� ������
      m_testLabel: String; /// ������������ �������� �����
+     m_trainMnistData: TMNIST_DATA; /// ������������� ������ � MNIST
+     m_testMnistData: TMNIST_DATA;  /// �������� ������ � MNIST
   end;
 
 implementation
 
-uses dataset, keras, UNNConstants;
+uses keras, UNNConstants;
 
 constructor  TDataSet.Create;
 begin
@@ -80,7 +82,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-
+      cY[0] := 5;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -90,8 +92,8 @@ end;
 function   TDataSet.RunFunc;
 var
   returnCode: TStatus;
-  trainData: TMNIST_DATA;
-  testData: TMNIST_DATA;
+  p64: UInt64;
+  i, j: Integer;
 begin
  Result:=0;
  case Action of
@@ -100,31 +102,46 @@ begin
     end;
     f_InitState: begin
       isCreate := False;
-      if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
-        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)), PAnsiChar(AnsiString(m_trainLabel)));
-        if returnCode <> STATUS_OK then begin
-          ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
-          Exit;
+      m_trainMnistData.quantity := 0;
+      m_testMnistData.quantity := 0;
+      // ��������� �������� ������
+      for I := 0 to cY.Count - 1 do begin
+        cY.Arr^[I] := 0;
+        for J := 0 to Y[I].Count - 1 do  begin
+          Y[I].Arr^[J] := 0;
         end;
-        trainData := mnistTrainParams;
-        ErrorEvent('Read MNIST train: ' + IntToStr(trainData.quantity), msInfo, VisualObject);
       end;
+
+//      if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
+//        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)), PAnsiChar(AnsiString(m_trainLabel)));
+//        if returnCode <> STATUS_OK then begin
+//          ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
+//          Exit;
+//        end;
+//        m_trainMnistData := mnistTrainParams;
+//        ErrorEvent('Read MNIST train: ' + IntToStr(m_trainMnistData.quantity), msInfo, VisualObject);
+//      end;
       if FileExists(m_testData) AND FileExists(m_testLabel) then begin
         returnCode := dataset.readMnistTest(PAnsiChar(AnsiString(m_testData)), PAnsiChar(AnsiString(m_testLabel)));
         if returnCode <> STATUS_OK then begin
           ErrorEvent('Read MNIST test db is failure!', msError, VisualObject);
           Exit;
         end;
-        testData := mnistTestParams;
-        ErrorEvent('Read MNIST test: ' + IntToStr(testData.quantity), msInfo, VisualObject);
+        m_testMnistData := mnistTestParams;
+        ErrorEvent('Read MNIST test: ' + IntToStr(m_testMnistData.quantity), msInfo, VisualObject);
       end;
     end;
     f_GoodStep: begin
-      if isCreate = False then begin
+      if isCreate = False then
+      begin
         isCreate := True;
         Y[0].Arr^[0] := UNN_DATASEMNIST;
-        Y[0].Arr^[1] := trainData.quantity;
-        Y[0].Arr^[2] := testData.quantity;
+        p64 := UInt64(@m_trainMnistData);
+        Y[0].Arr^[1] := p64 shr 32;
+        Y[0].Arr^[2]:= (p64 shl 32) shr 32;
+        p64 := UInt64(@m_testMnistData);
+        Y[0].Arr^[3] := p64 shr 32;
+        Y[0].Arr^[4]:= (p64 shl 32) shr 32;
       end;
     end;
   end

@@ -59,7 +59,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-
+      cY[0] := 2;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -80,8 +80,8 @@ begin
 
     end;
     f_InitState: begin
-      shortName := '';
       isCreate := False;
+      nodes := '';
     end;
     f_GoodStep: begin
       if isCreate = False then begin

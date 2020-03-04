@@ -9,8 +9,8 @@ type
   // Данные для наборов MNIST
   pMNIST_DATA = ^TMNIST_DATA;
   TMNIST_DATA = Record
-     data: ^Single;     // Нормализованные данные
-     labels: ^Byte;     // Метки
+     data: PSingle;     // Нормализованные данные
+     labels: PByte;     // Метки
      quantity: Integer; // Количество данных
      rows: Integer;     // Количество строк в одном данном
      cols: Integer;     // Количество столбцов в одном данном

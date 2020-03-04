@@ -172,6 +172,8 @@ KERAS_EXPORT Status fit(float * data, LayerSize dataSize, unsigned char * label,
                         LayerSize labelsSize, unsigned int epochs,
                         float learningRate);
 
+KERAS_EXPORT float lastAccurateSum();
+
 /**
  * @brief evaluate Проверка с тестовым сетом
  * @param data тестовые данные

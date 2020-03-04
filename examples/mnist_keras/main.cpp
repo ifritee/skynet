@@ -1,4 +1,7 @@
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
 
 #include "keras.h"
 #include "dataset.h"
@@ -39,7 +42,7 @@ int main()
   layerLabelSize.h = 1;
   layerLabelSize.ch = 1;
 
-  KR_CHECK(fit(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 10, 0.001f));
+  KR_CHECK(fit(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 1, 0.001f));
   KR_CHECK(saveModel("w.dat"));
 
   //----- Тестирование --------------

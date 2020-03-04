@@ -155,9 +155,11 @@ Function netArchitecture(buffer: PAnsiChar; length: Cardinal
 // epochs @brief Эпохи
 // classes вероятностное распределения на N классов
 // Статус тренировки
-Function fit(data: Single; dataSize: TLayerSize;
-             label_: Byte; labelsSize: TLayerSize;
+Function fit(data: PSingle; dataSize: TLayerSize;
+             label_: PByte; labelsSize: TLayerSize;
              epochs: Cardinal; learningRate: Single): TStatus; cdecl; external KERAS_EXPORT;
+
+Function lastAccurateSum(): Single; cdecl; external KERAS_EXPORT;
 
 // evaluate Проверка с тестовым сетом
 // data тестовые данные

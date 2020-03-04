@@ -13,6 +13,7 @@
 namespace sn = SN_API;
 
 static sn::Net * model = nullptr; ///< @brief Модель
+static float accuratSummLast = 0;
 
 Status createModel()
 {
@@ -160,7 +161,7 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
   sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
   sn::Tensor targetLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
   sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
-  float accuratSumm = 0;
+
   int classes = labelsSize.w;
   for(unsigned int epoch = 0; epoch < epochs; ++epoch) {
     for (unsigned int i = 0; i < dataSize.bsz; ++i) { // Запись распределения ответов по нейронам выходным
@@ -169,7 +170,7 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
     }
     // Запуск тренировки -----
     float accurat = 0;
-
+    float accuratSumm = 0;
     model->training(learningRate, inputLayer, outputLayer, targetLayer, accurat);
     // Расчет ошибки -----
     sn::snFloat* targetData = targetLayer.data();
@@ -189,10 +190,15 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
     }
 
     accuratSumm += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
-
-    std::cout << epoch << " accurate " << accuratSumm / epoch << " " << model->getLastErrorStr() << std::endl;
+    accuratSummLast = epoch > 0 ? accuratSumm / epoch: accuratSumm;
+    //std::cout << epoch << " accurate " << accuratSumm / epoch << " " << model->getLastErrorStr() << std::endl;
   }
   return STATUS_OK;
+}
+
+float lastAccurateSum()
+{
+    return accuratSummLast;
 }
 
 Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
