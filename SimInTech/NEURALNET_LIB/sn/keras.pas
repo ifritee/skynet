@@ -161,6 +161,13 @@ Function fit(data: PSingle; dataSize: TLayerSize;
 
 Function lastAccurateSum(): Single; cdecl; external KERAS_EXPORT;
 
+Function trainCreate(data: PSingle; dataSize: TLayerSize;
+             label_: PByte; labelsSize: TLayerSize): TStatus; cdecl; external KERAS_EXPORT;
+
+Function trainStep(learningRate: Single; dataSize: TLayerSize) : TStatus; cdecl; external KERAS_EXPORT;
+
+Function trainStop() : TStatus; cdecl; external KERAS_EXPORT;
+
 // evaluate Проверка с тестовым сетом
 // data тестовые данные
 // dataSize количество тестовых данных
@@ -168,11 +175,13 @@ Function lastAccurateSum(): Single; cdecl; external KERAS_EXPORT;
 // labelsSize количество меток
 // verbose уровень подробности
 // return Статус тестирования
-Function evaluate(data: Single; dataSize: TLayerSize;
-                  label_: Byte; labelsSize: TLayerSize;
+Function evaluate(data: PSingle; dataSize: TLayerSize;
+                  label_: PByte; labelsSize: TLayerSize;
                   verbose: Cardinal
                   ): TStatus; cdecl; external KERAS_EXPORT;
 
+// Возвращает процент опознаных элементов
+Function testPercents(): Single; cdecl; external KERAS_EXPORT;
 // saveModel Сохраняет модель с весами
 // filename имя с путем
 // return Статус сохранения

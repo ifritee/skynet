@@ -15,6 +15,13 @@ namespace sn = SN_API;
 static sn::Net * model = nullptr; ///< @brief Модель
 static float accuratSummLast = 0;
 
+static sn::Tensor * spInputLayer = nullptr;
+static sn::Tensor * spTargetLayer = nullptr;
+static sn::Tensor * spOutputLayer = nullptr;
+static int sClasses = 0;
+static int sEpochs = 0;
+static float sAccuratSumm = 0.f, sTestPercent = 0.f;
+
 Status createModel()
 {
   int createStatus = STATUS_OK;
@@ -189,8 +196,9 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
     }
 
     accuratSumm += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
-//    accuratSummLast = epoch > 0 ? accuratSumm / epoch: accuratSumm;
-    std::cout << epoch << " accurate " << accuratSumm / epoch << " " << model->getLastErrorStr() << std::endl;
+    accuratSummLast = epoch > 0 ? accuratSumm / epoch: accuratSumm;
+    accuratSummLast = accuratSummLast > 1.f ? 1.00f : accuratSummLast;
+    //std::cout << epoch << " accurate " << accuratSummLast << " " << model->getLastErrorStr() << std::endl;
   }
   return STATUS_OK;
 }
@@ -198,6 +206,83 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
 float lastAccurateSum()
 {
     return accuratSummLast;
+}
+
+Status trainCreate(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if (labelsSize.bsz != dataSize.bsz) {
+    return STATUS_FAILURE;
+  }
+  if(spInputLayer != nullptr || spTargetLayer != nullptr || spOutputLayer != nullptr) {
+    return STATUS_FAILURE;
+  }
+  sClasses = labelsSize.w;
+  spInputLayer = new sn::Tensor(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
+  spTargetLayer = new sn::Tensor(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  spOutputLayer = new sn::Tensor(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  for (unsigned int i = 0; i < dataSize.bsz; ++i) { // Запись распределения ответов по нейронам выходным
+    float* tarData = spTargetLayer->data() + sClasses * i;
+    tarData[label[i]] = 1;
+  }
+  accuratSummLast = 0;
+  sEpochs = 0;
+  sAccuratSumm = 0;
+  return STATUS_OK;
+}
+
+Status trainStep(float learningRate, LayerSize dataSize)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  // Запуск тренировки -----
+  float accurat = 0;
+  model->training(learningRate, *spInputLayer, *spOutputLayer, *spTargetLayer, accurat);
+  // Расчет ошибки -----
+  sn::snFloat* targetData = spTargetLayer->data();
+  sn::snFloat* outData = spOutputLayer->data();
+  size_t accCnt = 0, bsz = dataSize.bsz;
+  for (size_t i = 0; i < bsz; ++i) {
+    float* refTarget = targetData + i * sClasses;
+    float* refOutput = outData + i * sClasses;
+
+    // Вычисление правдивости предположения -----
+    auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + sClasses));
+    auto maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + sClasses));
+
+    if (maxTargInx == maxOutInx) {  // Если угадали
+      ++accCnt;
+    }
+  }
+
+  sAccuratSumm += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
+  accuratSummLast = sEpochs > 0 ? sAccuratSumm / sEpochs : sAccuratSumm;
+  accuratSummLast = accuratSummLast > 1.f ? 1.00f : accuratSummLast;
+  ++sEpochs;
+  return STATUS_OK;
+}
+
+Status trainStop()
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if(spInputLayer != nullptr || spTargetLayer != nullptr || spOutputLayer != nullptr) {
+    spInputLayer->clear();
+    spTargetLayer->clear();
+    spOutputLayer->clear();
+  }
+  delete spInputLayer;
+  delete spTargetLayer;
+  delete spOutputLayer;
+  spInputLayer = nullptr;
+  spTargetLayer = nullptr;
+  spOutputLayer = nullptr;
+
+  return STATUS_OK;
 }
 
 Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
@@ -209,6 +294,7 @@ Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize
   if (labelsSize.bsz != dataSize.bsz) {
     return STATUS_FAILURE;
   }
+  sTestPercent = 0.f;
   sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
   sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
   model->forward(false, inputLayer, outputLayer);
@@ -221,8 +307,14 @@ Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize
       ++errors;
     }
   }
-  std::cout<<"ERRORS QTY = "<<errors<<std::endl;
+  sTestPercent = 100.00f - float(errors) * 100.f / float(dataSize.bsz);
+  //std::cout<<"ERRORS QTY = "<<errors<<std::endl;
   return STATUS_OK;
+}
+
+float testPercents() 
+{
+  return sTestPercent;
 }
 
 Status saveModel(const char *filename)

@@ -164,15 +164,42 @@ KERAS_EXPORT Status netArchitecture(char * buffer, unsigned int length);
  * @param dataSize количество тренировочных данных
  * @param label метки тренировочных данных
  * @param labelsSize количество меток
- * @param epochs @brief Эпохи
- * @param classes вероятностное распределения на N классов
+ * @param epochs Эпохи
+ * @param learningRate Шаг обучения
  * @return Статус тренировки
  */
 KERAS_EXPORT Status fit(float * data, LayerSize dataSize, unsigned char * label,
                         LayerSize labelsSize, unsigned int epochs,
                         float learningRate);
 
+/**
+ * @brief lastAccurateSum Уровень обучения по результатам упрощенной тренировки
+ * @return значение уровня обучения
+ */
 KERAS_EXPORT float lastAccurateSum();
+
+/**
+ * @brief trainCreate Запуск тренировки без эпох (пока не надоест)
+ * @param data тренировочные данные
+ * @param dataSize количество тренировочных данных
+ * @param label метки тренировочных данных
+ * @param labelsSize количество меток
+ * @param learningRate Шаг обучения
+ * @return Статус начала обучения
+ */
+KERAS_EXPORT Status trainCreate(float * data, LayerSize dataSize, unsigned char * label, LayerSize labelsSize);
+
+/**
+ * @brief trainStep Очередной шаг обучения
+ * @return Статус шага обучения
+ */
+KERAS_EXPORT Status trainStep(float learningRate, LayerSize dataSize);
+
+/**
+ * @brief trainStop Остановка обучения и высвобождение памяти
+ * @return Статус окончания обучения
+ */
+KERAS_EXPORT Status trainStop();
 
 /**
  * @brief evaluate Проверка с тестовым сетом
@@ -185,6 +212,11 @@ KERAS_EXPORT float lastAccurateSum();
  */
 KERAS_EXPORT Status evaluate(float * data, LayerSize dataSize, unsigned char * label,
                              LayerSize labelsSize, unsigned int verbose);
+
+/**
+ * 
+ */
+KERAS_EXPORT float testPercents();
 
 /**
  * @brief saveModel Сохраняет модель с весами

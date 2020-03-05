@@ -112,15 +112,15 @@ begin
         end;
       end;
 
-//      if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
-//        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)), PAnsiChar(AnsiString(m_trainLabel)));
-//        if returnCode <> STATUS_OK then begin
-//          ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
-//          Exit;
-//        end;
-//        m_trainMnistData := mnistTrainParams;
-//        ErrorEvent('Read MNIST train: ' + IntToStr(m_trainMnistData.quantity), msInfo, VisualObject);
-//      end;
+      if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
+        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)), PAnsiChar(AnsiString(m_trainLabel)));
+        if returnCode <> STATUS_OK then begin
+          ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
+          Exit;
+        end;
+        m_trainMnistData := mnistTrainParams;
+        ErrorEvent('Read MNIST train: ' + IntToStr(m_trainMnistData.quantity), msInfo, VisualObject);
+      end;
       if FileExists(m_testData) AND FileExists(m_testLabel) then begin
         returnCode := dataset.readMnistTest(PAnsiChar(AnsiString(m_testData)), PAnsiChar(AnsiString(m_testLabel)));
         if returnCode <> STATUS_OK then begin

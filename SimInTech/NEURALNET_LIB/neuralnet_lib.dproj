@@ -878,6 +878,7 @@
         <DCCReference Include="UTestingBlock.pas"/>
         <DCCReference Include="ULossFunction.pas"/>
         <DCCReference Include="UAbstractLayer.pas"/>
+        <DCCReference Include="UNNConstants.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
