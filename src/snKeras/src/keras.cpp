@@ -113,6 +113,53 @@ Status addDense(const char *name, const char *nodes, unsigned int units_, Activa
   return STATUS_OK;
 }
 
+Status addConcat(const char *name, const char *nodes, const char * sequence)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  model->addNode(name, sn::Concat(sequence), nodes);
+  return STATUS_OK;
+}
+
+Status addResize(const char *name, const char *nodes, unsigned int fwdBegin, unsigned int fwdEnd,
+                 unsigned int bwdBegin, unsigned int bwdEnd)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  model->addNode(name, sn::Resize(sn::diap(fwdBegin, fwdEnd), sn::diap(bwdBegin, bwdEnd)), nodes);
+  return STATUS_OK;
+}
+
+Status addCrop(const char *name, const char *nodes, unsigned int x, unsigned int y,
+               unsigned int w, unsigned int h)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  model->addNode(name, sn::Crop(sn::rect(x, y, w, h)), nodes);
+  return STATUS_OK;
+}
+
+Status addSummator(const char *name, const char *nodes, SummatorType type)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  model->addNode(name, sn::Summator(static_cast<sn::summatorType>(type)), nodes);
+  return STATUS_OK;
+}
+
+Status addActivator(const char *name, const char *nodes, Activation active)
+{
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  model->addNode(name, sn::Activation(static_cast<sn::active>(active)), nodes);
+  return STATUS_OK;
+}
+
 Status addLossFunction(const char *name, const char *nodes, LossType loss_)
 {
   if(!model) {

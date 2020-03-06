@@ -47,6 +47,12 @@ typedef int LossType; ///< @brief Типы функции потерь
 
 typedef int PoolType; ///< @brief Типы объединения
 
+#define SUMMATOR_SUMM 0
+#define SUMMATOR_DIFF 1
+#define SUMMATOR_MEAN 2
+
+typedef int SummatorType; ///< @brief Типы суммирования
+
 /** @brief Размер данных в слое */
 struct LayerSize
 {
@@ -119,9 +125,9 @@ KERAS_EXPORT Status addDeconvolution(const char *name, const char *nodes, unsign
  * @param nodes узлы с которыми связан слой (через пробел)
  * @param kernel_
  * @param stride_
- * @param pool_
+ * @param pool_ Типы объединения
  * @param gpuDeviceId_ ID видеокарты для рсчетов
- * @return
+ * @return Статус добавления слоя в модель
  */
 KERAS_EXPORT Status addPooling(const char *name, const char *nodes, unsigned int kernel_,
                                unsigned int stride_,
@@ -131,7 +137,13 @@ KERAS_EXPORT Status addPooling(const char *name, const char *nodes, unsigned int
 /**
  * @brief addDense Добавляет плотный слой
  * @param name Имя слоя
- * @param nodes узли с которыми связан слой (через пробел)
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param units_ Количество нейронов
+ * @param act_ Функция активации
+ * @param opt_ Функция оптимизации
+ * @param dropOut_
+ * @param bnorm_ Нормализация набора
+ * @param gpuDeviceId_ ID устройства GPU
  * @return Статус добавления слоя в модель
  */
 KERAS_EXPORT Status addDense(const char *name, const char *nodes, unsigned int units_,
@@ -140,6 +152,60 @@ KERAS_EXPORT Status addDense(const char *name, const char *nodes, unsigned int u
                           float dropOut_ = 0.0,
                           BatchNormType bnorm_ = BATCH_NONE,
                           unsigned int gpuDeviceId_ = 0);
+
+/**
+ * @brief addConcat Слой объединения
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param sequence Имена объединяемых слоев (через пробел)
+ * @return Статус добавления слоя в модель
+ */
+KERAS_EXPORT Status addConcat(const char *name, const char *nodes, const char * sequence);
+
+/**
+ * @brief addResize Слой изменения размера
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param fwdBegin Начальное значение перед
+ * @param fwdEnd Конечное значение перед
+ * @param bwdBegin Начальное значение зад
+ * @param bwdEnd Конечное значение зад
+ * @return Статус добавления слоя в модель
+ */
+KERAS_EXPORT Status addResize(const char *name, const char *nodes,
+                              unsigned int fwdBegin, unsigned int fwdEnd,
+                              unsigned int bwdBegin, unsigned int bwdEnd);
+
+/**
+ * @brief addCrop Отсечение каналов в изображении
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param x координата
+ * @param y координата
+ * @param w длина
+ * @param h ширина
+ * @return Статус добавления слоя в модель
+ */
+KERAS_EXPORT Status addCrop(const char *name, const char *nodes, unsigned int x, unsigned int y,
+                            unsigned int w, unsigned int h);
+
+/**
+ * @brief addSummator Добавляет слой сумирования
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param type тип сумирования
+ * @return Статус добавления слоя в модель
+ */
+KERAS_EXPORT Status addSummator(const char *name, const char *nodes, SummatorType type);
+
+/**
+ * @brief addActivator Добавляет слой с ф-ией активации
+ * @param name Имя слоя
+ * @param nodes узлы с которыми связан слой (через пробел)
+ * @param active Функции активации
+ * @return Статус добавления слоя в модель
+ */
+KERAS_EXPORT Status addActivator(const char *name, const char *nodes, Activation active);
 
 /**
  * @brief addLossFunction Добавляет функцию потерь в модель
