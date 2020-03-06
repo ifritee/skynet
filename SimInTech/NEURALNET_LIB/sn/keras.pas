@@ -15,6 +15,7 @@ type
   TBatchNormType = Integer; // Типы нормализации наборов
   TLossType = Integer; // Типы функции потерь
   TPoolType = Integer; // Типы объединения
+  TSummatorType = Integer; // Типы суммирования
 
   // Размер данных в слое
   pLayerSize = ^TLayerSize;
@@ -53,6 +54,10 @@ const
 
   POOL_MAX = 0;
   POOL_AVG = 1;
+
+  SUMMATOR_SUMM = 0;
+  SUMMATOR_DIFF = 1;
+  SUMMATOR_MEAN = 2;
 
 // Создание модели
 // return Статус создания модели
@@ -131,6 +136,49 @@ Function addDense(name: PAnsiChar; nodes: PAnsiChar; units_: Cardinal;
                   bnorm_: TBatchNormType = BATCH_NONE;
                   gpuDeviceId_: Cardinal = 0
                   ): TStatus; cdecl; external KERAS_EXPORT;
+
+// addConcat Слой объединения
+// name Имя слоя
+// nodes узлы с которыми связан слой (через пробел)
+// sequence Имена объединяемых слоев (через пробел)
+// return Статус добавления слоя в модель
+Function addConcat(name: PAnsiChar; nodes: PAnsiChar; sequence: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+
+// addResize Слой изменения размера
+// name Имя слоя
+// nodes узлы с которыми связан слой (через пробел)
+// fwdBegin Начальное значение перед
+// fwdEnd Конечное значение перед
+// bwdBegin Начальное значение зад
+// bwdEnd Конечное значение зад
+// return Статус добавления слоя в модель
+Function addResize(name: PAnsiChar; nodes: PAnsiChar; fwdBegin : Cardinal; fwdEnd : Cardinal;
+                              bwdBegin : Cardinal; bwdEnd : Cardinal): TStatus; cdecl; external KERAS_EXPORT;
+
+// addCrop Отсечение каналов в изображении
+// name Имя слоя
+// nodes узлы с которыми связан слой (через пробел)
+// x координата
+// y координата
+// w длина
+// h ширина
+// return Статус добавления слоя в модель
+Function addCrop(name: PAnsiChar; nodes: PAnsiChar; x : Cardinal; y : Cardinal;
+                 w : Cardinal; h : Cardinal): TStatus; cdecl; external KERAS_EXPORT;
+
+// addSummator Добавляет слой сумирования
+// name Имя слоя
+// nodes узлы с которыми связан слой (через пробел)
+// type тип сумирования
+// return Статус добавления слоя в модель
+Function addSummator(name: PAnsiChar; nodes: PAnsiChar; type_ : TSummatorType): TStatus; cdecl; external KERAS_EXPORT;
+
+// addActivator Добавляет слой с ф-ией активации
+// name Имя слоя
+// nodes узлы с которыми связан слой (через пробел)
+// active Функции активации
+// return Статус добавления слоя в модель
+Function addActivator(name: PAnsiChar; nodes: PAnsiChar; active: TActivation): TStatus; cdecl; external KERAS_EXPORT;
 
 // addLossFunction Добавляет функцию потерь в модель
 // name Имя слоя

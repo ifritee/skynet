@@ -190,10 +190,10 @@ KERAS_EXPORT Status addCrop(const char *name, const char *nodes, unsigned int x,
                             unsigned int w, unsigned int h);
 
 /**
- * @brief addSummator Добавляет слой сумирования
+ * @brief addSummator Добавляет слой суммирования
  * @param name Имя слоя
  * @param nodes узлы с которыми связан слой (через пробел)
- * @param type тип сумирования
+ * @param type тип суммирования
  * @return Статус добавления слоя в модель
  */
 KERAS_EXPORT Status addSummator(const char *name, const char *nodes, SummatorType type);
