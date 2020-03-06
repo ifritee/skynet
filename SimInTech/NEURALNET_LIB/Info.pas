@@ -42,7 +42,15 @@ uses Blocks,
      UDenseLayer,
      UTrainingBlock,
      UTestingBlock,
-     ULossFunction;
+     ULossFunction,
+     USummatorLayer,
+     UResizeLayer,
+     UPoolingLayer,
+     UDeconvolutionLayer,
+     UCropLayer,
+     UActivatorLayer,
+     UConvolutionLayer,
+     UConcatLayer;
 
 function  Init:boolean;
 begin
@@ -79,14 +87,14 @@ const
     (Name:'TTrainingBlock'; RunClass:TTrainingBlock),
     (Name:'TTestingBlock'; RunClass:TTestingBlock),
     (Name:'TLossFunction'; RunClass:TLossFunction),
-    (Name:'tgd_c';   RunClass:TGD_c),
-    (Name:'tdr';     RunClass:TDR),
-    (Name:'tdr_idd'; RunClass:TDR_idd),
-    (Name:'treg_n';  RunClass:TREG_n),
-    (Name:'tred';    RunClass:TRED),
-    (Name:'tor_tv';  RunClass:TOR_tv),
-    (Name:'tklpr';   RunClass:TKLpr),
-    (Name:'tklpp';   RunClass:TKLpp)
+    (Name:'TActivatorLayer'; RunClass:TActivatorLayer),
+    (Name:'TConcatLayer'; RunClass:TConcatLayer),
+    (Name:'TConvolutionLayer'; RunClass:TConvolutionLayer),
+    (Name:'TCropLayer'; RunClass:TCropLayer),
+    (Name:'TDeconvolutionLayer'; RunClass:TDeconvolutionLayer),
+    (Name:'TPoolingLayer'; RunClass:TPoolingLayer),
+    (Name:'TResizeLayer'; RunClass:TResizeLayer),
+    (Name:'TSummatorLayer'; RunClass:TSummatorLayer)
   );
 
 

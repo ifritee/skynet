@@ -27,7 +27,15 @@ uses
   UTestingBlock in 'UTestingBlock.pas',
   ULossFunction in 'ULossFunction.pas',
   UAbstractLayer in 'UAbstractLayer.pas',
-  UNNConstants in 'UNNConstants.pas';
+  UNNConstants in 'UNNConstants.pas',
+  UConcatLayer in 'UConcatLayer.pas',
+  USummatorLayer in 'USummatorLayer.pas',
+  UActivatorLayer in 'UActivatorLayer.pas',
+  UCropLayer in 'UCropLayer.pas',
+  UResizeLayer in 'UResizeLayer.pas',
+  UConvolutionLayer in 'UConvolutionLayer.pas',
+  UDeconvolutionLayer in 'UDeconvolutionLayer.pas',
+  UPoolingLayer in 'UPoolingLayer.pas';
 
 {$R *.res}
 

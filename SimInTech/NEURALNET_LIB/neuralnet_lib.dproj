@@ -879,6 +879,14 @@
         <DCCReference Include="ULossFunction.pas"/>
         <DCCReference Include="UAbstractLayer.pas"/>
         <DCCReference Include="UNNConstants.pas"/>
+        <DCCReference Include="UConcatLayer.pas"/>
+        <DCCReference Include="USummatorLayer.pas"/>
+        <DCCReference Include="UActivatorLayer.pas"/>
+        <DCCReference Include="UCropLayer.pas"/>
+        <DCCReference Include="UResizeLayer.pas"/>
+        <DCCReference Include="UConvolutionLayer.pas"/>
+        <DCCReference Include="UDeconvolutionLayer.pas"/>
+        <DCCReference Include="UPoolingLayer.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
