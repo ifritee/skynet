@@ -112,6 +112,8 @@ begin
 end;
 
 function   TInputLayer.RunFunc;
+var
+  J : Integer;
 begin
   Result:=0;
   case Action of
@@ -124,7 +126,8 @@ begin
     end;
     f_GoodStep: begin
       if stepCount = 0 then begin
-        Y[0].Arr^[0] := getLayerNumber;
+        for J := 0 to cY.Count - 1 do
+          Y[J].Arr^[0] := getLayerNumber;
         inc(stepCount);
       end;
     end;

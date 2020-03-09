@@ -14,6 +14,7 @@ struct MnistDATA {
   int quantity; ///< @brief Количество данных
   int rows; ///< @brief Количество строк в одном данном
   int cols; ///< @brief Количество столбцов в одном данном
+  int channels; ///< @brief Количество каналов
 };
 
 /**

@@ -73,7 +73,8 @@ Function addInput(name: PAnsiChar; nodes: PAnsiChar): TStatus; cdecl; external K
 // name Имя слоя
 // nodes узлы с которыми связан слой (через пробел)
 // return Статус добавления слоя в модель
-Function addConvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
+Function addConvolution(name: PAnsiChar; nodes: PAnsiChar;
+                        filters_: Cardinal;
                         act_: TActivation = ACTIV_RELU;
                         opt_: TOptimizer = OPTIM_ADAM;
                         dropOut_: Single = 0.0;
@@ -98,7 +99,8 @@ Function addConvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
 // stride_
 // gpuDeviceId_ ID видеокарты для рсчетов
 // return Статус добавления слоя в модель
-Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
+Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar;
+                          filters_: Cardinal;
                           act_: TActivation = ACTIV_RELU;
                           opt_: TOptimizer = OPTIM_ADAM;
                           dropOut_: Single = 0.0;

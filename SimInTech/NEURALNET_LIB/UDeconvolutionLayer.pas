@@ -25,6 +25,14 @@ type
   private
     isCreate: Boolean;
     m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_activate: NativeInt; // Метод активации
+    m_opimized: NativeInt; // Функция оптимизации
+    m_filters: NativeInt; // Количество фильтров
+    m_dropout:  double;  // Отсев
+    m_batchnorm: NativeInt; // Нормализация наборов
+    m_width : NativeInt;  // Длина свертки
+    m_height: NativeInt;  // Высота свертки
+    m_stride: NativeInt;  //
 
   const
     PortType = 0; // Тип создаваемых портов (под математическую связь)
@@ -36,7 +44,7 @@ uses keras;
 constructor  TDeconvolutionLayer.Create;
 begin
   inherited;
-  shortName := 'DCN' + IntToStr(getLayerNumber);
+  shortName := 'DN' + IntToStr(getLayerNumber);
   isCreate := False;
 end;
 
@@ -54,6 +62,38 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'active') then begin
+      Result:=NativeInt(@m_activate);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'optim') then begin
+      Result:=NativeInt(@m_opimized);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'filters') then begin
+      Result:=NativeInt(@m_filters);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'dropout') then begin
+      Result:=NativeInt(@m_dropout);
+      DataType:=dtDouble;
+      Exit;
+    end else if StrEqu(ParamName,'batchnorm') then begin
+      Result:=NativeInt(@m_dropout);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'width') then begin
+      Result:=NativeInt(@m_width);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'height') then begin
+      Result:=NativeInt(@m_height);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'stride') then begin
+      Result:=NativeInt(@m_stride);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
@@ -62,7 +102,16 @@ procedure TDeconvolutionLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addDeconvolution(PAnsiChar(shortName),
+                         PAnsiChar(nodes),
+                         m_filters,
+                         m_activate,
+                         m_opimized,
+                         m_dropout,
+                         m_batchnorm,
+                         m_width,
+                         m_height,
+                         m_stride);
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added activation layer', msError, VisualObject);
     Exit;
@@ -94,6 +143,7 @@ function   TDeconvolutionLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  J : Integer;
 begin
   Result:=0;
   case Action of
@@ -111,7 +161,8 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

@@ -114,9 +114,9 @@ var
 begin
   returnCode := addConvolution(PAnsiChar(shortName),
                          PAnsiChar(nodes),
+                         m_filters,
                          m_activate,
                          m_opimized,
-                         m_filters,
                          m_dropout,
                          m_batchnorm,
                          m_width,
@@ -155,6 +155,7 @@ function   TConvolutionLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  J : Integer;
 begin
   Result:=0;
   case Action of
@@ -172,7 +173,8 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

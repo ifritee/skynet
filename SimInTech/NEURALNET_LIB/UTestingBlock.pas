@@ -102,9 +102,9 @@ begin
 
               datas.w := m_testData.rows;
               datas.h := m_testData.cols;
-              datas.ch := 1;
+              datas.ch := m_testData.channels;
               datas.bsz := m_testData.quantity;
-              labels.w := 10;
+              labels.w := m_crossOut;
               labels.h := 1;
               labels.ch := 1;
               labels.bsz := m_testData.quantity;

@@ -25,6 +25,10 @@ type
   private
     isCreate: Boolean;
     m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_x : Integer;
+    m_y : Integer;
+    m_w : Integer;
+    m_h : Integer;
 
   const
     PortType = 0; // Тип создаваемых портов (под математическую связь)
@@ -54,6 +58,22 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'x_val') then begin
+      Result:=NativeInt(@m_x);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'y_val') then begin
+      Result:=NativeInt(@m_y);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'w_val') then begin
+      Result:=NativeInt(@m_w);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'h_val') then begin
+      Result:=NativeInt(@m_h);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
@@ -62,9 +82,14 @@ procedure TCropLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addCrop(PAnsiChar(shortName),
+                        PAnsiChar(nodes),
+                        m_x,
+                        m_y,
+                        m_w,
+                        m_h);
   if returnCode <> STATUS_OK then begin
-    ErrorEvent('Neural model not added activation layer', msError, VisualObject);
+    ErrorEvent('Neural model not added crop layer', msError, VisualObject);
     Exit;
   end;
 end;
@@ -94,6 +119,7 @@ function   TCropLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  J : Integer;
 begin
   Result:=0;
   case Action of
@@ -111,7 +137,8 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

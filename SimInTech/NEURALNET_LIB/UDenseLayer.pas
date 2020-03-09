@@ -128,6 +128,7 @@ function   TDenseLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  J : integer;
 begin
   Result:=0;
   case Action of
@@ -145,7 +146,8 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin          
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

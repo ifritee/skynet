@@ -78,6 +78,7 @@ MnistDATA mnistTrainParams()
     mnistData.quantity = param.m_batchs;
     mnistData.rows = param.m_rows;
     mnistData.cols = param.m_cols;
+    mnistData.channels = 1;
   }
   return mnistData;
 }
@@ -92,6 +93,7 @@ MnistDATA mnistTestParams()
     mnistData.quantity = param.m_batchs;
     mnistData.rows = param.m_rows;
     mnistData.cols = param.m_cols;
+    mnistData.channels = 1;
   }
   return mnistData;
 }

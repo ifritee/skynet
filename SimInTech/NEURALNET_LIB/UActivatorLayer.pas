@@ -25,7 +25,7 @@ type
   private
     isCreate: Boolean;
     m_outputQty: NativeInt;// Количество связей с другими слоями
-
+    m_activate: NativeInt; // Метод активации
   const
     PortType = 0; // Тип создаваемых портов (под математическую связь)
   end;
@@ -54,6 +54,10 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'active') then begin
+      Result:=NativeInt(@m_activate);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
@@ -62,7 +66,9 @@ procedure TActivatorLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addActivator(PAnsiChar(shortName),
+                             PAnsiChar(nodes),
+                             m_activate);
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added activation layer', msError, VisualObject);
     Exit;
@@ -94,6 +100,7 @@ function   TActivatorLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  J : Integer;
 begin
   Result:=0;
   case Action of
@@ -111,7 +118,8 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

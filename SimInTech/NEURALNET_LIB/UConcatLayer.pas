@@ -26,7 +26,7 @@ type
     isCreate: Boolean;
     m_outputQty: NativeInt;// Количество связей с другими слоями
     m_inputQty:  NativeInt;// Количество объединяемых слоев
-
+    m_ccNodes: AnsiString; // Объединяемые ноды
   const
     PortType = 0; // Тип создаваемых портов (под математическую связь)
   end;
@@ -63,7 +63,9 @@ procedure TConcatLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addConcat(PAnsiChar(shortName),
+                          PAnsiChar(nodes),
+                          PAnsiChar(m_ccNodes));
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added dense layer', msError, VisualObject);
     Exit;
@@ -96,6 +98,7 @@ function   TConcatLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  I, J : Integer;
 begin
   Result:=0;
   case Action of
@@ -104,16 +107,23 @@ begin
     end;
     f_InitState: begin
       nodes := '';
+      m_ccNodes := '';
       isCreate := False;
     end;
     f_GoodStep: begin
       if isCreate = False then begin
-        if U[0].FCount > 0 then begin
-          rootIndex := Round(U[0].Arr^[0]);
+        for I := 0 to cU.FCount - 1 do begin
+          rootIndex := Round(U[I].Arr^[0]);
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            if Length(m_ccNodes) > 0 then begin
+              m_ccNodes := m_ccNodes + ' ' + rootLayer.getShortName;
+            end else begin
+              m_ccNodes := rootLayer.getShortName;
+            end;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

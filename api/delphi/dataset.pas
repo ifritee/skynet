@@ -14,6 +14,7 @@ type
      quantity: Integer; // Количество данных
      rows: Integer;     // Количество строк в одном данном
      cols: Integer;     // Количество столбцов в одном данном
+     channels: Integer; // Количество каналов
      end;
 
   // Чтение БД с MNIST

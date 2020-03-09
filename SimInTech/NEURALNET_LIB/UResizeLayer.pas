@@ -25,6 +25,10 @@ type
   private
     isCreate: Boolean;
     m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_fwdBegin : Cardinal;
+    m_fwdEnd : Cardinal;
+    m_bwdBegin : Cardinal;
+    m_bwdEnd : Cardinal;
 
   const
     PortType = 0; // Тип создаваемых портов (под математическую связь)
@@ -54,6 +58,22 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'fwd_begin') then begin
+      Result:=NativeInt(@m_fwdBegin);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'fwd_end') then begin
+      Result:=NativeInt(@m_fwdEnd);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'bwd_begin') then begin
+      Result:=NativeInt(@m_bwdBegin);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'bwd_end') then begin
+      Result:=NativeInt(@m_bwdEnd);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
@@ -62,7 +82,13 @@ procedure TResizeLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addResize(PAnsiChar(shortName),
+                          PAnsiChar(nodes),
+                          m_fwdBegin,
+                          m_fwdEnd,
+                          m_bwdBegin,
+                          m_bwdEnd
+                          );
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added activation layer', msError, VisualObject);
     Exit;
@@ -94,6 +120,7 @@ function   TResizeLayer.RunFunc;
 var
   rootLayer: TAbstractLayer; // Родительский слой
   rootIndex: NativeInt;      // Индекс родительского слоя
+  J : Integer;
 begin
   Result:=0;
   case Action of
@@ -111,7 +138,8 @@ begin
           if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
-            Y[0].Arr^[0] := getLayerNumber;
+            for J := 0 to cY.Count - 1 do
+              Y[J].Arr^[0] := getLayerNumber;
             isCreate := True;
           end;
         end;

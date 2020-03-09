@@ -110,15 +110,11 @@ begin
               p64 := p64 shl 32;
               p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
               m_trainData := pMNIST_DATA(p64);
-//              p64 := Round(U[I].Arr^[3]);
-//              p64 := p64 shl 32;
-//              p64 := p64 OR UInt64(Round(U[I].Arr^[4]));
-//              m_testData := pMNIST_DATA(p64);
               datas.w := m_trainData.rows;
               datas.h := m_trainData.cols;
-              datas.ch := 1;
+              datas.ch := m_trainData.channels;
               datas.bsz := m_trainData.quantity;
-              labels.w := 10;
+              labels.w := m_crossOut;
               labels.h := 1;
               labels.ch := 1;
               labels.bsz := m_trainData.quantity;
