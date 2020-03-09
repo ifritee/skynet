@@ -7,16 +7,16 @@ type
 
   TPoolingLayer = class(TAbstractLayer)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // ��������� ������ ���� � ������
+    // Добавляет данный слой в модель
     procedure addLayerToModel(); override;
-    // ������� ��� ����������� ��������� ���������� ���������� �����
+    // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -24,13 +24,13 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// ���������� ������ � ������� ������
-    m_kernel : NativeInt; // ������ ���������� �����
-    m_stride: NativeInt; // ��� �����
-    m_poolType: NativeInt; // ��� �����������
+    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_kernel : NativeInt; // Размер квадратной маски
+    m_stride: NativeInt; // Шаг маски
+    m_poolType: NativeInt; // Тип объединения
 
   const
-    PortType = 0; // ��� ����������� ������ (��� �������������� �����)
+    PortType = 0; // Тип создаваемых портов (под математическую связь)
   end;
 
 implementation
@@ -89,7 +89,7 @@ begin
   end;
 end;
 
-//----- �������������� ������� ����� -----
+//----- Редактирование свойств блока -----
 procedure TPoolingLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -112,8 +112,8 @@ end;
 
 function   TPoolingLayer.RunFunc;
 var
-  rootLayer: TAbstractLayer; // ������������ ����
-  rootIndex: NativeInt;      // ������ ������������� ����
+  rootLayer: TAbstractLayer; // Родительский слой
+  rootIndex: NativeInt;      // Индекс родительского слоя
 begin
   Result:=0;
   case Action of

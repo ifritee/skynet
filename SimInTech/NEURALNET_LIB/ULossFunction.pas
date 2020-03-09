@@ -8,16 +8,16 @@ type
 
   TLossFunction = class(TAbstractLayer)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // ��������� ������ ���� � ������
+    // Добавляет данный слой в модель
     procedure addLayerToModel(); override;
-    // ������� ��� ����������� ��������� ���������� ���������� �����
+    // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -25,10 +25,10 @@ type
 
   private
     isCreate: Boolean;
-    m_lossType: NativeInt; // ��� ������� ������
+    m_lossType: NativeInt; // Тип функции потерь
 
   const
-    PortType = 0; // ��� ����������� ������ (��� �������������� �����)
+    PortType = 0; // Тип создаваемых портов (под математическую связь)
 
   end;
 
@@ -71,7 +71,7 @@ begin
   end;
 end;
 
-//----- �������������� ������� ����� -----
+//----- Редактирование свойств блока -----
 procedure TLossFunction.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -94,8 +94,8 @@ end;
 
 function   TLossFunction.RunFunc;
 var
-  rootLayer: TAbstractLayer; // ������������ ����
-  rootIndex: NativeInt;      // ������ ������������� ����
+  rootLayer: TAbstractLayer; // Родительский слой
+  rootIndex: NativeInt;      // Индекс родительского слоя
 begin
   Result:=0;
   case Action of

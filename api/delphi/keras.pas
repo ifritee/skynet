@@ -52,8 +52,8 @@ const
   LOSS_REGRESSION_MSE = 2;
   LOSS_USER_LOSS = 3;  // Пользовтельская функция потерь
 
-  POOL_MAX = 0;
-  POOL_AVG = 1;
+  POOL_MAX = 0; //  Тип объединения по максимуму
+  POOL_AVG = 1; //  Тип объединения по среднему
 
   SUMMATOR_SUMM = 0;
   SUMMATOR_DIFF = 1;
@@ -86,19 +86,18 @@ Function addConvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
                         gpuDeviceId_: Cardinal = 0
                         ): TStatus; cdecl; external KERAS_EXPORT;
 
- // addDeconvolution Добавляет анти-сверточный слой
- // name Имя слоя
- // nodes узлы с которыми связан слой (через пробел)
- // filters_ Количество нейронов
- // act_ функция активации
- // opt_ Оптимизатор
- // dropOut_
- // bnorm_
- // fWidth_
- // fHeight_
- // stride_
- // gpuDeviceId_ ID видеокарты для рсчетов
- // return Статус добавления слоя в модель
+// addDeconvolution Добавляет анти-сверточный слой
+// name Имя слоя
+// nodes узлы с которыми связан слой (через пробел)
+// act_ функция активации
+// opt_ Оптимизатор
+// dropOut_
+// bnorm_
+// fWidth_
+// fHeight_
+// stride_
+// gpuDeviceId_ ID видеокарты для рсчетов
+// return Статус добавления слоя в модель
 Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
                           act_: TActivation = ACTIV_RELU;
                           opt_: TOptimizer = OPTIM_ADAM;
@@ -119,7 +118,8 @@ Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar; filters_: Cardinal;
 // pool_
 // gpuDeviceId_ ID видеокарты для рсчетов
 // return Статус добавления слоя в модель
-Function addPooling(name: PAnsiChar; nodes: PAnsiChar; kernel_: Cardinal;
+Function addPooling(name: PAnsiChar; nodes: PAnsiChar;
+                    kernel_: Cardinal;
                     stride_: Cardinal;
                     pool_: TPoolType = POOL_MAX;
                     gpuDeviceId_: Cardinal = 0

@@ -8,17 +8,17 @@ type
 
   TTestingBlock = class(TRunObject)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
 
   strict private
-    stepCount: NativeInt; // ������� �����
-    m_nnState: Boolean; // ��������� ����
+    stepCount: NativeInt; // Счетчик шагов
+    m_nnState: Boolean; // Состояние сети
     m_testData : pMNIST_DATA;
 
     m_crossOut: NativeInt;
@@ -82,18 +82,18 @@ begin
       stepCount := 0;
     end;
     f_GoodStep: begin
-      if stepCount = 0 then // ������ ��� ������� ����
+      if stepCount = 0 then // Только для первого шага
       begin
-        for I := 0 to cU.FCount - 1 do begin  // ������� �� ������
+        for I := 0 to cU.FCount - 1 do begin  // Пройдем по входам
           if U[I].FCount > 0 then begin
-            if U[I].Arr^[0] = UNN_NNMAGICWORD then // ���� ������ ��������� ����
+            if U[I].Arr^[0] = UNN_NNMAGICWORD then // Если пришло состояние сети
             begin
               m_nnState := False;
               if U[I].FCount = 2 then
-                m_nnState := (U[I].Arr^[1] = 1); // ��������� ��������� ����
+                m_nnState := (U[I].Arr^[1] = 1); // Установим состояние сети
               if m_nnState <> True then
                 ErrorEvent('State of NN FALSE', msError, VisualObject);
-            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 5 )) then // ���� ������ ������
+            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 5 )) then // Если пришли данные
             begin
               p64 := Round(U[I].Arr^[3]);
               p64 := p64 shl 32;

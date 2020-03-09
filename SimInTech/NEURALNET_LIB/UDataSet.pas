@@ -1,6 +1,6 @@
 //**************************************************************************//
- // ������ �������� ��� �������� ��������� ������ �������             //
- // �����������:        ������� �. �.                                        //
+ // Данный исходный код является составной частью системы             //
+ // Программист:        Никишин Е. В.                                        //
  //**************************************************************************//
 
 unit UDataSet;
@@ -13,9 +13,9 @@ type
 
   TDataSet = class(TRunObject)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
@@ -24,13 +24,15 @@ type
   strict private
      isCreate: Boolean;
 
-     m_datasetType: NativeInt;  /// ��� ������
-     m_trainData: String; /// ������������ ������������� ������
-     m_trainlabel: String;  /// ������������ ������������� �����
-     m_testData: String;  /// ������������ �������� ������
-     m_testLabel: String; /// ������������ �������� �����
-     m_trainMnistData: TMNIST_DATA; /// ������������� ������ � MNIST
-     m_testMnistData: TMNIST_DATA;  /// �������� ������ � MNIST
+     m_datasetType: NativeInt;  /// Тип набора
+     m_trainData: String; /// Расположение тренировочных данных
+     m_trainlabel: String;  /// Расположение тренировочных меток
+     m_testData: String;  /// Расположение тестовых данных
+     m_testLabel: String; /// Расположение тестовых меток
+     m_trainMnistData: TMNIST_DATA; /// Тренировочные данные о MNIST
+     m_testMnistData: TMNIST_DATA;  /// Тестовые данные о MNIST
+     m_trainQty : Cardinal; /// Количество считываемых данны
+     m_testQty : Cardinal; /// Количество считываемых данны
   end;
 
 implementation
@@ -72,6 +74,14 @@ begin
       Result:=NativeInt(@m_datasetType);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'train_qty') then begin
+      Result:=NativeInt(@m_trainQty);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'test_qty') then begin
+      Result:=NativeInt(@m_testQty);
+      DataType:=dtInteger;
+      Exit;
     end;
 
   end
@@ -104,7 +114,7 @@ begin
       isCreate := False;
       m_trainMnistData.quantity := 0;
       m_testMnistData.quantity := 0;
-      // ��������� �������� ������
+      // Зануление выходных портов
       for I := 0 to cY.Count - 1 do begin
         cY.Arr^[I] := 0;
         for J := 0 to Y[I].Count - 1 do  begin
@@ -113,7 +123,9 @@ begin
       end;
 
       if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
-        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)), PAnsiChar(AnsiString(m_trainLabel)));
+        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)),
+                                             PAnsiChar(AnsiString(m_trainLabel)),
+                                             m_trainQty);
         if returnCode <> STATUS_OK then begin
           ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
           Exit;
@@ -122,7 +134,9 @@ begin
         ErrorEvent('Read MNIST train: ' + IntToStr(m_trainMnistData.quantity), msInfo, VisualObject);
       end;
       if FileExists(m_testData) AND FileExists(m_testLabel) then begin
-        returnCode := dataset.readMnistTest(PAnsiChar(AnsiString(m_testData)), PAnsiChar(AnsiString(m_testLabel)));
+        returnCode := dataset.readMnistTest(PAnsiChar(AnsiString(m_testData)),
+                                            PAnsiChar(AnsiString(m_testLabel)),
+                                            m_testQty);
         if returnCode <> STATUS_OK then begin
           ErrorEvent('Read MNIST test db is failure!', msError, VisualObject);
           Exit;

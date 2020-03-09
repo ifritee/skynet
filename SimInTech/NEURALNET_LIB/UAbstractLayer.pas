@@ -16,10 +16,10 @@ type
     constructor Create(Owner: TObject); override;
     function getLayerNumber(): NativeInt;
     function getShortName(): String;
-    // ��������� ������ ���� � ������
+    // Добавляет данный слой в модель
     procedure addLayerToModel(); virtual; abstract;
 
-    // ��������� ��������� ���� ����� � ����
+    // Добавляет очередную ноду связи к слою
     procedure appendNode(nodeName: String);
 
   protected

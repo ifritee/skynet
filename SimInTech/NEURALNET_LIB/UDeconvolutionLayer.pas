@@ -7,16 +7,16 @@ type
 
   TDeconvolutionLayer = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР°
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // Р”РѕР±Р°РІР»СЏРµС‚ РґР°РЅРЅС‹Р№ СЃР»РѕР№ РІ РјРѕРґРµР»СЊ
     procedure addLayerToModel(); override;
-    // Функция для обеспечения изменения визуальных параметров блока
+    // Р¤СѓРЅРєС†РёСЏ РґР»СЏ РѕР±РµСЃРїРµС‡РµРЅРёСЏ РёР·РјРµРЅРµРЅРёСЏ РІРёР·СѓР°Р»СЊРЅС‹С… РїР°СЂР°РјРµС‚СЂРѕРІ Р±Р»РѕРєР°
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -24,10 +24,10 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_outputQty: NativeInt;// РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРІСЏР·РµР№ СЃ РґСЂСѓРіРёРјРё СЃР»РѕСЏРјРё
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 0; // РўРёРї СЃРѕР·РґР°РІР°РµРјС‹С… РїРѕСЂС‚РѕРІ (РїРѕРґ РјР°С‚РµРјР°С‚РёС‡РµСЃРєСѓСЋ СЃРІСЏР·СЊ)
   end;
 
 implementation
@@ -69,7 +69,7 @@ begin
   end;
 end;
 
-//----- Редактирование свойств блока -----
+//----- Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЃРІРѕР№СЃС‚РІ Р±Р»РѕРєР° -----
 procedure TDeconvolutionLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -92,8 +92,8 @@ end;
 
 function   TDeconvolutionLayer.RunFunc;
 var
-  rootLayer: TAbstractLayer; // Родительский слой
-  rootIndex: NativeInt;      // Индекс родительского слоя
+  rootLayer: TAbstractLayer; // Р РѕРґРёС‚РµР»СЊСЃРєРёР№ СЃР»РѕР№
+  rootIndex: NativeInt;      // РРЅРґРµРєСЃ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ СЃР»РѕСЏ
 begin
   Result:=0;
   case Action of

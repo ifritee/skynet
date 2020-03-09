@@ -8,14 +8,14 @@ type
 
   TOutputLayer = class(TAbstractLayer)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // ��������� ������ ���� � ������
+    // Добавляет данный слой в модель
     procedure addLayerToModel(); override;
 
   private
@@ -68,8 +68,8 @@ end;
 
 function   TOutputLayer.RunFunc;
 var
-  rootLayer, layer: TAbstractLayer; // ������������ ����
-  rootIndex: NativeInt;      // ������ ������������� ����
+  rootLayer, layer: TAbstractLayer; // Родительский слой
+  rootIndex: NativeInt;      // Индекс родительского слоя
   i: integer;
   netJSON: array[0..2048] of AnsiChar;
   returnCode: TStatus;
@@ -91,7 +91,7 @@ begin
             rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
             isCreate := True;
-            //----- �������� �� ���� ����� ��������� ���� -----
+            //----- Проходим по всем слоям нейронной сети -----
             for i := 0 to LayersDict.Count - 1 do begin
                layer := TAbstractLayer(LayersDict[i]);
                layer.addLayerToModel;
@@ -101,10 +101,10 @@ begin
             if returnCode <> STATUS_OK then begin
               lastError(netJSON, Length(netJSON));
               ErrorEvent(String(netJSON), msError, VisualObject);
-              Y[0].Arr^[1] := 0; // ������, ��� ���� ��������
+              Y[0].Arr^[1] := 0; // Укажем, что были проблемы
               Exit;
             end else begin
-              Y[0].Arr^[1] := 1; // ������, ��� �������� ���� �������
+              Y[0].Arr^[1] := 1; // Укажем, что создание сети успешно
             end;
             ErrorEvent(String(netJSON), msInfo, VisualObject);
           end;

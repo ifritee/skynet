@@ -8,27 +8,27 @@ type
 
   TInputLayer = class(TAbstractLayer)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // ��������� ������ ���� � ������
+    // Добавляет данный слой в модель
     procedure addLayerToModel(); override;
-    // ������� ��� ����������� ��������� ���������� ���������� �����
+    // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
                        ExecutePropScript:TExecutePropScript);override;
 
   strict private
-    stepCount: NativeInt; // ������� �����
-    m_outputQty: NativeInt;// ���������� ������ � ������� ������
+    stepCount: NativeInt; // Счетчик шагов
+    m_outputQty: NativeInt;// Количество связей с другими слоями
 
   const
-    PortType = 0; // ��� ����������� ������ (��� �������������� �����)
+    PortType = 0; // Тип создаваемых портов (под математическую связь)
 
  end;
 
@@ -60,7 +60,7 @@ begin
   end
 end;
 
-//----- �������������� ������� ����� -----
+//----- Редактирование свойств блока -----
 procedure TInputLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -75,7 +75,7 @@ var
   returnCode: TStatus;
 begin
   returnCode:= createModel();
-  // �������� ��������� �������� ������
+  // Проверим состояние создания модели
   if returnCode = STATUS_FAILURE then begin
     ErrorEvent('Neural model not created', msError, VisualObject);
     Exit;

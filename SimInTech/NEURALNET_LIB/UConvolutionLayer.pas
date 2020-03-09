@@ -7,16 +7,16 @@ type
 
   TConvolutionLayer = class(TAbstractLayer)
   public
-    // ����������� ������
+    // Конструктор класса
     constructor  Create(Owner: TObject); override;
-    // ����������
+    // Деструктор
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // ��������� ������ ���� � ������
+    // Добавляет данный слой в модель
     procedure addLayerToModel(); override;
-    // ������� ��� ����������� ��������� ���������� ���������� �����
+    // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -24,20 +24,20 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// ���������� ������ � ������� ������
-    m_activate: NativeInt; // ����� ���������
-    m_opimized: NativeInt; // ������� �����������
-    m_filters: NativeInt; // ���������� ��������
-    m_dropout:  double;  // �����
-    m_batchnorm: NativeInt; // ������������ �������
-    m_width : NativeInt;  // ����� �������
-    m_height: NativeInt;  // ������ �������
+    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_activate: NativeInt; // Метод активации
+    m_opimized: NativeInt; // Функция оптимизации
+    m_filters: NativeInt; // Количество фильтров
+    m_dropout:  double;  // Отсев
+    m_batchnorm: NativeInt; // Нормализация наборов
+    m_width : NativeInt;  // Длина свертки
+    m_height: NativeInt;  // Высота свертки
     m_padding: NativeInt;  //
     m_stride: NativeInt;  //
     m_dilate: NativeInt;  //
 
   const
-    PortType = 0; // ��� ����������� ������ (��� �������������� �����)
+    PortType = 0; // Тип создаваемых портов (под математическую связь)
   end;
 
 implementation
@@ -130,7 +130,7 @@ begin
   end;
 end;
 
-//----- �������������� ������� ����� -----
+//----- Редактирование свойств блока -----
 procedure TConvolutionLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -153,8 +153,8 @@ end;
 
 function   TConvolutionLayer.RunFunc;
 var
-  rootLayer: TAbstractLayer; // ������������ ����
-  rootIndex: NativeInt;      // ������ ������������� ����
+  rootLayer: TAbstractLayer; // Родительский слой
+  rootIndex: NativeInt;      // Индекс родительского слоя
 begin
   Result:=0;
   case Action of
