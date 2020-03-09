@@ -137,7 +137,6 @@ begin
         datas.h := m_trainData.cols;
         datas.ch := 1;
         datas.bsz := m_trainData.quantity;
-
         returnCode := trainStep(m_learningRate, datas);
         Y[0].Arr^[0] := lastAccurateSum();
 //        ErrorEvent(IntToStr(stepCount) + ' Accurate: ' + FloatToStr(lastAccurateSum()), msInfo, VisualObject);

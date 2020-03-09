@@ -7,16 +7,16 @@ type
 
   TPoolingLayer = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); override;
-    // Функция для обеспечения изменения визуальных параметров блока
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -24,10 +24,13 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_outputQty: NativeInt;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    m_kernel : NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    m_stride: NativeInt; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+    m_poolType: NativeInt; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 0; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
   end;
 
 implementation
@@ -36,7 +39,7 @@ uses keras;
 constructor  TPoolingLayer.Create;
 begin
   inherited;
-  shortName := 'CN' + IntToStr(getLayerNumber);
+  shortName := 'P' + IntToStr(getLayerNumber);
   isCreate := False;
 end;
 
@@ -54,6 +57,18 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'kernel') then begin
+      Result:=NativeInt(@m_kernel);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'stride') then begin
+      Result:=NativeInt(@m_stride);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'pool_type') then begin
+      Result:=NativeInt(@m_poolType);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
@@ -62,14 +77,19 @@ procedure TPoolingLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addPooling(PAnsiChar(shortName),
+                           PAnsiChar(nodes),
+                           m_kernel,
+                           m_stride,
+                           m_poolType
+                           );
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added activation layer', msError, VisualObject);
     Exit;
   end;
 end;
 
-//----- Редактирование свойств блока -----
+//----- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -----
 procedure TPoolingLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -92,8 +112,8 @@ end;
 
 function   TPoolingLayer.RunFunc;
 var
-  rootLayer: TAbstractLayer; // Родительский слой
-  rootIndex: NativeInt;      // Индекс родительского слоя
+  rootLayer: TAbstractLayer; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+  rootIndex: NativeInt;      // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 begin
   Result:=0;
   case Action of

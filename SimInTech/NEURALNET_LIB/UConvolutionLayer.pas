@@ -7,16 +7,16 @@ type
 
   TConvolutionLayer = class(TAbstractLayer)
   public
-    // Конструктор класса
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     constructor  Create(Owner: TObject); override;
-    // Деструктор
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     destructor   Destroy; override;
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
-    // Добавляет данный слой в модель
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
     procedure addLayerToModel(); override;
-    // Функция для обеспечения изменения визуальных параметров блока
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
                        SetCondPortCount:TSetCondPortCount;
@@ -24,10 +24,20 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_outputQty: NativeInt;// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    m_activate: NativeInt; // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_opimized: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_filters: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_dropout:  double;  // пїЅпїЅпїЅпїЅпїЅ
+    m_batchnorm: NativeInt; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_width : NativeInt;  // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_height: NativeInt;  // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    m_padding: NativeInt;  //
+    m_stride: NativeInt;  //
+    m_dilate: NativeInt;  //
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 0; // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ)
   end;
 
 implementation
@@ -54,6 +64,46 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'active') then begin
+      Result:=NativeInt(@m_activate);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'optim') then begin
+      Result:=NativeInt(@m_opimized);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'filters') then begin
+      Result:=NativeInt(@m_filters);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'dropout') then begin
+      Result:=NativeInt(@m_dropout);
+      DataType:=dtDouble;
+      Exit;
+    end else if StrEqu(ParamName,'batchnorm') then begin
+      Result:=NativeInt(@m_dropout);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'width') then begin
+      Result:=NativeInt(@m_width);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'height') then begin
+      Result:=NativeInt(@m_height);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'padding') then begin
+      Result:=NativeInt(@m_padding);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'stride') then begin
+      Result:=NativeInt(@m_stride);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'dilate') then begin
+      Result:=NativeInt(@m_dilate);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
@@ -62,14 +112,25 @@ procedure TConvolutionLayer.addLayerToModel();
 var
   returnCode: TStatus;
 begin
-
+  returnCode := addConvolution(PAnsiChar(shortName),
+                         PAnsiChar(nodes),
+                         m_activate,
+                         m_opimized,
+                         m_filters,
+                         m_dropout,
+                         m_batchnorm,
+                         m_width,
+                         m_height,
+                         m_padding,
+                         m_stride,
+                         m_dilate);
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added activation layer', msError, VisualObject);
     Exit;
   end;
 end;
 
-//----- Редактирование свойств блока -----
+//----- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ -----
 procedure TConvolutionLayer.EditFunc;
 var
   InputPortsNmb, OutputPortsNmb: integer;
@@ -92,8 +153,8 @@ end;
 
 function   TConvolutionLayer.RunFunc;
 var
-  rootLayer: TAbstractLayer; // Родительский слой
-  rootIndex: NativeInt;      // Индекс родительского слоя
+  rootLayer: TAbstractLayer; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+  rootIndex: NativeInt;      // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 begin
   Result:=0;
   case Action of

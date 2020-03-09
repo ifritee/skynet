@@ -71,7 +71,7 @@ var
   rootLayer, layer: TAbstractLayer; // ������������ ����
   rootIndex: NativeInt;      // ������ ������������� ����
   i: integer;
-  netJSON: array[0..1024] of AnsiChar;
+  netJSON: array[0..2048] of AnsiChar;
   returnCode: TStatus;
 begin
   Result:=0;
@@ -96,10 +96,10 @@ begin
                layer := TAbstractLayer(LayersDict[i]);
                layer.addLayerToModel;
             end;
-            returnCode := netArchitecture(netJSON, 1024);
+            returnCode := netArchitecture(netJSON, Length(netJSON));
             Y[0].Arr^[0] := UNN_NNMAGICWORD;
             if returnCode <> STATUS_OK then begin
-              lastError(netJSON, 1024);
+              lastError(netJSON, Length(netJSON));
               ErrorEvent(String(netJSON), msError, VisualObject);
               Y[0].Arr^[1] := 0; // ������, ��� ���� ��������
               Exit;

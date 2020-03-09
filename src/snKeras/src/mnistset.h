@@ -40,9 +40,9 @@ namespace cpp_keras {
     virtual ~MnistSet();
 
     bool readTrainData(const std::string & pathTo);
-    bool readTrainData(const std::string& pathToData, const std::string& pathToLabel);
+    bool readTrainData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0);
     bool readTestData(const std::string & pathTo);
-    bool readTestData(const std::string& pathToData, const std::string& pathToLabel);
+    bool readTestData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0);
 
     float *trainData() const;
     uint8_t *trainLabel() const;
@@ -53,7 +53,7 @@ namespace cpp_keras {
 
   private:
     bool readData(const std::string & pathToData, const std::string &pathToLabels,
-                  bool isTrain, DatasetParameters &param);
+                  bool isTrain, DatasetParameters &param, unsigned int qty = 0);
     DatasetParameters extractDatasetParameters(std::ifstream & is);
     void extractDataset(std::ifstream & is, DatasetParameters param, float * data);
     DatasetParameters extractLabelParameters(std::ifstream & is);

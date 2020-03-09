@@ -85,7 +85,7 @@ KERAS_EXPORT Status addInput(const char * name, const char * nodes);
 KERAS_EXPORT Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
                                 Activation act_ = ACTIV_RELU,
                                 Optimizer opt_ = OPTIM_ADAM,
-                                float dropOut_ = 0.0,
+                                float dropOut_ = 0.0f,
                                 BatchNormType bnorm_ = BATCH_NONE,
                                 unsigned int fWidth_ = 3,
                                 unsigned int fHeight_ = 3,

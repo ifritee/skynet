@@ -63,9 +63,9 @@ namespace cpp_keras {
                     true, m_trainParameters);
   }
 
-  bool MnistSet::readTrainData(const std::string& pathToData, const std::string& pathToLabel)
+  bool MnistSet::readTrainData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty)
   {
-      return readData(pathToData, pathToLabel, true, m_trainParameters);
+      return readData(pathToData, pathToLabel, true, m_trainParameters, qty);
   }
 
   bool MnistSet::readTestData(const string &pathTo)
@@ -74,13 +74,13 @@ namespace cpp_keras {
                     false, m_testParameters);
   }
 
-  bool MnistSet::readTestData(const std::string& pathToData, const std::string& pathToLabel)
+  bool MnistSet::readTestData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty)
   {
-      return readData(pathToData, pathToLabel, false, m_testParameters);
+      return readData(pathToData, pathToLabel, false, m_testParameters, qty);
   }
 
   bool MnistSet::readData(const string & pathToData, const string & pathToLabels,
-                          bool isTrain, DatasetParameters & param)
+                          bool isTrain, DatasetParameters & param, unsigned int qty)
   {
     ifstream datasetStream(pathToData, std::ios::binary);
     ifstream labelsStream(pathToLabels, std::ios::binary);
@@ -89,6 +89,9 @@ namespace cpp_keras {
       uint8_t * labels = nullptr;
       //----- Чтение основных параметров -----
       param = extractDatasetParameters(datasetStream);
+      if(qty > 0 && qty < param.m_batchs) {
+        param.m_batchs = qty;
+      }
       unsigned int length = param.qty();
       if (length > 0) {
         data = new float[length];
@@ -105,6 +108,9 @@ namespace cpp_keras {
       }
       //----- Чтение основных параметров -----
       DatasetParameters datasetParameters = extractLabelParameters(labelsStream);
+      if(qty > 0 && qty < datasetParameters.m_batchs) {
+        datasetParameters.m_batchs = qty;
+      }
       length = datasetParameters.qty();
       if (length > 0) {
         labels = new uint8_t[length];
