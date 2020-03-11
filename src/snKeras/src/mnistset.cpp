@@ -91,7 +91,7 @@ namespace cpp_keras {
       uint8_t * labels = nullptr;
       //----- Чтение основных параметров -----
       param = extractDatasetParameters(datasetStream);
-      step = step % (param.m_batchs / qty);
+      step = qty > 0 ? (step % (param.m_batchs / qty)) : 0;
       if(qty > 0 && qty < param.m_batchs) {
         param.m_batchs = qty;
       }
