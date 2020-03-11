@@ -30,14 +30,14 @@ Status readMnist(const char *path)
   return status;
 }
 
-Status readMnistTrain(const char* dataFile, const char* labelFile, unsigned int qty)
+Status readMnistTrain(const char* dataFile, const char* labelFile, unsigned int qty, unsigned int step)
 {
     Status status = STATUS_OK;
     try {
         if (mnistSet == nullptr) {
             mnistSet = new cpp_keras::MnistSet;
         }
-        if (!mnistSet->readTrainData(dataFile, labelFile, qty)) {
+        if (!mnistSet->readTrainData(dataFile, labelFile, qty, step)) {
             cerr << "Read MNIST training data crashed! " << endl;
             status = STATUS_WARNING;
         }

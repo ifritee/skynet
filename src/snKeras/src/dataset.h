@@ -29,7 +29,8 @@ KERAS_EXPORT Status readMnist(const char * path);
  * @param labelFile Полный путь к файлу БД с метками для тренировки
  * @return состояние
  */
-KERAS_EXPORT Status readMnistTrain(const char * dataFile, const char * labelFile, unsigned int qty = 0);
+KERAS_EXPORT Status readMnistTrain(const char * dataFile, const char * labelFile,
+                                   unsigned int qty = 0, unsigned int step = 0);
 
 /**
  * @param dataFile Полный путь к файлу БД с данным для тестирования

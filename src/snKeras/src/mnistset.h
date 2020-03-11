@@ -40,7 +40,8 @@ namespace cpp_keras {
     virtual ~MnistSet();
 
     bool readTrainData(const std::string & pathTo);
-    bool readTrainData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0);
+    bool readTrainData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0, unsigned int step = 0);
+
     bool readTestData(const std::string & pathTo);
     bool readTestData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0);
 
@@ -53,11 +54,11 @@ namespace cpp_keras {
 
   private:
     bool readData(const std::string & pathToData, const std::string &pathToLabels,
-                  bool isTrain, DatasetParameters &param, unsigned int qty = 0);
+                  bool isTrain, DatasetParameters &param, unsigned int qty = 0, unsigned int step = 0);
     DatasetParameters extractDatasetParameters(std::ifstream & is);
-    void extractDataset(std::ifstream & is, DatasetParameters param, float * data);
+    int extractDataset(std::ifstream & is, DatasetParameters param, float * data, unsigned int step = 0);
     DatasetParameters extractLabelParameters(std::ifstream & is);
-    void extractLabels(std::ifstream & is, DatasetParameters param, uint8_t * data);
+    int extractLabels(std::ifstream & is, DatasetParameters param, uint8_t * data, unsigned int step = 0);
 
     /**
      * @brief ReadUint32 Чтение 4-х байт из потока

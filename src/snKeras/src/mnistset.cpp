@@ -63,9 +63,10 @@ namespace cpp_keras {
                     true, m_trainParameters);
   }
 
-  bool MnistSet::readTrainData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty)
+  bool MnistSet::readTrainData(const std::string& pathToData, const std::string& pathToLabel,
+                               unsigned int qty, unsigned int step)
   {
-      return readData(pathToData, pathToLabel, true, m_trainParameters, qty);
+      return readData(pathToData, pathToLabel, true, m_trainParameters, qty, step);
   }
 
   bool MnistSet::readTestData(const string &pathTo)
@@ -80,7 +81,8 @@ namespace cpp_keras {
   }
 
   bool MnistSet::readData(const string & pathToData, const string & pathToLabels,
-                          bool isTrain, DatasetParameters & param, unsigned int qty)
+                          bool isTrain, DatasetParameters & param, unsigned int qty,
+                          unsigned int step)
   {
     ifstream datasetStream(pathToData, std::ios::binary);
     ifstream labelsStream(pathToLabels, std::ios::binary);
@@ -89,6 +91,7 @@ namespace cpp_keras {
       uint8_t * labels = nullptr;
       //----- Чтение основных параметров -----
       param = extractDatasetParameters(datasetStream);
+      step = step % (param.m_batchs / qty);
       if(qty > 0 && qty < param.m_batchs) {
         param.m_batchs = qty;
       }
@@ -103,7 +106,7 @@ namespace cpp_keras {
           m_testData = data;
         }
         //----- Чтение данных ------
-        extractDataset(datasetStream, param, data);
+        param.m_batchs = extractDataset(datasetStream, param, data, step);
         datasetStream.close();
       }
       //----- Чтение основных параметров -----
@@ -122,7 +125,7 @@ namespace cpp_keras {
           m_testLabel = labels;
         }
         //----- Чтение данных ------
-        extractLabels(labelsStream, datasetParameters, labels);
+        datasetParameters.m_batchs = extractLabels(labelsStream, datasetParameters, labels, step);
         labelsStream.close();
       }
     } catch (std::logic_error & e) {
@@ -150,20 +153,27 @@ namespace cpp_keras {
     return params;
   }
 
-  void MnistSet::extractDataset(ifstream &is, DatasetParameters param, float * data)
+  int MnistSet::extractDataset(ifstream &is, DatasetParameters param, float * data, unsigned int step)
   {
     if (!is) {
       throw logic_error("can't open file dataset");
     }
-    int count = 0;
+    is.seekg(16 + step * (param.m_batchs * param.m_rows * param.m_cols));
+    int count = 0, readBatches = 0;
     while(param.m_batchs--) {
-      for (uint32_t r = 0; r < param.m_rows; ++r) {
-        for(uint32_t c = 0; c < param.m_cols; ++c) {
-          uint8_t byte = readUint8(is);
-          data[count++] = static_cast<float>(byte) / 255.f;
+      try {
+        for (uint32_t r = 0; r < param.m_rows; ++r) {
+          for(uint32_t c = 0; c < param.m_cols; ++c) {
+            uint8_t byte = readUint8(is);
+            data[count++] = static_cast<float>(byte) / 255.f;
+          }
         }
+      } catch(logic_error &) {
+        return readBatches;
       }
+      ++readBatches;
     }
+    return readBatches;
   }
 
   DatasetParameters MnistSet::extractLabelParameters(ifstream &is)
@@ -180,16 +190,23 @@ namespace cpp_keras {
     return params;
   }
 
-  void MnistSet::extractLabels(ifstream &is, DatasetParameters param, uint8_t *data)
+  int MnistSet::extractLabels(ifstream &is, DatasetParameters param, uint8_t *data, unsigned int step)
   {
     if (!is) {
       throw logic_error("can't open file dataset");
     }
+    is.seekg(8 + step * param.m_batchs);
     int count = 0;
     while(param.m_batchs--) {
-      data[count] = readUint8(is);
+      try {
+        uint8_t val = readUint8(is);
+        data[count] = val;
+      } catch (logic_error &) {
+        return count;
+      }
       ++count;
     }
+    return count;
   }
 
   uint8_t MnistSet::readUint8(ifstream & is)

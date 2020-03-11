@@ -26,8 +26,8 @@ int main()
   cout<<buffer<<endl;
   //=================================
 //  KR_CHECK(readMnist("data"));
-  KR_CHECK(readMnistTrain("data/train-images-idx3-ubyte", "data/train-labels-idx1-ubyte", 0));
-  KR_CHECK(readMnistTest("data/t10k-images-idx3-ubyte", "data/t10k-labels-idx1-ubyte"));
+  KR_CHECK(readMnistTrain("data/train-images-idx3-ubyte", "data/train-labels-idx1-ubyte", 10, 1));
+//  KR_CHECK(readMnistTest("data/t10k-images-idx3-ubyte", "data/t10k-labels-idx1-ubyte"));
   int classCnt = 10;  // выход: вероятностное распределение на 10 классов
 
   //----- Тренировка ----------------
