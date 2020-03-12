@@ -24,8 +24,11 @@ type
 
   // dataFile Полный путь к файлу БД с данным для тренировки
   // labelFile Полный путь к файлу БД с метками для тренировки
+  // qty Количество считываемых данных
+  // step номер шага (qty * step)
   // return состояние
- Function readMnistTrain(dataFile: PAnsiChar; labelFile: PAnsiChar; qty: Cardinal = 0): keras.TStatus; cdecl; external KERAS_EXPORT;
+ Function readMnistTrain(dataFile: PAnsiChar; labelFile: PAnsiChar; qty: Cardinal = 0;
+                         step: Cardinal = 0): keras.TStatus; cdecl; external KERAS_EXPORT;
 
  // dataFile Полный путь к файлу БД с данным для тестирования
  // labelFile Полный путь к файлу БД с метками для тестирования

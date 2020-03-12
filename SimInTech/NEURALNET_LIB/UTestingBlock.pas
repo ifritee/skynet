@@ -93,11 +93,11 @@ begin
                 m_nnState := (U[I].Arr^[1] = 1); // Установим состояние сети
               if m_nnState <> True then
                 ErrorEvent('State of NN FALSE', msError, VisualObject);
-            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 5 )) then // Если пришли данные
+            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 3 )) then // Если пришли данные
             begin
-              p64 := Round(U[I].Arr^[3]);
+              p64 := Round(U[I].Arr^[1]);
               p64 := p64 shl 32;
-              p64 := p64 OR UInt64(Round(U[I].Arr^[4]));
+              p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
               m_testData := pMNIST_DATA(p64);
 
               datas.w := m_testData.rows;

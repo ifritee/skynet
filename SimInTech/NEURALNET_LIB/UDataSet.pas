@@ -22,17 +22,17 @@ type
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
 
   strict private
-     isCreate: Boolean;
+     m_stepNumber: Cardinal;
 
      m_datasetType: NativeInt;  /// Тип набора
      m_trainData: String; /// Расположение тренировочных данных
      m_trainlabel: String;  /// Расположение тренировочных меток
      m_testData: String;  /// Расположение тестовых данных
      m_testLabel: String; /// Расположение тестовых меток
-     m_trainMnistData: TMNIST_DATA; /// Тренировочные данные о MNIST
-     m_testMnistData: TMNIST_DATA;  /// Тестовые данные о MNIST
+     m_mnistData: TMNIST_DATA; /// Тренировочные данные о MNIST
      m_trainQty : Cardinal; /// Количество считываемых данны
-     m_testQty : Cardinal; /// Количество считываемых данны
+     m_sendDataType : Cardinal; /// Тип отправляемых данных
+     m_isOneSend : Boolean; /// Одноразовая отправка одного пакета
   end;
 
 implementation
@@ -42,7 +42,7 @@ uses keras, UNNConstants;
 constructor  TDataSet.Create;
 begin
   inherited;
-  isCreate:= False;
+  m_stepNumber:= 0;
 end;
 
 destructor   TDataSet.Destroy;
@@ -78,9 +78,13 @@ begin
       Result:=NativeInt(@m_trainQty);
       DataType:=dtInteger;
       Exit;
-    end else if StrEqu(ParamName,'test_qty') then begin
-      Result:=NativeInt(@m_testQty);
+    end else if StrEqu(ParamName,'send_data_type') then begin
+      Result:=NativeInt(@m_sendDataType);
       DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'is_one_send') then begin
+      Result:=NativeInt(@m_isOneSend);
+      DataType:=dtBool;
       Exit;
     end;
 
@@ -92,7 +96,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      cY[0] := 5;
+      cY[0] := 3;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -104,16 +108,18 @@ var
   returnCode: TStatus;
   p64: UInt64;
   i, j: Integer;
+  isWorkDone: Boolean;
+  datas, labels : String;
 begin
- Result:=0;
- case Action of
+  Result:=0;
+  isWorkDone := True;
+  case Action of
     f_UpdateOuts: begin
 
     end;
     f_InitState: begin
-      isCreate := False;
-      m_trainMnistData.quantity := 0;
-      m_testMnistData.quantity := 0;
+      m_stepNumber := 0;
+      m_mnistData.quantity := 0;
       // Зануление выходных портов
       for I := 0 to cY.Count - 1 do begin
         cY.Arr^[I] := 0;
@@ -121,42 +127,83 @@ begin
           Y[I].Arr^[J] := 0;
         end;
       end;
-
-      if FileExists(m_trainData) AND FileExists(m_trainLabel) then begin
-        returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(m_trainData)),
-                                             PAnsiChar(AnsiString(m_trainLabel)),
-                                             m_trainQty);
-        if returnCode <> STATUS_OK then begin
-          ErrorEvent('Read MNIST train db is failure!', msError, VisualObject);
+      if m_isOneSend = True then begin // Только для пакета MNIST
+        // Считываем тренировочные данные
+        if m_sendDataType = 0  then begin
+          datas := m_trainData;
+          labels := m_trainLabel;
+        end else begin
+          datas := m_testData;
+          labels := m_testLabel;
+        end;
+        // Проверяем доступность файлов
+        if FileExists(datas) AND FileExists(labels) then begin
+          returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(datas)),
+                                               PAnsiChar(AnsiString(labels)),
+                                               m_trainQty);
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent('Read MNIST db is failure!', msError, VisualObject);
+            Exit;
+          end;
+          m_mnistData := mnistTrainParams;
+          ErrorEvent('Read MNIST: ' + IntToStr(m_mnistData.quantity), msInfo, VisualObject);
+        end else begin
+          ErrorEvent('Read MNIST failure ', msError, VisualObject);
+          isWorkDone := False;
           Exit;
         end;
-        m_trainMnistData := mnistTrainParams;
-        ErrorEvent('Read MNIST train: ' + IntToStr(m_trainMnistData.quantity), msInfo, VisualObject);
-      end;
-      if FileExists(m_testData) AND FileExists(m_testLabel) then begin
-        returnCode := dataset.readMnistTest(PAnsiChar(AnsiString(m_testData)),
-                                            PAnsiChar(AnsiString(m_testLabel)),
-                                            m_testQty);
-        if returnCode <> STATUS_OK then begin
-          ErrorEvent('Read MNIST test db is failure!', msError, VisualObject);
-          Exit;
-        end;
-        m_testMnistData := mnistTestParams;
-        ErrorEvent('Read MNIST test: ' + IntToStr(m_testMnistData.quantity), msInfo, VisualObject);
       end;
     end;
     f_GoodStep: begin
-      if isCreate = False then
+      //----- Только для одноразовой посылки всех данных -----
+      if m_stepNumber = 0 then
       begin
-        isCreate := True;
-        Y[0].Arr^[0] := UNN_DATASEMNIST;
-        p64 := UInt64(@m_trainMnistData);
-        Y[0].Arr^[1] := p64 shr 32;
-        Y[0].Arr^[2]:= (p64 shl 32) shr 32;
-        p64 := UInt64(@m_testMnistData);
-        Y[0].Arr^[3] := p64 shr 32;
-        Y[0].Arr^[4]:= (p64 shl 32) shr 32;
+        if (m_isOneSend = True) AND (isWorkDone = True) then begin // Только для пакета MNIST
+          Y[0].Arr^[0] := UNN_DATASEMNIST;
+          p64 := UInt64(@m_mnistData);  // Для тренировочных данных
+          Y[0].Arr^[1] := p64 shr 32;
+          Y[0].Arr^[2]:= (p64 shl 32) shr 32;
+        end else begin // Если данные будут идти по шагам
+          Y[0].Arr^[0] := UNN_DATASTEPBYSTEP;
+          Y[0].Arr^[1] := 0;
+          Y[0].Arr^[2]:= 0;
+        end;
+      //----- Для посылки по шагам -----
+      end else begin
+        if m_isOneSend = True then begin
+          Y[0].Arr^[0] := UNN_DATASEMNIST;
+          Y[0].Arr^[1] := 0;
+          Y[0].Arr^[2]:= 0;
+        end else begin
+          // Считываем тренировочные данные
+          if m_sendDataType = 0  then begin
+            datas := m_trainData;
+            labels := m_trainLabel;
+          end else begin
+            datas := m_testData;
+            labels := m_testLabel;
+          end;
+          // Проверяем доступность файлов
+          if FileExists(datas) AND FileExists(labels) then begin
+            returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(datas)),
+                                                 PAnsiChar(AnsiString(labels)),
+                                                 m_trainQty, m_stepNumber);
+            if returnCode <> STATUS_OK then begin
+              ErrorEvent('Read MNIST db is failure!', msError, VisualObject);
+              Exit;
+            end;
+            m_mnistData := mnistTrainParams;
+            Y[0].Arr^[0] := UNN_DATASTEPBYSTEP;
+            p64 := UInt64(@m_mnistData);  // Для тренировочных данных
+            Y[0].Arr^[1] := p64 shr 32;
+            Y[0].Arr^[2]:= (p64 shl 32) shr 32;
+          end else begin
+            ErrorEvent('Read MNIST failure ', msError, VisualObject);
+            Exit;
+          end;
+        end;
       end;
+      inc(m_stepNumber);
     end;
   end
 end;

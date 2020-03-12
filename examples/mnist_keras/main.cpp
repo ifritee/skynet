@@ -25,7 +25,7 @@ int main()
   KR_CHECK(netArchitecture(buffer, 1024));
   cout<<buffer<<endl;
   //=================================
-#define __TESTING__
+#define __TRAINING__
   LayerSize layerDataSize, layerLabelSize;
   int classCnt = 10;  // выход: вероятностное распределение на 10 классов
 #if defined(__TRAINING__)
