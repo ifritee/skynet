@@ -60,20 +60,23 @@ const
   SUMMATOR_MEAN = 2;
 
 // Создание модели
-// return Статус создания модели
-Function createModel(): TStatus;  cdecl; external KERAS_EXPORT;
+// return id модели или -1
+Function createModel(): Integer; cdecl; external KERAS_EXPORT;
+
+/// Удаление модели
+Function deleteModel(id : Integer): TStatus; cdecl; external KERAS_EXPORT;
 
 // addInput Добавляет сходной слой
 // name Имя слоя
 // nodes узли с которыми связан слой (через пробел)
 // Статус добавления входного слоя в модель
-Function addInput(name: PAnsiChar; nodes: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+Function addInput(id : Integer; name: PAnsiChar; nodes: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // addConvolution Добавляет сверточный слой
 // name Имя слоя
 // nodes узлы с которыми связан слой (через пробел)
 // return Статус добавления слоя в модель
-Function addConvolution(name: PAnsiChar; nodes: PAnsiChar;
+Function addConvolution(id : Integer; name: PAnsiChar; nodes: PAnsiChar;
                         filters_: Cardinal;
                         act_: TActivation = ACTIV_RELU;
                         opt_: TOptimizer = OPTIM_ADAM;
@@ -99,7 +102,7 @@ Function addConvolution(name: PAnsiChar; nodes: PAnsiChar;
 // stride_
 // gpuDeviceId_ ID видеокарты для рсчетов
 // return Статус добавления слоя в модель
-Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar;
+Function addDeconvolution(id : Integer; name: PAnsiChar; nodes: PAnsiChar;
                           filters_: Cardinal;
                           act_: TActivation = ACTIV_RELU;
                           opt_: TOptimizer = OPTIM_ADAM;
@@ -120,7 +123,7 @@ Function addDeconvolution(name: PAnsiChar; nodes: PAnsiChar;
 // pool_
 // gpuDeviceId_ ID видеокарты для рсчетов
 // return Статус добавления слоя в модель
-Function addPooling(name: PAnsiChar; nodes: PAnsiChar;
+Function addPooling(id : Integer; name: PAnsiChar; nodes: PAnsiChar;
                     kernel_: Cardinal;
                     stride_: Cardinal;
                     pool_: TPoolType = POOL_MAX;
@@ -131,7 +134,7 @@ Function addPooling(name: PAnsiChar; nodes: PAnsiChar;
 // name Имя слоя
 // nodes узли с которыми связан слой (через пробел)
 // return Статус добавления слоя в модель
-Function addDense(name: PAnsiChar; nodes: PAnsiChar; units_: Cardinal;
+Function addDense(id : Integer; name: PAnsiChar; nodes: PAnsiChar; units_: Cardinal;
                   act_: TActivation = ACTIV_RELU;
                   opt_: TOptimizer = OPTIM_ADAM;
                   dropOut_: Single = 0.0;
@@ -144,7 +147,7 @@ Function addDense(name: PAnsiChar; nodes: PAnsiChar; units_: Cardinal;
 // nodes узлы с которыми связан слой (через пробел)
 // sequence Имена объединяемых слоев (через пробел)
 // return Статус добавления слоя в модель
-Function addConcat(name: PAnsiChar; nodes: PAnsiChar; sequence: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+Function addConcat(id : Integer; name: PAnsiChar; nodes: PAnsiChar; sequence: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // addResize Слой изменения размера
 // name Имя слоя
@@ -154,7 +157,7 @@ Function addConcat(name: PAnsiChar; nodes: PAnsiChar; sequence: PAnsiChar): TSta
 // bwdBegin Начальное значение зад
 // bwdEnd Конечное значение зад
 // return Статус добавления слоя в модель
-Function addResize(name: PAnsiChar; nodes: PAnsiChar; fwdBegin : Cardinal; fwdEnd : Cardinal;
+Function addResize(id : Integer; name: PAnsiChar; nodes: PAnsiChar; fwdBegin : Cardinal; fwdEnd : Cardinal;
                               bwdBegin : Cardinal; bwdEnd : Cardinal): TStatus; cdecl; external KERAS_EXPORT;
 
 // addCrop Отсечение каналов в изображении
@@ -165,7 +168,7 @@ Function addResize(name: PAnsiChar; nodes: PAnsiChar; fwdBegin : Cardinal; fwdEn
 // w длина
 // h ширина
 // return Статус добавления слоя в модель
-Function addCrop(name: PAnsiChar; nodes: PAnsiChar; x : Cardinal; y : Cardinal;
+Function addCrop(id : Integer; name: PAnsiChar; nodes: PAnsiChar; x : Cardinal; y : Cardinal;
                  w : Cardinal; h : Cardinal): TStatus; cdecl; external KERAS_EXPORT;
 
 // addSummator Добавляет слой сумирования
@@ -173,28 +176,28 @@ Function addCrop(name: PAnsiChar; nodes: PAnsiChar; x : Cardinal; y : Cardinal;
 // nodes узлы с которыми связан слой (через пробел)
 // type тип сумирования
 // return Статус добавления слоя в модель
-Function addSummator(name: PAnsiChar; nodes: PAnsiChar; type_ : TSummatorType): TStatus; cdecl; external KERAS_EXPORT;
+Function addSummator(id : Integer; name: PAnsiChar; nodes: PAnsiChar; type_ : TSummatorType): TStatus; cdecl; external KERAS_EXPORT;
 
 // addActivator Добавляет слой с ф-ией активации
 // name Имя слоя
 // nodes узлы с которыми связан слой (через пробел)
 // active Функции активации
 // return Статус добавления слоя в модель
-Function addActivator(name: PAnsiChar; nodes: PAnsiChar; active: TActivation): TStatus; cdecl; external KERAS_EXPORT;
+Function addActivator(id : Integer; name: PAnsiChar; nodes: PAnsiChar; active: TActivation): TStatus; cdecl; external KERAS_EXPORT;
 
 // addLossFunction Добавляет функцию потерь в модель
 // name Имя слоя
 // nodes  узли с которыми связан слой (через пробел)
 // loss_ тип функции потерь
 // return Статус добавления слоя в модель
-Function addLossFunction(name: PAnsiChar; nodes: PAnsiChar;
+Function addLossFunction(id : Integer; name: PAnsiChar; nodes: PAnsiChar;
                          loss_: TLossType): TStatus; cdecl; external KERAS_EXPORT;
 
 // netArchitecture Записывает архитектуру сети в JSON виде
 // buffer Буфер для записи
 // length Размер буфера
 //return Статус вывода архитектуры
-Function netArchitecture(buffer: PAnsiChar; length: Cardinal
+Function netArchitecture(id : Integer; buffer: PAnsiChar; length: Cardinal
                          ): TStatus; cdecl; external KERAS_EXPORT;
 
 // fit Запуск упрощенной тренировки для известных наборов
@@ -205,18 +208,10 @@ Function netArchitecture(buffer: PAnsiChar; length: Cardinal
 // epochs @brief Эпохи
 // classes вероятностное распределения на N классов
 // Статус тренировки
-Function fit(data: PSingle; dataSize: TLayerSize;
+Function fit(id : Integer; data: PSingle; dataSize: TLayerSize;
              label_: PByte; labelsSize: TLayerSize;
-             epochs: Cardinal; learningRate: Single): TStatus; cdecl; external KERAS_EXPORT;
-
-Function lastAccurateSum(): Single; cdecl; external KERAS_EXPORT;
-
-Function trainCreate(data: PSingle; dataSize: TLayerSize;
-             label_: PByte; labelsSize: TLayerSize): TStatus; cdecl; external KERAS_EXPORT;
-
-Function trainStep(learningRate: Single; dataSize: TLayerSize) : TStatus; cdecl; external KERAS_EXPORT;
-
-Function trainStop() : TStatus; cdecl; external KERAS_EXPORT;
+             epochs: Cardinal; learningRate: Single; var accuracy : Single
+             ): TStatus; cdecl; external KERAS_EXPORT;
 
 // evaluate Проверка с тестовым сетом
 // data тестовые данные
@@ -225,30 +220,28 @@ Function trainStop() : TStatus; cdecl; external KERAS_EXPORT;
 // labelsSize количество меток
 // verbose уровень подробности
 // return Статус тестирования
-Function evaluate(data: PSingle; dataSize: TLayerSize;
+Function evaluate(id : Integer; data: PSingle; dataSize: TLayerSize;
                   label_: PByte; labelsSize: TLayerSize;
-                  verbose: Cardinal
+                  verbose: Cardinal; var accuracy : Single
                   ): TStatus; cdecl; external KERAS_EXPORT;
 
-// Возвращает процент опознаных элементов
-Function testPercents(): Single; cdecl; external KERAS_EXPORT;
 // saveModel Сохраняет модель с весами
 // filename имя с путем
 // return Статус сохранения
-Function saveModel(filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+Function saveModel(id : Integer; filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // saveModel Загружает модель с весами
 // filename имя с путем
 // return Статус загрузки
-Function loadModel(filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+Function loadModel(id : Integer; filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // lastError Вывод последней ошибки в буфер
 // buffer Буфер для текста ошибки
 // length размер буфера
-Procedure lastError(buffer: PAnsiChar; length: Cardinal); cdecl; external KERAS_EXPORT;
+Procedure lastError(id : Integer; buffer: PAnsiChar; length: Cardinal); cdecl; external KERAS_EXPORT;
 
 // printLastError Вывод последней ошибки в stdout
-Procedure printLastError(status: TStatus); cdecl; external KERAS_EXPORT;
+Procedure printLastError(id : Integer; status: TStatus); cdecl; external KERAS_EXPORT;
 
 implementation
 

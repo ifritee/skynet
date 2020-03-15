@@ -1,4 +1,4 @@
-unit UConcatLayer;
+﻿unit UConcatLayer;
 
 interface
 uses Windows, Classes, DataTypes, SysUtils, RunObjts, UAbstractLayer;
@@ -15,7 +15,7 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(); override;
+    procedure addLayerToModel(id : Integer); override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -59,11 +59,11 @@ begin
   end;
 end;
 
-procedure TConcatLayer.addLayerToModel();
+procedure TConcatLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  returnCode := addConcat(PAnsiChar(shortName),
+  returnCode := addConcat(id, PAnsiChar(shortName),
                           PAnsiChar(nodes),
                           PAnsiChar(m_ccNodes));
   if returnCode <> STATUS_OK then begin
@@ -83,11 +83,15 @@ begin
 end;
 
 function TConcatLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+var
+  I : Integer;
 begin
   Result:=0;
   case Action of
     i_GetCount: begin
-
+      for I := 0 to m_outputQty - 1 do
+        cY[I] := 1;
+      cY[0] := 3;
     end;
   else
     Result:=inherited InfoFunc(Action, aParameter);
@@ -111,23 +115,27 @@ begin
       isCreate := False;
     end;
     f_GoodStep: begin
-      if isCreate = False then begin
-        for I := 0 to cU.FCount - 1 do begin
-          rootIndex := Round(U[I].Arr^[0]);
-          if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
-            rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-            rootLayer.appendNode(shortName);
-            if Length(m_ccNodes) > 0 then begin
-              m_ccNodes := m_ccNodes + ' ' + rootLayer.getShortName;
-            end else begin
-              m_ccNodes := rootLayer.getShortName;
-            end;
-            for J := 0 to cY.Count - 1 do
-              Y[J].Arr^[0] := getLayerNumber;
-            isCreate := True;
+//      if isCreate = False then begin
+      for I := 0 to cU.FCount - 1 do begin
+        rootIndex := Round(U[I].Arr^[0]);
+        if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
+          rootLayer := TAbstractLayer(LayersDict[rootIndex]);
+          rootLayer.appendNode(shortName);
+          if Length(m_ccNodes) > 0 then begin
+            m_ccNodes := m_ccNodes + ' ' + rootLayer.getShortName;
+          end else begin
+            m_ccNodes := rootLayer.getShortName;
           end;
+          for J := 0 to cY.Count - 1 do
+            Y[J].Arr^[0] := getLayerNumber;
+          isCreate := True;
+        end;
+        if U[0].FCount = 3 then begin
+          Y[0].Arr^[1] := U[0].Arr^[1];
+          Y[0].Arr^[2] := U[0].Arr^[2];
         end;
       end;
+//      end;
     end;
   end
 end;

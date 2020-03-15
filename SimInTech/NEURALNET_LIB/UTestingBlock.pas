@@ -1,4 +1,4 @@
-unit UTestingBlock;
+﻿unit UTestingBlock;
 
 interface
 
@@ -84,42 +84,42 @@ begin
     f_GoodStep: begin
       if stepCount = 0 then // Только для первого шага
       begin
-        for I := 0 to cU.FCount - 1 do begin  // Пройдем по входам
-          if U[I].FCount > 0 then begin
-            if U[I].Arr^[0] = UNN_NNMAGICWORD then // Если пришло состояние сети
-            begin
-              m_nnState := False;
-              if U[I].FCount = 2 then
-                m_nnState := (U[I].Arr^[1] = 1); // Установим состояние сети
-              if m_nnState <> True then
-                ErrorEvent('State of NN FALSE', msError, VisualObject);
-            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 3 )) then // Если пришли данные
-            begin
-              p64 := Round(U[I].Arr^[1]);
-              p64 := p64 shl 32;
-              p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
-              m_testData := pMNIST_DATA(p64);
-
-              datas.w := m_testData.rows;
-              datas.h := m_testData.cols;
-              datas.ch := m_testData.channels;
-              datas.bsz := m_testData.quantity;
-              labels.w := m_crossOut;
-              labels.h := 1;
-              labels.ch := 1;
-              labels.bsz := m_testData.quantity;
-              if m_fileLoad.Length > 0 then begin
-                returnCode := loadModel(PAnsiChar(AnsiString(m_fileLoad)));
-                if returnCode <> STATUS_OK then begin
-                  ErrorEvent('Crashed load model weight', msError, VisualObject);
-                end;
-              end;
-              returnCode := evaluate(m_testData.data, datas, m_testData.labels, labels, 2);
-            end;
-          end;
-        end;
+//        for I := 0 to cU.FCount - 1 do begin  // Пройдем по входам
+//          if U[I].FCount > 0 then begin
+//            if U[I].Arr^[0] = UNN_NNMAGICWORD then // Если пришло состояние сети
+//            begin
+//              m_nnState := False;
+//              if U[I].FCount = 2 then
+//                m_nnState := (U[I].Arr^[1] = 1); // Установим состояние сети
+//              if m_nnState <> True then
+//                ErrorEvent('State of NN FALSE', msError, VisualObject);
+//            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 3 )) then // Если пришли данные
+//            begin
+//              p64 := Round(U[I].Arr^[1]);
+//              p64 := p64 shl 32;
+//              p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
+//              m_testData := pMNIST_DATA(p64);
+//
+//              datas.w := m_testData.rows;
+//              datas.h := m_testData.cols;
+//              datas.ch := m_testData.channels;
+//              datas.bsz := m_testData.quantity;
+//              labels.w := m_crossOut;
+//              labels.h := 1;
+//              labels.ch := 1;
+//              labels.bsz := m_testData.quantity;
+//              if m_fileLoad.Length > 0 then begin
+//                returnCode := loadModel(PAnsiChar(AnsiString(m_fileLoad)));
+//                if returnCode <> STATUS_OK then begin
+//                  ErrorEvent('Crashed load model weight', msError, VisualObject);
+//                end;
+//              end;
+//              returnCode := evaluate(m_testData.data, datas, m_testData.labels, labels, 2);
+//            end;
+//          end;
+//        end;
       end else begin
-        Y[0].Arr^[0] := testPercents();
+//        Y[0].Arr^[0] := testPercents();
       end;
       inc(stepCount);
     end;

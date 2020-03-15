@@ -1,11 +1,12 @@
-unit UTrainingBlock;
+﻿unit UTrainingBlock;
 
 interface
 
 uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset;
 
 type
-
+  TDataArr = array of Single;
+  PDataArr = ^TDataArr;
   TTrainingBlock = class(TRunObject)
   public
     // Конструктор класса
@@ -26,8 +27,13 @@ type
     m_learningRate : double;
     m_fileSave : String;
     m_fileLoad: String;
+    m_width, m_height, m_depth : Integer;
+
+    m_label: array of Byte;
 
     m_lastDataType : Integer;
+
+    m_id : Integer;
   end;
 
 implementation
@@ -63,6 +69,18 @@ begin
       Result:=NativeInt(@m_fileLoad);
       DataType:=dtString;
       Exit;
+    end else if StrEqu(ParamName,'width') then begin
+      Result:=NativeInt(@m_width);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'height') then begin
+      Result:=NativeInt(@m_height);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'depth') then begin
+      Result:=NativeInt(@m_depth);
+      DataType:=dtInteger;
+      Exit;
     end;
   end
 end;
@@ -72,7 +90,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-
+      cY[0] := 1;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -83,6 +101,9 @@ function   TTrainingBlock.RunFunc;
 var
   i, val : NativeInt;
   p64: UInt64;
+  accuracy : Single;
+  m_data: PDataArr; /// Данные, которые проходят через слои модели
+
   datas, labels : TLayerSize;
   returnCode : NativeInt;
 begin
@@ -96,104 +117,41 @@ begin
       m_lastDataType := 0;
     end;
     f_GoodStep: begin
-      if stepCount = 0 then // Только для первого шага
-      begin
-        for I := 0 to cU.FCount - 1 do begin  // Пройдем по входам
-          if U[I].FCount > 0 then begin
-            val := Round(U[I].Arr^[0]);
-            if val = UNN_NNMAGICWORD then // Если пришло состояние сети
-            begin
-              m_nnState := False;
-              if U[I].FCount = 2 then
-                m_nnState := (U[I].Arr^[1] = 1); // Установим состояние сети
-              if m_nnState <> True then
-                ErrorEvent('State of NN FALSE', msError, VisualObject);
-            end else if ((val = UNN_DATASEMNIST) AND (U[I].FCount = 3 )) then // Если пришли данные MNIST
-            begin
-              m_lastDataType := UNN_DATASEMNIST;
-              p64 := Round(U[I].Arr^[1]);
-              p64 := p64 shl 32;
-              p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
-              m_trainData := pMNIST_DATA(p64);
-              datas.w := m_trainData.rows;
-              datas.h := m_trainData.cols;
-              datas.ch := m_trainData.channels;
-              datas.bsz := m_trainData.quantity;
-              labels.w := m_crossOut;
-              labels.h := 1;
-              labels.ch := 1;
-              labels.bsz := m_trainData.quantity;
-              if m_fileLoad.Length > 0 then begin
-                returnCode := loadModel(PAnsiChar(AnsiString(m_fileLoad)));
-                if returnCode <> STATUS_OK then begin
-                  ErrorEvent('Crashed load model weight', msError, VisualObject);
-                end;
-              end;
-              returnCode := trainCreate(m_trainData.data, datas, m_trainData.labels, labels);
-            end else if ((val = UNN_DATASTEPBYSTEP) AND (U[I].FCount = 3 )) then begin
-              m_lastDataType := UNN_DATASTEPBYSTEP;
-              if m_fileLoad.Length > 0 then begin
-                returnCode := loadModel(PAnsiChar(AnsiString(m_fileLoad)));
-                if returnCode <> STATUS_OK then begin
-                  ErrorEvent('Crashed load model weight', msError, VisualObject);
-                end;
-              end;
-            end else begin
-              ErrorEvent('Not know data ' + IntToStr(val), msError, VisualObject);
-            end;
-          end;
+//      if stepCount = 0 then // Только для первого шага
+//      begin
+        // Вход 0 - данные
+        // Вход 1 - метки
+        if cU.FCount <> 2 then begin
+          ErrorEvent('Output ports qty != 2', msError, VisualObject);
+          Exit;
         end;
-      end else begin
-        for I := 0 to cU.FCount - 1 do begin  // Пройдем по входам
-          if (U[I].FCount >= 3) then begin // только если данные есть
-            val := Round(U[I].Arr^[0]);
-            if val = UNN_DATASEMNIST then begin
-              datas.w := m_trainData.rows;
-              datas.h := m_trainData.cols;
-              datas.ch := 1;
-              datas.bsz := m_trainData.quantity;
-              returnCode := trainStep(m_learningRate, datas);
-              Y[0].Arr^[0] := lastAccurateSum();
-            end else if val = UNN_DATASTEPBYSTEP then begin
-              p64 := Round(U[I].Arr^[1]);
-              p64 := p64 shl 32;
-              p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
-              m_trainData := pMNIST_DATA(p64);
-              datas.w := m_trainData.rows;
-              datas.h := m_trainData.cols;
-              datas.ch := m_trainData.channels;
-              datas.bsz := m_trainData.quantity;
-              labels.w := m_crossOut;
-              labels.h := 1;
-              labels.ch := 1;
-              labels.bsz := m_trainData.quantity;
-              fit(m_trainData.data, datas, m_trainData.labels, labels, 1, m_learningRate);
-              ErrorEvent(IntToStr(stepCount) + ' Accurate: ' + FloatToStr(lastAccurateSum()), msInfo, VisualObject);
-            end;
-          end;
+        m_id := Round(U[0].Arr^[0]);
+        p64 := Round(U[0].Arr^[1]);
+        p64 := p64 shl 32;
+        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
+        m_data := PDataArr(p64);
+        SetLength(m_label, U[1].Count);
+        for I := 0 to Length(m_label) - 1 do begin
+          m_label[I] := Round(U[1].Arr^[I]);
         end;
-
-//        ErrorEvent(IntToStr(stepCount) + ' Accurate: ' + FloatToStr(lastAccurateSum()), msInfo, VisualObject);
-//        labels.w := 10;
-//        labels.h := 1;
-//        labels.ch := 1;
-//        labels.bsz := m_trainData.quantity;
-//        fit(m_trainData.data, datas, m_trainData.labels, labels, m_epochs, m_learningRate);
-//        ErrorEvent(IntToStr(stepCount) + ' Accurate: ' + FloatToStr(lastAccurateSum()), msInfo, VisualObject);
-      end;
+        datas.w := m_width;
+        datas.h := m_height;
+        datas.ch := m_depth;
+        datas.bsz := Length(m_label);
+        labels.w := m_crossOut;
+        labels.h := 1;
+        labels.ch := 1;
+        labels.bsz := Length(m_label);
+        fit(m_id, @m_data^[0], datas, @m_label[0], labels, 1, m_learningRate, accuracy);
+        Y[0].Arr^[0] := accuracy;
       inc(stepCount);
     end;
     f_Stop : begin
-      if m_lastDataType = UNN_DATASEMNIST then begin
-        returnCode := trainStop();
-        if returnCode <> STATUS_OK then begin
-          ErrorEvent('Crashed stop train', msError, VisualObject);
-        end;
-      end;
       if m_fileSave.Length > 0 then begin
-        returnCode := saveModel(PAnsiChar(AnsiString(m_fileSave)));
+        returnCode := saveModel(m_id, PAnsiChar(AnsiString(m_fileSave)));
         if returnCode <> STATUS_OK then begin
           ErrorEvent('Crashed save model weight', msError, VisualObject);
+          Exit;
         end;
       end;
     end;

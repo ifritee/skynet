@@ -1,4 +1,4 @@
-unit UOutputLayer;
+﻿unit UOutputLayer;
 
 interface
 
@@ -16,10 +16,11 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(); override;
+    procedure addLayerToModel(id : Integer); override;
 
   private
     isCreate: Boolean;
+    m_modelID: Integer;
   end;
 
 implementation
@@ -48,7 +49,7 @@ begin
   end
 end;
 
-procedure TOutputLayer.addLayerToModel();
+procedure TOutputLayer.addLayerToModel(id : Integer);
 begin
 
 end;
@@ -92,23 +93,34 @@ begin
             rootLayer.appendNode(shortName);
             isCreate := True;
             //----- Проходим по всем слоям нейронной сети -----
+            m_modelID:= createModel();
+            // Проверим состояние создания модели
+            if m_modelID = -1 then begin
+              ErrorEvent('Neural model not created', msError, VisualObject);
+              Exit;
+            end;
             for i := 0 to LayersDict.Count - 1 do begin
                layer := TAbstractLayer(LayersDict[i]);
-               layer.addLayerToModel;
+               layer.addLayerToModel(m_modelID);
             end;
-            returnCode := netArchitecture(netJSON, Length(netJSON));
-            Y[0].Arr^[0] := UNN_NNMAGICWORD;
+            returnCode := netArchitecture(m_modelID, netJSON, Length(netJSON));
+//            Y[0].Arr^[0] := UNN_NNMAGICWORD;
             if returnCode <> STATUS_OK then begin
-              lastError(netJSON, Length(netJSON));
+              lastError(m_modelID, netJSON, Length(netJSON));
               ErrorEvent(String(netJSON), msError, VisualObject);
-              Y[0].Arr^[1] := 0; // Укажем, что были проблемы
+              Y[0].Arr^[0] := -1; // Укажем, что были проблемы
               Exit;
-            end else begin
-              Y[0].Arr^[1] := 1; // Укажем, что создание сети успешно
+//            end else begin
+//              Y[0].Arr^[1] := 1; // Укажем, что создание сети успешно
             end;
             ErrorEvent(String(netJSON), msInfo, VisualObject);
           end;
         end;
+      end;
+      Y[0].Arr^[0] := m_modelID; // Пошлем ID сети или -1
+      if U[0].FCount = 3 then begin
+        Y[0].Arr^[1] := U[0].Arr^[1];
+        Y[0].Arr^[2] := U[0].Arr^[2];
       end;
     end;
   end

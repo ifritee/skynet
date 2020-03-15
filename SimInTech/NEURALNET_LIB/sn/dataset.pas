@@ -9,36 +9,25 @@ type
   // Данные для наборов MNIST
   pMNIST_DATA = ^TMNIST_DATA;
   TMNIST_DATA = Record
-     data: PSingle;     // Нормализованные данные
-     labels: PByte;     // Метки
      quantity: Integer; // Количество данных
      rows: Integer;     // Количество строк в одном данном
      cols: Integer;     // Количество столбцов в одном данном
      channels: Integer; // Количество каналов
      end;
+/// Создает очередной dataset
+/// dataFile файл с данными
+/// labelFile файл с метками
+/// return -1 - ошибка, N - id
+  Function createMnistDataset(dataFile: PAnsiChar; labelFile: PAnsiChar):
+                              Integer; cdecl; external KERAS_EXPORT;
+/// Освобождает память dataset'а
+  Function deleteMnistDataset(id : Integer): keras.TStatus; cdecl; external KERAS_EXPORT;
+/// Считывает данные из БД MNIST в массивы  datas, labels
+  Function readMnist(id : Integer; datas : PSingle; labels : PByte; qty: Cardinal = 0;
+                     step: Cardinal = 0): keras.TStatus; cdecl; external KERAS_EXPORT;
 
-  // Чтение БД с MNIST
-  // path - Путь к файлам БД
-  // return - состояние
-  Function readMnist(path: PAnsiChar): keras.TStatus; cdecl; external KERAS_EXPORT;
-
-  // dataFile Полный путь к файлу БД с данным для тренировки
-  // labelFile Полный путь к файлу БД с метками для тренировки
-  // qty Количество считываемых данных
-  // step номер шага (qty * step)
-  // return состояние
- Function readMnistTrain(dataFile: PAnsiChar; labelFile: PAnsiChar; qty: Cardinal = 0;
-                         step: Cardinal = 0): keras.TStatus; cdecl; external KERAS_EXPORT;
-
- // dataFile Полный путь к файлу БД с данным для тестирования
- // labelFile Полный путь к файлу БД с метками для тестирования
- // return состояние
- Function readMnistTest(dataFile: PAnsiChar; labelFile: PAnsiChar; qty: Cardinal = 0): keras.TStatus; cdecl; external KERAS_EXPORT;
-
-  // Возвращает данные тренировочного набора MNIST
-  Function mnistTrainParams(): TMNIST_DATA; cdecl; external KERAS_EXPORT;
-  // Возвращает данные тестового набора MNIST
-  Function mnistTestParams(): TMNIST_DATA; cdecl; external KERAS_EXPORT;
+/// Возвращает данные тренировочного набора MNIST
+  Function mnistParameters(id : Integer) : TMNIST_DATA; cdecl; external KERAS_EXPORT;
 
 implementation
 

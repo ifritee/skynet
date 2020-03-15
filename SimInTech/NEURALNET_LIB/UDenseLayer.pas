@@ -1,4 +1,4 @@
-unit UDenseLayer;
+﻿unit UDenseLayer;
 
 interface
 
@@ -16,7 +16,7 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(); override;
+    procedure addLayerToModel(id : Integer); override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -86,11 +86,11 @@ begin
   end;
 end;
 
-procedure TDenseLayer.addLayerToModel();
+procedure TDenseLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  returnCode := addDense(PAnsiChar(shortName),
+  returnCode := addDense(id, PAnsiChar(shortName),
                          PAnsiChar(nodes),
                          m_units, 
                          m_activate, 
@@ -113,11 +113,15 @@ begin
 end;
 
 function TDenseLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
+var
+  I : Integer;
 begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      
+      for I := 0 to m_outputQty - 1 do
+        cY[I] := 1;
+      cY[0] := 3;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -140,18 +144,22 @@ begin
       isCreate := False;
     end;
     f_GoodStep: begin
-      if isCreate = False then begin
-        if U[0].FCount > 0 then begin
-          rootIndex := Round(U[0].Arr^[0]);
-          if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin          
-            rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-            rootLayer.appendNode(shortName);
-            for J := 0 to cY.Count - 1 do
-              Y[J].Arr^[0] := getLayerNumber;
-            isCreate := True;
-          end;
+//      if isCreate = False then begin
+      if U[0].FCount > 0 then begin
+        rootIndex := Round(U[0].Arr^[0]);
+        if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
+          rootLayer := TAbstractLayer(LayersDict[rootIndex]);
+          rootLayer.appendNode(shortName);
+          for J := 0 to cY.Count - 1 do
+            Y[J].Arr^[0] := getLayerNumber;
+          isCreate := True;
+        end;
+        if U[0].FCount = 3 then begin
+          Y[0].Arr^[1] := U[0].Arr^[1];
+          Y[0].Arr^[2] := U[0].Arr^[2];
         end;
       end;
+//      end;
     end;
   end
 end;

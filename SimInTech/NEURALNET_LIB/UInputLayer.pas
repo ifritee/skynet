@@ -1,4 +1,4 @@
-unit UInputLayer;
+﻿unit UInputLayer;
 
 interface
 
@@ -16,7 +16,7 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(); override;
+    procedure addLayerToModel(id : Integer); override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -26,6 +26,7 @@ type
   strict private
     stepCount: NativeInt; // Счетчик шагов
     m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_data: array of Single;  /// Данные, которые проходят через слои модели
 
   const
     PortType = 0; // Тип создаваемых портов (под математическую связь)
@@ -70,17 +71,11 @@ begin
   SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
 end;
 
-procedure TInputLayer.addLayerToModel();
+procedure TInputLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  returnCode:= createModel();
-  // Проверим состояние создания модели
-  if returnCode = STATUS_FAILURE then begin
-    ErrorEvent('Neural model not created', msError, VisualObject);
-    Exit;
-  end;
-  returnCode := addInput( PAnsiChar(shortName), PAnsiChar(nodes));
+  returnCode := addInput(id, PAnsiChar(shortName), PAnsiChar(nodes));
   if returnCode <> STATUS_OK then begin
     ErrorEvent('Neural model not added input layer', msError, VisualObject);
     Exit;
@@ -94,7 +89,9 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      cY[0] := 1;
+      for I := 0 to m_outputQty - 1 do
+        cY[I] := 1;
+      cY[0] := 3;
       stepCount := 0;
     end;
     i_GetInit: begin
@@ -114,6 +111,7 @@ end;
 function   TInputLayer.RunFunc;
 var
   J : Integer;
+  p64: UInt64;
 begin
   Result:=0;
   case Action of
@@ -125,11 +123,18 @@ begin
       nodes := '';
     end;
     f_GoodStep: begin
-      if stepCount = 0 then begin
+//      if stepCount = 0 then begin
         for J := 0 to cY.Count - 1 do
           Y[J].Arr^[0] := getLayerNumber;
-        inc(stepCount);
+//        inc(stepCount);
+//      end;
+      SetLength(m_data, U[0].Count);
+      for J := 0 to Length(m_data) - 1 do begin
+        m_data[J] := U[0].Arr^[J];
       end;
+        p64 := UInt64(@m_data);
+        Y[0].Arr^[1] := p64 shr 32;
+        Y[0].Arr^[2]:= (p64 shl 32) shr 32;
     end;
   end
 end;
