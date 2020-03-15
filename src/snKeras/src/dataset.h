@@ -9,44 +9,34 @@ extern "C" {
 
 /** @brief Данные для наборов MNIST */
 struct MnistDATA {
-  float * data; ///< @brief Нормализованные данные
-  unsigned char * labels; ///< @brief Метки
   int quantity; ///< @brief Количество данных
   int rows; ///< @brief Количество строк в одном данном
   int cols; ///< @brief Количество столбцов в одном данном
-  int channels; ///< @brief Количество каналов
+  int depth; ///< @brief Количество каналов
 };
 
 /**
- * @brief readMnist Чтение БД с MNIST
- * @param path Путь к файлам БД
- * @return состояние
+ * @brief createMnistDataset Создает очередной dataset
+ * @param dataFile файл с данными
+ * @param labelFile файл с метками
+ * @return -1 - ошибка, N - id
  */
-KERAS_EXPORT Status readMnist(const char * path);
+KERAS_EXPORT int createMnistDataset(const char * dataFile, const char * labelFile);
 
 /**
- * @param dataFile Полный путь к файлу БД с данным для тренировки
- * @param labelFile Полный путь к файлу БД с метками для тренировки
+ * @brief deleteMnistDataset Освобождает память dataset'а
+ * @param id Номер сета
  * @return состояние
  */
-KERAS_EXPORT Status readMnistTrain(const char * dataFile, const char * labelFile,
-                                   unsigned int qty = 0, unsigned int step = 0);
+KERAS_EXPORT Status deleteMnistDataset(int id);
 
-/**
- * @param dataFile Полный путь к файлу БД с данным для тестирования
- * @param labelFile Полный путь к файлу БД с метками для тестирования
- * @return состояние
- */
-KERAS_EXPORT Status readMnistTest(const char* dataFile, const char* labelFile, unsigned int qty = 0);
+KERAS_EXPORT Status readMnist(int id, float * datas, unsigned char * labels, unsigned int qty = 0,
+                              unsigned int step = 0);
 
 /**
  * @brief mnistTrainParams Возвращает данные тренировочного набора MNIST
  */
-KERAS_EXPORT MnistDATA mnistTrainParams();
-/**
- * @brief mnistTestParams Возвращает данные тестового набора MNIST
- */
-KERAS_EXPORT MnistDATA mnistTestParams();
+KERAS_EXPORT MnistDATA mnistParameters(int id);
 
 #if defined(__cplusplus)
 }

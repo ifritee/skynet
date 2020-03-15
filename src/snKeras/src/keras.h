@@ -64,9 +64,11 @@ struct LayerSize
 
 /**
  * @brief CreateModel Создание модели
- * @return Статус создания модели
+ * @return -1 - ошибка создания модели 0... - id модели
  */
-KERAS_EXPORT Status createModel();
+KERAS_EXPORT int createModel();
+/** @brief Удаление модели */
+KERAS_EXPORT Status deleteModel(int id);
 
 /**
  * @brief addInput Добавляет сходной слой
@@ -74,7 +76,7 @@ KERAS_EXPORT Status createModel();
  * @param nodes узли с которыми связан слой (через пробел)
  * @return Статус добавления входного слоя в модель
  */
-KERAS_EXPORT Status addInput(const char * name, const char * nodes);
+KERAS_EXPORT Status addInput(int id, const char * name, const char * nodes);
 
 /**
  * @brief addConvolution Добавляет сверточный слой
@@ -82,7 +84,7 @@ KERAS_EXPORT Status addInput(const char * name, const char * nodes);
  * @param nodes узлы с которыми связан слой (через пробел)
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addConvolution(const char *name, const char *nodes, unsigned int filters_,
+KERAS_EXPORT Status addConvolution(int id, const char *name, const char *nodes, unsigned int filters_,
                                 Activation act_ = ACTIV_RELU,
                                 Optimizer opt_ = OPTIM_ADAM,
                                 float dropOut_ = 0.0f,
@@ -109,7 +111,7 @@ KERAS_EXPORT Status addConvolution(const char *name, const char *nodes, unsigned
  * @param gpuDeviceId_ ID видеокарты для рсчетов
  * @return
  */
-KERAS_EXPORT Status addDeconvolution(const char *name, const char *nodes, unsigned int filters_,
+KERAS_EXPORT Status addDeconvolution(int id, const char *name, const char *nodes, unsigned int filters_,
                                      Activation act_ = ACTIV_RELU,
                                      Optimizer opt_ = OPTIM_ADAM,
                                      float dropOut_ = 0.0,
@@ -129,7 +131,7 @@ KERAS_EXPORT Status addDeconvolution(const char *name, const char *nodes, unsign
  * @param gpuDeviceId_ ID видеокарты для рсчетов
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addPooling(const char *name, const char *nodes, unsigned int kernel_,
+KERAS_EXPORT Status addPooling(int id, const char *name, const char *nodes, unsigned int kernel_,
                                unsigned int stride_,
                                PoolType pool_ = POOL_MAX,
                                unsigned int gpuDeviceId_ = 0);
@@ -146,7 +148,7 @@ KERAS_EXPORT Status addPooling(const char *name, const char *nodes, unsigned int
  * @param gpuDeviceId_ ID устройства GPU
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addDense(const char *name, const char *nodes, unsigned int units_,
+KERAS_EXPORT Status addDense(int id, const char *name, const char *nodes, unsigned int units_,
                           Activation act_ = ACTIV_RELU,
                           Optimizer opt_ = OPTIM_ADAM,
                           float dropOut_ = 0.0,
@@ -160,7 +162,7 @@ KERAS_EXPORT Status addDense(const char *name, const char *nodes, unsigned int u
  * @param sequence Имена объединяемых слоев (через пробел)
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addConcat(const char *name, const char *nodes, const char * sequence);
+KERAS_EXPORT Status addConcat(int id, const char *name, const char *nodes, const char * sequence);
 
 /**
  * @brief addResize Слой изменения размера
@@ -172,7 +174,7 @@ KERAS_EXPORT Status addConcat(const char *name, const char *nodes, const char * 
  * @param bwdEnd Конечное значение зад
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addResize(const char *name, const char *nodes,
+KERAS_EXPORT Status addResize(int id, const char *name, const char *nodes,
                               unsigned int fwdBegin, unsigned int fwdEnd,
                               unsigned int bwdBegin, unsigned int bwdEnd);
 
@@ -186,7 +188,7 @@ KERAS_EXPORT Status addResize(const char *name, const char *nodes,
  * @param h ширина
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addCrop(const char *name, const char *nodes, unsigned int x, unsigned int y,
+KERAS_EXPORT Status addCrop(int id, const char *name, const char *nodes, unsigned int x, unsigned int y,
                             unsigned int w, unsigned int h);
 
 /**
@@ -196,7 +198,7 @@ KERAS_EXPORT Status addCrop(const char *name, const char *nodes, unsigned int x,
  * @param type тип суммирования
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addSummator(const char *name, const char *nodes, SummatorType type);
+KERAS_EXPORT Status addSummator(int id, const char *name, const char *nodes, SummatorType type);
 
 /**
  * @brief addActivator Добавляет слой с ф-ией активации
@@ -205,7 +207,7 @@ KERAS_EXPORT Status addSummator(const char *name, const char *nodes, SummatorTyp
  * @param active Функции активации
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addActivator(const char *name, const char *nodes, Activation active);
+KERAS_EXPORT Status addActivator(int id, const char *name, const char *nodes, Activation active);
 
 /**
  * @brief addLossFunction Добавляет функцию потерь в модель
@@ -214,7 +216,7 @@ KERAS_EXPORT Status addActivator(const char *name, const char *nodes, Activation
  * @param loss_ тип функции потерь
  * @return Статус добавления слоя в модель
  */
-KERAS_EXPORT Status addLossFunction(const char *name, const char *nodes, LossType loss_);
+KERAS_EXPORT Status addLossFunction(int id, const char *name, const char *nodes, LossType loss_);
 
 /**
  * @brief netArchitecture Записывает архитектуру сети в JSON виде
@@ -222,7 +224,7 @@ KERAS_EXPORT Status addLossFunction(const char *name, const char *nodes, LossTyp
  * @param length Размер буфера
  * @return Статус вывода архитектуры
  */
-KERAS_EXPORT Status netArchitecture(char * buffer, unsigned int length);
+KERAS_EXPORT Status netArchitecture(int id, char * buffer, unsigned int length);
 
 /**
  * @brief fit Запуск упрощенной тренировки для известных наборов
@@ -234,38 +236,9 @@ KERAS_EXPORT Status netArchitecture(char * buffer, unsigned int length);
  * @param learningRate Шаг обучения
  * @return Статус тренировки
  */
-KERAS_EXPORT Status fit(float * data, LayerSize dataSize, unsigned char * label,
+KERAS_EXPORT Status fit(int id, float * data, LayerSize dataSize, unsigned char * label,
                         LayerSize labelsSize, unsigned int epochs,
-                        float learningRate);
-
-/**
- * @brief lastAccurateSum Уровень обучения по результатам упрощенной тренировки
- * @return значение уровня обучения
- */
-KERAS_EXPORT float lastAccurateSum();
-
-/**
- * @brief trainCreate Запуск тренировки без эпох (пока не надоест)
- * @param data тренировочные данные
- * @param dataSize количество тренировочных данных
- * @param label метки тренировочных данных
- * @param labelsSize количество меток
- * @param learningRate Шаг обучения
- * @return Статус начала обучения
- */
-KERAS_EXPORT Status trainCreate(float * data, LayerSize dataSize, unsigned char * label, LayerSize labelsSize);
-
-/**
- * @brief trainStep Очередной шаг обучения
- * @return Статус шага обучения
- */
-KERAS_EXPORT Status trainStep(float learningRate, LayerSize dataSize);
-
-/**
- * @brief trainStop Остановка обучения и высвобождение памяти
- * @return Статус окончания обучения
- */
-KERAS_EXPORT Status trainStop();
+                        float learningRate, float & accuracy);
 
 /**
  * @brief evaluate Проверка с тестовым сетом
@@ -276,39 +249,34 @@ KERAS_EXPORT Status trainStop();
  * @param verbose уровень подробности
  * @return Статус тестирования
  */
-KERAS_EXPORT Status evaluate(float * data, LayerSize dataSize, unsigned char * label,
-                             LayerSize labelsSize, unsigned int verbose);
-
-/**
- * 
- */
-KERAS_EXPORT float testPercents();
+KERAS_EXPORT Status evaluate(int id, float * data, LayerSize dataSize, unsigned char * label,
+                             LayerSize labelsSize, unsigned int verbose, float & accuracy);
 
 /**
  * @brief saveModel Сохраняет модель с весами
  * @param filename имя с путем
  * @return Статус сохранения
  */
-KERAS_EXPORT Status saveModel(const char * filename);
+KERAS_EXPORT Status saveModel(int id, const char * filename);
 
 /**
  * @brief loadModel Загружает модель с весами
  * @param filename имя с путем
  * @return Статус загрузки
  */
-KERAS_EXPORT Status loadModel(const char * filename);
+KERAS_EXPORT Status loadModel(int id, const char * filename);
 
 /**
  * @brief lastError Вывод последней ошибки в буфер
  * @param buffer Буфер для текста ошибки
  * @param length размер буфера
  */
-KERAS_EXPORT void lastError(char * buffer, unsigned int length);
+KERAS_EXPORT void lastError(int id, char * buffer, unsigned int length);
 
 /**
  * @brief printLastError Вывод последней ошибки в stdout
  */
-KERAS_EXPORT void printLastError(Status);
+KERAS_EXPORT void printLastError(int id, Status);
 
 #if defined(__cplusplus)
 }

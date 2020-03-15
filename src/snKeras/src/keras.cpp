@@ -2,6 +2,7 @@
 #include <iostream>
 #include <map>
 #include <string.h>
+#include <vector>
 
 #include "snNet.h"
 #include "snOperator.h"
@@ -12,34 +13,31 @@
 
 namespace sn = SN_API;
 
-static sn::Net * model = nullptr; ///< @brief Модель
-static float accuratSummLast = 0;
+static std::vector<sn::Net *> modelSet; ///< @brief Набор моделей
 
-static sn::Tensor * spInputLayer = nullptr;
-static sn::Tensor * spTargetLayer = nullptr;
-static sn::Tensor * spOutputLayer = nullptr;
-static int sClasses = 0;
-static int sEpochs = 0;
-static float sAccuratSumm = 0.f, sTestPercent = 0.f;
-
-Status createModel()
+int createModel()
 {
-  int createStatus = STATUS_OK;
-  if(model) { // Если модель существует,
-    delete model; //то удаляем ее
-    createStatus = STATUS_WARNING;
-  }
   try {
-    model = new sn::Net;
+    sn::Net * model = new sn::Net;
+    modelSet.push_back(model);
+    return modelSet.size() - 1;
   } catch(...) {
-    createStatus = STATUS_FAILURE;
-    model = nullptr;
+    return -1;
   }
-  return createStatus;
+  return -1;
 }
 
-Status addInput(const char * name, const char * nodes)
+Status deleteModel( int id )
 {
+  sn::Net * model = modelSet[id];
+  delete model;
+  modelSet[id] = nullptr;
+  return STATUS_OK;
+}
+
+Status addInput(int id, const char * name, const char * nodes)
+{
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -47,11 +45,12 @@ Status addInput(const char * name, const char * nodes)
   return STATUS_OK;
 }
 
-Status addConvolution(const char * name, const char * nodes, unsigned int filters_, Activation act_,
+Status addConvolution(int id, const char * name, const char * nodes, unsigned int filters_, Activation act_,
                       Optimizer opt_, float dropOut_, BatchNormType bnorm_, unsigned int fWidth_,
                       unsigned int fHeight_, int padding_, unsigned int stride_, unsigned int dilate_,
                       unsigned int gpuDeviceId_)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -65,10 +64,11 @@ Status addConvolution(const char * name, const char * nodes, unsigned int filter
   return STATUS_OK;
 }
 
-Status addDeconvolution(const char *name, const char *nodes, unsigned int filters_, Activation act_,
+Status addDeconvolution(int id, const char *name, const char *nodes, unsigned int filters_, Activation act_,
                         Optimizer opt_, float dropOut_, BatchNormType bnorm_, unsigned int fWidth_,
                         unsigned int fHeight_, unsigned int stride_, unsigned int gpuDeviceId_)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -83,9 +83,10 @@ Status addDeconvolution(const char *name, const char *nodes, unsigned int filter
 }
 
 
-Status addPooling(const char *name, const char *nodes, unsigned int kernel_, unsigned int stride_,
+Status addPooling(int id, const char *name, const char *nodes, unsigned int kernel_, unsigned int stride_,
                   PoolType pool_, unsigned int gpuDeviceId_)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -97,9 +98,10 @@ Status addPooling(const char *name, const char *nodes, unsigned int kernel_, uns
   return STATUS_OK;
 }
 
-Status addDense(const char *name, const char *nodes, unsigned int units_, Activation act_, Optimizer opt_,
+Status addDense(int id, const char *name, const char *nodes, unsigned int units_, Activation act_, Optimizer opt_,
                 float dropOut_, BatchNormType bnorm_, unsigned int gpuDeviceId_)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -113,8 +115,9 @@ Status addDense(const char *name, const char *nodes, unsigned int units_, Activa
   return STATUS_OK;
 }
 
-Status addConcat(const char *name, const char *nodes, const char * sequence)
+Status addConcat(int id, const char *name, const char *nodes, const char * sequence)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -122,9 +125,10 @@ Status addConcat(const char *name, const char *nodes, const char * sequence)
   return STATUS_OK;
 }
 
-Status addResize(const char *name, const char *nodes, unsigned int fwdBegin, unsigned int fwdEnd,
+Status addResize(int id, const char *name, const char *nodes, unsigned int fwdBegin, unsigned int fwdEnd,
                  unsigned int bwdBegin, unsigned int bwdEnd)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -132,9 +136,10 @@ Status addResize(const char *name, const char *nodes, unsigned int fwdBegin, uns
   return STATUS_OK;
 }
 
-Status addCrop(const char *name, const char *nodes, unsigned int x, unsigned int y,
+Status addCrop(int id, const char *name, const char *nodes, unsigned int x, unsigned int y,
                unsigned int w, unsigned int h)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -142,8 +147,9 @@ Status addCrop(const char *name, const char *nodes, unsigned int x, unsigned int
   return STATUS_OK;
 }
 
-Status addSummator(const char *name, const char *nodes, SummatorType type)
+Status addSummator(int id, const char *name, const char *nodes, SummatorType type)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -151,8 +157,9 @@ Status addSummator(const char *name, const char *nodes, SummatorType type)
   return STATUS_OK;
 }
 
-Status addActivator(const char *name, const char *nodes, Activation active)
+Status addActivator(int id, const char *name, const char *nodes, Activation active)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -160,8 +167,9 @@ Status addActivator(const char *name, const char *nodes, Activation active)
   return STATUS_OK;
 }
 
-Status addLossFunction(const char *name, const char *nodes, LossType loss_)
+Status addLossFunction(int id, const char *name, const char *nodes, LossType loss_)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -169,8 +177,9 @@ Status addLossFunction(const char *name, const char *nodes, LossType loss_)
   return STATUS_OK;
 }
 
-Status netArchitecture(char * buffer, unsigned int length)
+Status netArchitecture(int id, char * buffer, unsigned int length)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -184,8 +193,9 @@ Status netArchitecture(char * buffer, unsigned int length)
   return STATUS_OK;
 }
 
-void lastError(char *buffer, unsigned int length)
+void lastError(int id, char *buffer, unsigned int length)
 {
+  sn::Net * model = modelSet[id];
   if(model) {
     std::string error = model->getLastErrorStr();
     if(length >= error.size()) {
@@ -194,8 +204,9 @@ void lastError(char *buffer, unsigned int length)
   }
 }
 
-void printLastError(Status status)
+void printLastError(int id, Status status)
 {
+  sn::Net * model = modelSet[id];
   if(model && status == STATUS_WARNING) {
     std::cout<<"MODEL WARNING: "<<model->getLastErrorStr()<<std::endl;
   } else if (model && status == STATUS_FAILURE) {
@@ -203,9 +214,10 @@ void printLastError(Status status)
   }
 }
 
-Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
-           unsigned int epochs, float learningRate)
+Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
+           unsigned int epochs, float learningRate, float & accuracy)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -215,7 +227,7 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
   sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
   sn::Tensor targetLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
   sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
-  float accuratSumm = 0;
+  accuracy = 0;
   int classes = labelsSize.w;
   for(unsigned int epoch = 0; epoch < epochs; ++epoch) {
     for (unsigned int i = 0; i < dataSize.bsz; ++i) { // Запись распределения ответов по нейронам выходным
@@ -223,125 +235,22 @@ Status fit(float *data, LayerSize dataSize, unsigned char *label, LayerSize labe
       tarData[label[i]] = 1;
     }
     // Запуск тренировки -----
-    float accurat = 0;
-    model->training(learningRate, inputLayer, outputLayer, targetLayer, accurat);
-    // Расчет ошибки -----
-    sn::snFloat* targetData = targetLayer.data();
-    sn::snFloat* outData = outputLayer.data();
-    size_t accCnt = 0, bsz = dataSize.bsz;
-    for (size_t i = 0; i < bsz; ++i) {
-      float* refTarget = targetData + i * classes;
-      float* refOutput = outData + i * classes;
-
-      // Вычисление правдивости предположения -----
-      auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + classes));
-      auto maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + classes));
-
-      if (maxTargInx == maxOutInx) {  // Если угадали
-        ++accCnt;
-      }
-    }
-
-    accuratSumm += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
-    accuratSummLast = epoch > 0 ? accuratSumm / epoch: accuratSumm;
-    accuratSummLast = accuratSummLast > 1.f ? 1.00f : accuratSummLast;
-    //std::cout << epoch << " accurate " << accuratSummLast << " " << model->getLastErrorStr() << std::endl;
+    model->training(learningRate, inputLayer, outputLayer, targetLayer, accuracy);
   }
   return STATUS_OK;
 }
 
-float lastAccurateSum()
+Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
+                unsigned int /*verbose*/, float & accuracy)
 {
-    return accuratSummLast;
-}
-
-Status trainCreate(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize)
-{
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
   if (labelsSize.bsz != dataSize.bsz) {
     return STATUS_FAILURE;
   }
-  if(spInputLayer != nullptr || spTargetLayer != nullptr || spOutputLayer != nullptr) {
-    return STATUS_FAILURE;
-  }
-  sClasses = labelsSize.w;
-  spInputLayer = new sn::Tensor(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
-  spTargetLayer = new sn::Tensor(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
-  spOutputLayer = new sn::Tensor(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
-  for (unsigned int i = 0; i < dataSize.bsz; ++i) { // Запись распределения ответов по нейронам выходным
-    float* tarData = spTargetLayer->data() + sClasses * i;
-    tarData[label[i]] = 1;
-  }
-  accuratSummLast = 0;
-  sEpochs = 0;
-  sAccuratSumm = 0;
-  return STATUS_OK;
-}
-
-Status trainStep(float learningRate, LayerSize dataSize)
-{
-  if(!model) {
-    return STATUS_FAILURE;
-  }
-  // Запуск тренировки -----
-  float accurat = 0;
-  model->training(learningRate, *spInputLayer, *spOutputLayer, *spTargetLayer, accurat);
-  // Расчет ошибки -----
-  sn::snFloat* targetData = spTargetLayer->data();
-  sn::snFloat* outData = spOutputLayer->data();
-  size_t accCnt = 0, bsz = dataSize.bsz;
-  for (size_t i = 0; i < bsz; ++i) {
-    float* refTarget = targetData + i * sClasses;
-    float* refOutput = outData + i * sClasses;
-
-    // Вычисление правдивости предположения -----
-    auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + sClasses));
-    auto maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + sClasses));
-
-    if (maxTargInx == maxOutInx) {  // Если угадали
-      ++accCnt;
-    }
-  }
-
-  sAccuratSumm += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
-  accuratSummLast = sEpochs > 0 ? sAccuratSumm / sEpochs : sAccuratSumm;
-  accuratSummLast = accuratSummLast > 1.f ? 1.00f : accuratSummLast;
-  ++sEpochs;
-  return STATUS_OK;
-}
-
-Status trainStop()
-{
-  if(!model) {
-    return STATUS_FAILURE;
-  }
-  if(spInputLayer != nullptr || spTargetLayer != nullptr || spOutputLayer != nullptr) {
-    spInputLayer->clear();
-    spTargetLayer->clear();
-    spOutputLayer->clear();
-  }
-  delete spInputLayer;
-  delete spTargetLayer;
-  delete spOutputLayer;
-  spInputLayer = nullptr;
-  spTargetLayer = nullptr;
-  spOutputLayer = nullptr;
-
-  return STATUS_OK;
-}
-
-Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
-                unsigned int /*verbose*/)
-{
-  if(!model) {
-    return STATUS_FAILURE;
-  }
-  if (labelsSize.bsz != dataSize.bsz) {
-    return STATUS_FAILURE;
-  }
-  sTestPercent = 0.f;
+  accuracy = 0.f;
   sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
   sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
   model->forward(false, inputLayer, outputLayer);
@@ -354,18 +263,13 @@ Status evaluate(float *data, LayerSize dataSize, unsigned char *label, LayerSize
       ++errors;
     }
   }
-  sTestPercent = 100.00f - float(errors) * 100.f / float(dataSize.bsz);
-  //std::cout<<"ERRORS QTY = "<<errors<<std::endl;
+  accuracy = 1.f - (float(errors) / float(dataSize.bsz));
   return STATUS_OK;
 }
 
-float testPercents() 
+Status saveModel(int id, const char *filename)
 {
-  return sTestPercent;
-}
-
-Status saveModel(const char *filename)
-{
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }
@@ -375,8 +279,9 @@ Status saveModel(const char *filename)
   return STATUS_OK;
 }
 
-Status loadModel(const char *filename)
+Status loadModel(int id, const char *filename)
 {
+  sn::Net * model = modelSet[id];
   if(!model) {
     return STATUS_FAILURE;
   }

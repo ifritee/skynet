@@ -10,103 +10,38 @@ using namespace std;
 
 namespace cpp_keras {
 
-  float *MnistSet::trainData() const
+  DatasetParameters MnistSet::trainParameters()
   {
-    return m_trainData;
+    ifstream datasetStream(m_dataFile, std::ios::binary);
+    DatasetParameters param = extractDatasetParameters(datasetStream);
+    datasetStream.close();
+    return param;
   }
 
-  uint8_t *MnistSet::trainLabel() const
+  MnistSet::MnistSet(const std::string& pathToData, const std::string& pathToLabel) :
+    m_dataFile(pathToData),
+    m_labelFile(pathToLabel)
   {
-    return m_trainLabel;
-  }
-
-  DatasetParameters MnistSet::trainParameters() const
-  {
-    return m_trainParameters;
-  }
-
-  float *MnistSet::testData() const
-  {
-    return m_testData;
-  }
-
-  uint8_t *MnistSet::testLabel() const
-  {
-    return m_testLabel;
-  }
-
-  DatasetParameters MnistSet::testParameters() const
-  {
-    return m_testParameters;
-  }
-
-  MnistSet::MnistSet()
-  {
-
   }
 
   MnistSet::~MnistSet()
   {
-    delete [] m_trainData;
-    m_trainData = nullptr;
-    delete [] m_trainLabel;
-    m_trainLabel = nullptr;
-    delete [] m_testData;
-    m_testData = nullptr;
-    delete [] m_testLabel;
-    m_testLabel = nullptr;
   }
 
-  bool MnistSet::readTrainData(const string &pathTo)
+  bool MnistSet::readData(unsigned int qty, unsigned int step, float * data, uint8_t * labels)
   {
-    return readData(pathTo + "/train-images-idx3-ubyte", pathTo + "/train-labels-idx1-ubyte",
-                    true, m_trainParameters);
-  }
-
-  bool MnistSet::readTrainData(const std::string& pathToData, const std::string& pathToLabel,
-                               unsigned int qty, unsigned int step)
-  {
-      return readData(pathToData, pathToLabel, true, m_trainParameters, qty, step);
-  }
-
-  bool MnistSet::readTestData(const string &pathTo)
-  {
-    return readData(pathTo + "/t10k-images-idx3-ubyte", pathTo + "/t10k-labels-idx1-ubyte",
-                    false, m_testParameters);
-  }
-
-  bool MnistSet::readTestData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty)
-  {
-      return readData(pathToData, pathToLabel, false, m_testParameters, qty);
-  }
-
-  bool MnistSet::readData(const string & pathToData, const string & pathToLabels,
-                          bool isTrain, DatasetParameters & param, unsigned int qty,
-                          unsigned int step)
-  {
-    ifstream datasetStream(pathToData, std::ios::binary);
-    ifstream labelsStream(pathToLabels, std::ios::binary);
+    ifstream datasetStream(m_dataFile, std::ios::binary);
+    ifstream labelsStream(m_labelFile, std::ios::binary);
     try {
-      float * data = nullptr;
-      uint8_t * labels = nullptr;
       //----- Чтение основных параметров -----
-      param = extractDatasetParameters(datasetStream);
-      step = qty > 0 ? (step % (param.m_batchs / qty)) : 0;
-      if(qty > 0 && qty < param.m_batchs) {
-        param.m_batchs = qty;
+      m_trainParameters = extractDatasetParameters(datasetStream);
+      step = qty > 0 ? (step % (m_trainParameters.m_batchs / qty)) : 0;
+      if(qty > 0 && qty < m_trainParameters.m_batchs) {
+        m_trainParameters.m_batchs = qty;
       }
-      unsigned int length = param.qty();
-      if (length > 0) {
-        data = new float[length];
-        if(isTrain) {
-          delete [] m_trainData;
-          m_trainData = data;
-        } else {
-          delete [] m_testData;
-          m_testData = data;
-        }
-        //----- Чтение данных ------
-        param.m_batchs = extractDataset(datasetStream, param, data, step);
+      unsigned int length = m_trainParameters.qty();
+      if (length > 0) { //----- Чтение данных ------
+        m_trainParameters.m_batchs = extractDataset(datasetStream, m_trainParameters, data, step);
         datasetStream.close();
       }
       //----- Чтение основных параметров -----
@@ -115,16 +50,7 @@ namespace cpp_keras {
         datasetParameters.m_batchs = qty;
       }
       length = datasetParameters.qty();
-      if (length > 0) {
-        labels = new uint8_t[length];
-        if(isTrain) {
-          delete [] m_trainLabel;
-          m_trainLabel = labels;
-        } else {
-          delete [] m_testLabel;
-          m_testLabel = labels;
-        }
-        //----- Чтение данных ------
+      if (length > 0) { //----- Чтение данных ------
         datasetParameters.m_batchs = extractLabels(labelsStream, datasetParameters, labels, step);
         labelsStream.close();
       }
@@ -134,6 +60,8 @@ namespace cpp_keras {
       labelsStream.close();
       return false;
     }
+    datasetStream.close();
+    labelsStream.close();
     return true;
   }
 

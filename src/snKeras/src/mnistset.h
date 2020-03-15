@@ -26,35 +26,31 @@ namespace cpp_keras {
   /** @brief Обработка изображения для дальнейшей передачи в Keras */
   class MnistSet
   {
-    float * m_trainData = nullptr;
-    uint8_t * m_trainLabel = nullptr;
+    std::string m_dataFile; ///< @brief Файл данных
+    std::string m_labelFile; ///< @brief Файл меток
     DatasetParameters m_trainParameters;
-    float * m_testData = nullptr;
-    uint8_t * m_testLabel = nullptr;
-    DatasetParameters m_testParameters;
 
   public:
-    /** @brief Конструктор */
-    MnistSet();
+    /**
+     * @brief MnistSet Конструктор
+     * @param pathToData Путь к файлу с данными
+     * @param pathToLabel Путь к файлу с метками
+     */
+    MnistSet(const std::string& pathToData, const std::string& pathToLabel);
     /** @brief Деструктор */
     virtual ~MnistSet();
+    /**
+     * @brief readData Чтение данных
+     * @param qty Количество данных (0 - все данные за раз)
+     * @param step Номер шага чтения
+     * @param data Куда сохранять данные
+     * @return labels Куда сохранять метки
+     */
+    bool readData(unsigned int qty = 0, unsigned int step = 0, float * data = nullptr, uint8_t * labels = nullptr);
 
-    bool readTrainData(const std::string & pathTo);
-    bool readTrainData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0, unsigned int step = 0);
-
-    bool readTestData(const std::string & pathTo);
-    bool readTestData(const std::string& pathToData, const std::string& pathToLabel, unsigned int qty = 0);
-
-    float *trainData() const;
-    uint8_t *trainLabel() const;
-    DatasetParameters trainParameters() const;
-    float *testData() const;
-    uint8_t *testLabel() const;
-    DatasetParameters testParameters() const;
+    DatasetParameters trainParameters();
 
   private:
-    bool readData(const std::string & pathToData, const std::string &pathToLabels,
-                  bool isTrain, DatasetParameters &param, unsigned int qty = 0, unsigned int step = 0);
     DatasetParameters extractDatasetParameters(std::ifstream & is);
     int extractDataset(std::ifstream & is, DatasetParameters param, float * data, unsigned int step = 0);
     DatasetParameters extractLabelParameters(std::ifstream & is);

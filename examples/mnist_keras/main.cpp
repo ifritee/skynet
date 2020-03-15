@@ -6,82 +6,84 @@
 #include "keras.h"
 #include "dataset.h"
 
-#define KR_CHECK(A) printLastError(A)
-
 using namespace std;
 
 int main()
 {
   //----- Создание графа модели -----
-  KR_CHECK(createModel());
-  KR_CHECK(addInput("Input", "D1"));
-  KR_CHECK(addDense("D1", "D2", 200));
-  KR_CHECK(addDense("D2", "LS", 10));
-  KR_CHECK(addLossFunction("LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY));
+  int classCnt = 10;  // выход: вероятностное распределение на 10 классов
+  int modelID = createModel();
+  addInput(modelID, "Input", "D1");
+  addDense(modelID, "D1", "D2", 800);
+  addDense(modelID, "D2", "LS", classCnt);
+  addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
   //=================================
 
   //----- Вывод модели --------------
   char buffer[1024];
-  KR_CHECK(netArchitecture(buffer, 1024));
+  netArchitecture(modelID, buffer, 1024);
   cout<<buffer<<endl;
   //=================================
 #define __TRAINING__
   LayerSize layerDataSize, layerLabelSize;
-  int classCnt = 10;  // выход: вероятностное распределение на 10 классов
 #if defined(__TRAINING__)
 
+  int id = createMnistDataset("data/train-images-idx3-ubyte", "data/train-labels-idx1-ubyte");
+  MnistDATA trainData = mnistParameters(id);
+  const int qtyM = 60000;
+  const int epoche = 10;
 
-//  KR_CHECK(readMnist("data"));
-  for(int i = 0; i < 600; ++i) {
-    KR_CHECK(readMnistTrain("data/train-images-idx3-ubyte", "data/train-labels-idx1-ubyte", 10, i));
-  //
-
-
-    //----- Тренировка ----------------
-
-    MnistDATA trainData = mnistTrainParams();
-    layerDataSize.bsz = trainData.quantity;
-    layerDataSize.ch = 1;
+  float * dataM = new float[qtyM * trainData.cols * trainData.rows];
+  uint8_t * labelM = new uint8_t[qtyM];
+  for(int i = 0; i < epoche; ++i) {
+    readMnist(id, dataM, labelM, qtyM, i);
+    layerDataSize.bsz = qtyM;//trainData.quantity;
+    layerDataSize.ch = trainData.depth;
     layerDataSize.w = trainData.rows;
     layerDataSize.h = trainData.cols;
-    layerLabelSize.bsz = trainData.quantity;
+    layerLabelSize.bsz = qtyM;//trainData.quantity;
     layerLabelSize.w = classCnt;
     layerLabelSize.h = 1;
     layerLabelSize.ch = 1;
     //----- Эпохи не важны (1 штука) -----
-    KR_CHECK(fit(trainData.data, layerDataSize, trainData.labels, layerLabelSize, 1, 0.001f));
+    float accuracy = 0.f;
+    fit(modelID, dataM, layerDataSize, labelM, layerLabelSize, 1, 0.001f, accuracy);
+    cout<<"EPOCHE "<<i<<" : "<< accuracy <<endl;
   }
+  deleteMnistDataset(id);
 
-
-  //----- Последовательно эпоха за эпохой -----
-//  KR_CHECK(trainCreate(trainData.data, layerDataSize, trainData.labels, layerLabelSize));
-//  for (int i = 0; i < 10; ++i) {
-//    KR_CHECK(trainStep(0.001f, layerDataSize));
-//    cout<<lastAccurateSum()<<endl;
-//  }
-//  KR_CHECK(trainStop());
-//  cout<<lastAccurateSum()<<endl;
-  KR_CHECK(saveModel("w.dat"));
+  delete [] dataM;
+  delete [] labelM;
+  saveModel(modelID, "w.dat");
 
   //----- Тестирование --------------
 #elif defined(__TESTING__)
-  KR_CHECK(readMnistTest("data/t10k-images-idx3-ubyte", "data/t10k-labels-idx1-ubyte"));
-  MnistDATA testData = mnistTestParams();
-  layerDataSize.bsz = testData.quantity;
-  layerDataSize.ch = 1;
-  layerDataSize.w = testData.rows;
-  layerDataSize.h = testData.cols;
-  layerLabelSize.bsz = testData.quantity;
+  int id = createMnistDataset("data/t10k-images-idx3-ubyte", "data/t10k-labels-idx1-ubyte");
+  MnistDATA mnistDATA = mnistParameters(id);
+  float * dataM = new float[mnistDATA.quantity * mnistDATA.cols * mnistDATA.rows];
+  uint8_t * labelM = new uint8_t[mnistDATA.quantity];
+  readMnist(id, dataM, labelM);
+
+
+  layerDataSize.bsz = mnistDATA.quantity;
+  layerDataSize.ch = mnistDATA.depth;
+  layerDataSize.w = mnistDATA.rows;
+  layerDataSize.h = mnistDATA.cols;
+  layerLabelSize.bsz = mnistDATA.quantity;
   layerLabelSize.w = classCnt;
   layerLabelSize.h = 1;
   layerLabelSize.ch = 1;
 
-  KR_CHECK(loadModel("w.dat"));
-  KR_CHECK(evaluate(testData.data, layerDataSize, testData.labels, layerLabelSize, 2));
-  cout<<"Testing: "<<testPercents()<<endl;
+  loadModel(modelID, "w.dat");
+  float accuracy = 0.f;
+  evaluate(modelID, dataM, layerDataSize, labelM, layerLabelSize, 2, accuracy);
+  cout<<"Testing: "<<accuracy<<endl;
+  delete [] dataM;
+  delete [] labelM;
 
 #endif //__TRAINING__ or __TESTING__
 
+  deleteModel(modelID);
 
   return 0;
 }

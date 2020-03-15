@@ -1,99 +1,58 @@
 #include <iostream>
+#include <vector>
 
 #include "mnistset.h"
 #include "dataset.h"
 
 using namespace std;
 
-static cpp_keras::MnistSet * mnistSet = nullptr;
+static vector<cpp_keras::MnistSet *> mnistSet;
 
-Status readMnist(const char *path)
+int createMnistDataset(const char *dataFile, const char *labelFile)
 {
-  Status status = STATUS_OK;
   try {
-    if (mnistSet != nullptr) {
-       delete mnistSet;
-    }
-    mnistSet = new cpp_keras::MnistSet;
-    if( !mnistSet->readTrainData(path) ) {
-      cerr<<"Read MNIST training data crashed! "<<endl;
-      status = STATUS_WARNING;
-    }
-    if( !mnistSet->readTestData(path) ) {
-      cerr<<"Read MNIST test data crashed! "<<endl;
-      status = STATUS_WARNING;
-    }
+    cpp_keras::MnistSet * mnist = new cpp_keras::MnistSet(dataFile, labelFile);
+    mnistSet.push_back(mnist);
+    return mnistSet.size() - 1;
   } catch(std::logic_error & e) {
     cerr<<"READ MNIST ERROR: "<<e.what()<<endl;
+    return -1;
+  }
+  return -1;
+}
+
+Status deleteMnistDataset(int id)
+{
+  cpp_keras::MnistSet * mnist = mnistSet[id];
+  delete mnist;
+  mnistSet[id] = nullptr;
+  return STATUS_OK;
+}
+
+Status readMnist(int id, float *datas, unsigned char *labels, unsigned int qty, unsigned int step)
+{
+  cpp_keras::MnistSet * mnist = mnistSet[id];
+  if (mnist) {
+    if( !mnist->readData(qty, step,datas, labels) ) {
+      return STATUS_FAILURE;
+    }
+  } else {
     return STATUS_FAILURE;
   }
-  return status;
+  return STATUS_OK;
 }
 
-Status readMnistTrain(const char* dataFile, const char* labelFile, unsigned int qty, unsigned int step)
-{
-    Status status = STATUS_OK;
-    try {
-        if (mnistSet == nullptr) {
-            mnistSet = new cpp_keras::MnistSet;
-        }
-        if (!mnistSet->readTrainData(dataFile, labelFile, qty, step)) {
-            cerr << "Read MNIST training data crashed! " << endl;
-            status = STATUS_WARNING;
-        }
-    }
-    catch (std::logic_error & e) {
-        cerr << "READ MNIST ERROR: " << e.what() << endl;
-        return STATUS_FAILURE;
-    }
-    return status;
-}
-
-Status readMnistTest(const char* dataFile, const char* labelFile, unsigned int qty)
-{
-    Status status = STATUS_OK;
-    try {
-        if (mnistSet == nullptr) {
-            mnistSet = new cpp_keras::MnistSet;
-        }
-        if (!mnistSet->readTestData(dataFile, labelFile, qty)) {
-            cerr << "Read MNIST training data crashed! " << endl;
-            status = STATUS_WARNING;
-        }
-    }
-    catch (std::logic_error & e) {
-        cerr << "READ MNIST ERROR: " << e.what() << endl;
-        return STATUS_FAILURE;
-    }
-    return status;
-}
-
-MnistDATA mnistTrainParams()
+MnistDATA mnistParameters(int id)
 {
   MnistDATA mnistData;
-  if(mnistSet) {
-    mnistData.data = mnistSet->trainData();
-    mnistData.labels = mnistSet->trainLabel();
-    cpp_keras::DatasetParameters param = mnistSet->trainParameters();
+  cpp_keras::MnistSet * mnist = mnistSet[id];
+  if(mnist) {
+    cpp_keras::DatasetParameters param = mnist->trainParameters();
     mnistData.quantity = param.m_batchs;
     mnistData.rows = param.m_rows;
     mnistData.cols = param.m_cols;
-    mnistData.channels = 1;
+    mnistData.depth = 1;
   }
   return mnistData;
 }
 
-MnistDATA mnistTestParams()
-{
-  MnistDATA mnistData;
-  if(mnistSet) {
-    mnistData.data = mnistSet->testData();
-    mnistData.labels = mnistSet->testLabel();
-    cpp_keras::DatasetParameters param = mnistSet->testParameters();
-    mnistData.quantity = param.m_batchs;
-    mnistData.rows = param.m_rows;
-    mnistData.cols = param.m_cols;
-    mnistData.channels = 1;
-  }
-  return mnistData;
-}
