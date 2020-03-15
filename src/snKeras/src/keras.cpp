@@ -235,7 +235,24 @@ Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerS
       tarData[label[i]] = 1;
     }
     // Запуск тренировки -----
-    model->training(learningRate, inputLayer, outputLayer, targetLayer, accuracy);
+    float trainAccuracy = 0.f;
+    model->training(learningRate, inputLayer, outputLayer, targetLayer, trainAccuracy);
+    // Расчет ошибки -----
+    sn::snFloat* targetData = targetLayer.data();
+    sn::snFloat* outData = outputLayer.data();
+    size_t accCnt = 0, bsz = dataSize.bsz;
+    for (size_t i = 0; i < bsz; ++i) {
+      float* refTarget = targetData + i * classes;
+      float* refOutput = outData + i * classes;
+      // Вычисление правдивости предположения -----
+      auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + classes));
+      auto maxTargInx = std::distance(refTarget, std::max_element(refTarget, refTarget + classes));
+
+      if (maxTargInx == maxOutInx) {  // Если угадали
+        ++accCnt;
+      }
+    }
+    accuracy += (accCnt * 1.F) / bsz;  // Расчет показателя угадывания (до 100%)
   }
   return STATUS_OK;
 }
