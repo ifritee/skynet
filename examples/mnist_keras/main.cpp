@@ -30,12 +30,15 @@ int main()
 
   int id = createMnistDataset("data/train-images-idx3-ubyte", "data/train-labels-idx1-ubyte");
   MnistDATA trainData = mnistParameters(id);
-  const int qtyM = 60000;
-  const int epoche = 10;
+  const int qtyM = 1, epoche = 10000, reset = 100;
 
   float * dataM = new float[qtyM * trainData.cols * trainData.rows];
   uint8_t * labelM = new uint8_t[qtyM];
+  float accuracySum = 0.f;
   for(int i = 0; i < epoche; ++i) {
+    if(i % reset == 0) {
+      accuracySum = 0.f;
+    }
     readMnist(id, dataM, labelM, qtyM, i);
     layerDataSize.bsz = qtyM;//trainData.quantity;
     layerDataSize.ch = trainData.depth;
@@ -48,7 +51,8 @@ int main()
     //----- Эпохи не важны (1 штука) -----
     float accuracy = 0.f;
     fit(modelID, dataM, layerDataSize, labelM, layerLabelSize, 1, 0.001f, accuracy);
-    cout<<"EPOCHE "<<i<<" : "<< accuracy <<endl;
+    accuracySum += accuracy;
+    cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
   }
   deleteMnistDataset(id);
 
