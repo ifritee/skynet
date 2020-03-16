@@ -108,6 +108,9 @@ begin
       end;
       cY[0] := m_trainQty * m_width * m_height * m_depth; // Количество данных = количеству наборов * W * H
       cY[1] := m_trainQty; // Количество меток = количеству наборов
+      cY[2] := 1;
+      cY[3] := 1;
+      cY[4] := 1;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -158,33 +161,6 @@ begin
         ErrorEvent('MNIST files not exist!', msError, VisualObject);
         Exit;
       end;
-
-//      if m_isOneSend = True then begin // Только для пакета MNIST
-        // Считываем тренировочные данные
-//        if m_sendDataType = 0  then begin
-//          datas := m_trainData;
-//          labels := m_trainLabel;
-//        end else begin
-//          datas := m_testData;
-//          labels := m_testLabel;
-//        end;
-//        // Проверяем доступность файлов
-//        if FileExists(datas) AND FileExists(labels) then begin
-//          returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(datas)),
-//                                               PAnsiChar(AnsiString(labels)),
-//                                               m_trainQty);
-//          if returnCode <> STATUS_OK then begin
-//            ErrorEvent('Read MNIST db is failure!', msError, VisualObject);
-//            Exit;
-//          end;
-//          m_mnistData := mnistTrainParams;
-//          ErrorEvent('Read MNIST: ' + IntToStr(m_mnistData.quantity), msInfo, VisualObject);
-//        end else begin
-//          ErrorEvent('Read MNIST failure ', msError, VisualObject);
-//          isWorkDone := False;
-//          Exit;
-//        end;
-//      end;
     end;
     f_GoodStep: begin
       if m_sendDataType = 0  then begin
@@ -208,58 +184,13 @@ begin
           Y[0].Arr^[I] := dataPoint[I];
         for I := 0 to Length(labelPoint) - 1 do
           Y[1].Arr^[I] := labelPoint[I];
+        Y[2].Arr^[0] := m_width;
+        Y[3].Arr^[0] := m_height;
+        Y[4].Arr^[0] := m_depth;
       end else begin
         ErrorEvent('MNIST files not exist!', msError, VisualObject);
         Exit;
       end;
-      //----- Только для одноразовой посылки всех данных -----
-//      if m_stepNumber = 0 then
-//      begin
-//        if (m_isOneSend = True) AND (isWorkDone = True) then begin // Только для пакета MNIST
-//          Y[0].Arr^[0] := UNN_DATASEMNIST;
-//          p64 := UInt64(@m_mnistData);  // Для тренировочных данных
-//          Y[0].Arr^[1] := p64 shr 32;
-//          Y[0].Arr^[2]:= (p64 shl 32) shr 32;
-//        end else begin // Если данные будут идти по шагам
-//          Y[0].Arr^[0] := UNN_DATASTEPBYSTEP;
-//          Y[0].Arr^[1] := 0;
-//          Y[0].Arr^[2]:= 0;
-//        end;
-      //----- Для посылки по шагам -----
-//      end else begin
-//        if m_isOneSend = True then begin
-//          Y[0].Arr^[0] := UNN_DATASEMNIST;
-//          Y[0].Arr^[1] := 0;
-//          Y[0].Arr^[2]:= 0;
-//        end else begin
-//          // Считываем тренировочные данные
-//          if m_sendDataType = 0  then begin
-//            datas := m_trainData;
-//            labels := m_trainLabel;
-//          end else begin
-//            datas := m_testData;
-//            labels := m_testLabel;
-//          end;
-//          // Проверяем доступность файлов
-//          if FileExists(datas) AND FileExists(labels) then begin
-//            returnCode := dataset.readMnistTrain(PAnsiChar(AnsiString(datas)),
-//                                                 PAnsiChar(AnsiString(labels)),
-//                                                 m_trainQty, m_stepNumber);
-//            if returnCode <> STATUS_OK then begin
-//              ErrorEvent('Read MNIST db is failure!', msError, VisualObject);
-//              Exit;
-//            end;
-//            m_mnistData := mnistTrainParams;
-//            Y[0].Arr^[0] := UNN_DATASTEPBYSTEP;
-//            p64 := UInt64(@m_mnistData);  // Для тренировочных данных
-//            Y[0].Arr^[1] := p64 shr 32;
-//            Y[0].Arr^[2]:= (p64 shl 32) shr 32;
-//          end else begin
-//            ErrorEvent('Read MNIST failure ', msError, VisualObject);
-//            Exit;
-//          end;
-//        end;
-//      end;
       inc(m_stepNumber);
     end;
   end

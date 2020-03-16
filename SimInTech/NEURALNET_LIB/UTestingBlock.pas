@@ -23,6 +23,9 @@ type
 
     m_crossOut: NativeInt;
     m_fileLoad: String;
+    m_id : Integer;
+    m_label: array of Byte;
+    m_maxQty: Integer; // Максимальное кол-во элементов в посылке
   end;
 
 implementation
@@ -50,6 +53,10 @@ begin
       Result:=NativeInt(@m_fileLoad);
       DataType:=dtString;
       Exit;
+    end else if StrEqu(ParamName,'max_qty') then begin
+      Result:=NativeInt(@m_maxQty);
+      DataType:=dtInteger;
+      Exit;
     end;
   end
 end;
@@ -59,7 +66,8 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-
+      cY[0] := m_maxQty;
+      cY[1] := 1;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -72,6 +80,9 @@ var
   p64: UInt64;
   datas, labels : TLayerSize;
   returnCode : NativeInt;
+  m_data: PDataArr; /// Данные, которые проходят через слои модели
+  accuracy : Single;
+  //color, alpha : Integer;
 begin
  Result:=0;
   case Action of
@@ -82,45 +93,53 @@ begin
       stepCount := 0;
     end;
     f_GoodStep: begin
-      if stepCount = 0 then // Только для первого шага
-      begin
-//        for I := 0 to cU.FCount - 1 do begin  // Пройдем по входам
-//          if U[I].FCount > 0 then begin
-//            if U[I].Arr^[0] = UNN_NNMAGICWORD then // Если пришло состояние сети
-//            begin
-//              m_nnState := False;
-//              if U[I].FCount = 2 then
-//                m_nnState := (U[I].Arr^[1] = 1); // Установим состояние сети
-//              if m_nnState <> True then
-//                ErrorEvent('State of NN FALSE', msError, VisualObject);
-//            end else if ((U[I].Arr^[0] = UNN_DATASEMNIST) AND (U[I].FCount = 3 )) then // Если пришли данные
-//            begin
-//              p64 := Round(U[I].Arr^[1]);
-//              p64 := p64 shl 32;
-//              p64 := p64 OR UInt64(Round(U[I].Arr^[2]));
-//              m_testData := pMNIST_DATA(p64);
-//
-//              datas.w := m_testData.rows;
-//              datas.h := m_testData.cols;
-//              datas.ch := m_testData.channels;
-//              datas.bsz := m_testData.quantity;
-//              labels.w := m_crossOut;
-//              labels.h := 1;
-//              labels.ch := 1;
-//              labels.bsz := m_testData.quantity;
-//              if m_fileLoad.Length > 0 then begin
-//                returnCode := loadModel(PAnsiChar(AnsiString(m_fileLoad)));
-//                if returnCode <> STATUS_OK then begin
-//                  ErrorEvent('Crashed load model weight', msError, VisualObject);
-//                end;
-//              end;
-//              returnCode := evaluate(m_testData.data, datas, m_testData.labels, labels, 2);
-//            end;
-//          end;
-//        end;
-      end else begin
-//        Y[0].Arr^[0] := testPercents();
+    if stepCount = 0 then // Только для первого шага
+      // Вход 0 - данные
+      // Вход 1 - метки
+      // Вход 2 - ширина
+      // Вход 3 - высота
+      // Вход 4 - глубина
+      if cU.FCount <> 5 then begin
+        ErrorEvent('Input ports qty != 5', msError, VisualObject);
+        Exit;
       end;
+      m_id := Round(U[0].Arr^[0]);
+      p64 := Round(U[0].Arr^[1]);
+      p64 := p64 shl 32;
+      p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
+      m_data := PDataArr(p64);
+      SetLength(m_label, U[1].Count);
+      for I := 0 to Length(m_label) - 1 do begin
+        m_label[I] := Round(U[1].Arr^[I]);
+      end;
+      datas.w := Round(U[2].Arr^[0]);
+      datas.h := Round(U[3].Arr^[0]);
+      datas.ch := Round(U[4].Arr^[0]);
+      datas.bsz := Length(m_label);
+      labels.w := m_crossOut;
+      labels.h := 1;
+      labels.ch := 1;
+      labels.bsz := Length(m_label);
+      if m_fileLoad.Length > 0 then begin
+        returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
+        if returnCode <> STATUS_OK then begin
+          ErrorEvent('Crashed load model weight', msError, VisualObject);
+          Exit;
+        end;
+      end else begin
+        ErrorEvent('Open weight file is crashed', msError, VisualObject);
+        Exit;
+      end;
+      returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
+      Y[1].Arr^[0] := accuracy;
+      for I := 0 to Length(m_data^) - 1 do begin
+        // color := Round(m_data^[I] * 255.0);
+        // alpha := 255;
+        // Y[0].Arr^[I] := (Integer(alpha) SHL 24) or (Integer(color) SHL 16) or (Integer(color) SHL 8) or Integer(color);
+        Y[0].Arr^[I] := m_data^[I];
+
+      end;
+
       inc(stepCount);
     end;
     f_Stop : begin

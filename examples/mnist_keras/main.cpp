@@ -10,6 +10,13 @@ using namespace std;
 
 int main()
 {
+  int aaa = 0;
+  int color = 12;
+  int alpha = 255;
+  aaa = char(alpha) << 24 | char(color) << 16 | char(color) << 8 | color;
+
+
+
   //----- Создание графа модели -----
   int classCnt = 10;  // выход: вероятностное распределение на 10 классов
   int modelID = createModel();

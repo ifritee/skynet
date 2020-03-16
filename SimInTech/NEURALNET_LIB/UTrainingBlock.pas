@@ -5,8 +5,6 @@ interface
 uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset;
 
 type
-  TDataArr = array of Single;
-  PDataArr = ^TDataArr;
   TTrainingBlock = class(TRunObject)
   public
     // Конструктор класса
@@ -27,7 +25,6 @@ type
     m_learningRate : double;
     m_fileSave : String;
     m_fileLoad: String;
-    m_width, m_height, m_depth : Integer;
 
     m_label: array of Byte;
 
@@ -69,18 +66,6 @@ begin
       Result:=NativeInt(@m_fileLoad);
       DataType:=dtString;
       Exit;
-    end else if StrEqu(ParamName,'width') then begin
-      Result:=NativeInt(@m_width);
-      DataType:=dtInteger;
-      Exit;
-    end else if StrEqu(ParamName,'height') then begin
-      Result:=NativeInt(@m_height);
-      DataType:=dtInteger;
-      Exit;
-    end else if StrEqu(ParamName,'depth') then begin
-      Result:=NativeInt(@m_depth);
-      DataType:=dtInteger;
-      Exit;
     end;
   end
 end;
@@ -121,29 +106,29 @@ begin
 //      begin
         // Вход 0 - данные
         // Вход 1 - метки
-        if cU.FCount <> 2 then begin
-          ErrorEvent('Output ports qty != 2', msError, VisualObject);
-          Exit;
-        end;
-        m_id := Round(U[0].Arr^[0]);
-        p64 := Round(U[0].Arr^[1]);
-        p64 := p64 shl 32;
-        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
-        m_data := PDataArr(p64);
-        SetLength(m_label, U[1].Count);
-        for I := 0 to Length(m_label) - 1 do begin
-          m_label[I] := Round(U[1].Arr^[I]);
-        end;
-        datas.w := m_width;
-        datas.h := m_height;
-        datas.ch := m_depth;
-        datas.bsz := Length(m_label);
-        labels.w := m_crossOut;
-        labels.h := 1;
-        labels.ch := 1;
-        labels.bsz := Length(m_label);
-        fit(m_id, @m_data^[0], datas, @m_label[0], labels, 1, m_learningRate, accuracy);
-        Y[0].Arr^[0] := accuracy;
+      if cU.FCount <> 5 then begin
+        ErrorEvent('Output ports qty != 5', msError, VisualObject);
+        Exit;
+      end;
+      m_id := Round(U[0].Arr^[0]);
+      p64 := Round(U[0].Arr^[1]);
+      p64 := p64 shl 32;
+      p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
+      m_data := PDataArr(p64);
+      SetLength(m_label, U[1].Count);
+      for I := 0 to Length(m_label) - 1 do begin
+        m_label[I] := Round(U[1].Arr^[I]);
+      end;
+      datas.w := Round(U[2].Arr^[0]);
+      datas.h := Round(U[3].Arr^[0]);
+      datas.ch := Round(U[4].Arr^[0]);
+      datas.bsz := Length(m_label);
+      labels.w := m_crossOut;
+      labels.h := 1;
+      labels.ch := 1;
+      labels.bsz := Length(m_label);
+      fit(m_id, @m_data^[0], datas, @m_label[0], labels, 1, m_learningRate, accuracy);
+      Y[0].Arr^[0] := accuracy;
       inc(stepCount);
     end;
     f_Stop : begin

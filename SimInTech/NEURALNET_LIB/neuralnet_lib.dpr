@@ -35,7 +35,8 @@ uses
   UResizeLayer in 'UResizeLayer.pas',
   UConvolutionLayer in 'UConvolutionLayer.pas',
   UDeconvolutionLayer in 'UDeconvolutionLayer.pas',
-  UPoolingLayer in 'UPoolingLayer.pas';
+  UPoolingLayer in 'UPoolingLayer.pas',
+  UMNISTPixel in 'UMNISTPixel.pas';
 
 {$R *.res}
 

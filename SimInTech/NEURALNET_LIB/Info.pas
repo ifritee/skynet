@@ -50,7 +50,8 @@ uses Blocks,
      UCropLayer,
      UActivatorLayer,
      UConvolutionLayer,
-     UConcatLayer;
+     UConcatLayer,
+     UMNISTPixel;
 
 function  Init:boolean;
 begin
@@ -77,7 +78,7 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..14] of TClassRecord =
+  ClassTable:array[0..15] of TClassRecord =
   (
     //Блоки для работы с нейросетью
     (Name:'TDataSet'; RunClass:TDataSet),
@@ -94,7 +95,8 @@ const
     (Name:'TDeconvolutionLayer'; RunClass:TDeconvolutionLayer),
     (Name:'TPoolingLayer'; RunClass:TPoolingLayer),
     (Name:'TResizeLayer'; RunClass:TResizeLayer),
-    (Name:'TSummatorLayer'; RunClass:TSummatorLayer)
+    (Name:'TSummatorLayer'; RunClass:TSummatorLayer),
+    (Name:'TMNISTPixel'; RunClass:TMNISTPixel)
   );
 
 
