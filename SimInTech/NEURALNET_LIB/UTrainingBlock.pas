@@ -14,6 +14,11 @@ type
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+    // Функция для обеспечения изменения визуальных параметров блока
+    procedure EditFunc(Props:TList;
+                       SetPortCount:TSetPortCount;
+                       SetCondPortCount:TSetCondPortCount;
+                       ExecutePropScript:TExecutePropScript);override;
 
   strict private
     stepCount: NativeInt; // Счетчик шагов
@@ -68,6 +73,15 @@ begin
       Exit;
     end;
   end
+end;
+
+//----- Редактирование свойств блока -----
+procedure TTrainingBlock.EditFunc;
+var
+  InputPortsNmb, OutputPortsNmb: integer;
+  MsgLength: Integer;
+begin
+//  SetCondPortCount(VisualObject, 0, pmInput, 0, sdLeft, 'label');
 end;
 
 function TTrainingBlock.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

@@ -252,6 +252,8 @@ KERAS_EXPORT Status fit(int id, float * data, LayerSize dataSize, unsigned char 
 KERAS_EXPORT Status evaluate(int id, float * data, LayerSize dataSize, unsigned char * label,
                              LayerSize labelsSize, unsigned int verbose, float & accuracy);
 
+KERAS_EXPORT Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& result);
+
 /**
  * @brief saveModel Сохраняет модель с весами
  * @param filename имя с путем

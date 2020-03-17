@@ -82,6 +82,7 @@ var
   returnCode : NativeInt;
   m_data: PDataArr; /// Данные, которые проходят через слои модели
   accuracy : Single;
+  runResult : Integer;
   //color, alpha : Integer;
 begin
  Result:=0;
@@ -93,51 +94,74 @@ begin
       stepCount := 0;
     end;
     f_GoodStep: begin
-    if stepCount = 0 then // Только для первого шага
+//    if stepCount = 0 then // Только для первого шага
       // Вход 0 - данные
-      // Вход 1 - метки
+      // Вход 1 - метки (Может и не быть)
       // Вход 2 - ширина
       // Вход 3 - высота
       // Вход 4 - глубина
-      if cU.FCount <> 5 then begin
-        ErrorEvent('Input ports qty != 5', msError, VisualObject);
-        Exit;
-      end;
-      m_id := Round(U[0].Arr^[0]);
-      p64 := Round(U[0].Arr^[1]);
-      p64 := p64 shl 32;
-      p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
-      m_data := PDataArr(p64);
-      SetLength(m_label, U[1].Count);
-      for I := 0 to Length(m_label) - 1 do begin
-        m_label[I] := Round(U[1].Arr^[I]);
-      end;
-      datas.w := Round(U[2].Arr^[0]);
-      datas.h := Round(U[3].Arr^[0]);
-      datas.ch := Round(U[4].Arr^[0]);
-      datas.bsz := Length(m_label);
-      labels.w := m_crossOut;
-      labels.h := 1;
-      labels.ch := 1;
-      labels.bsz := Length(m_label);
-      if m_fileLoad.Length > 0 then begin
-        returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
-        if returnCode <> STATUS_OK then begin
-          ErrorEvent('Crashed load model weight', msError, VisualObject);
+      if cU.FCount = 5 then begin
+        m_id := Round(U[0].Arr^[0]);
+        p64 := Round(U[0].Arr^[1]);
+        p64 := p64 shl 32;
+        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
+        m_data := PDataArr(p64);
+        SetLength(m_label, U[1].Count);
+        for I := 0 to Length(m_label) - 1 do begin
+          m_label[I] := Round(U[1].Arr^[I]);
+        end;
+        datas.w := Round(U[2].Arr^[0]);
+        datas.h := Round(U[3].Arr^[0]);
+        datas.ch := Round(U[4].Arr^[0]);
+        datas.bsz := Length(m_label);
+        labels.w := m_crossOut;
+        labels.h := 1;
+        labels.ch := 1;
+        labels.bsz := Length(m_label);
+        if m_fileLoad.Length > 0 then begin
+          returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent('Crashed load model weight', msError, VisualObject);
+            Exit;
+          end;
+        end else begin
+          ErrorEvent('Open weight file is crashed', msError, VisualObject);
           Exit;
         end;
-      end else begin
-        ErrorEvent('Open weight file is crashed', msError, VisualObject);
-        Exit;
-      end;
-      returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
-      Y[1].Arr^[0] := accuracy;
-      for I := 0 to Length(m_data^) - 1 do begin
-        // color := Round(m_data^[I] * 255.0);
-        // alpha := 255;
-        // Y[0].Arr^[I] := (Integer(alpha) SHL 24) or (Integer(color) SHL 16) or (Integer(color) SHL 8) or Integer(color);
-        Y[0].Arr^[I] := m_data^[I];
-
+        returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
+        Y[1].Arr^[0] := accuracy;
+        for I := 0 to Length(m_data^) - 1 do begin
+          Y[0].Arr^[I] := m_data^[I];
+        end;
+      end else if cU.FCount = 4 then begin
+        m_id := Round(U[0].Arr^[0]);
+        p64 := Round(U[0].Arr^[1]);
+        p64 := p64 shl 32;
+        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
+        m_data := PDataArr(p64);
+        datas.w := Round(U[1].Arr^[0]);
+        datas.h := Round(U[2].Arr^[0]);
+        datas.ch := Round(U[3].Arr^[0]);
+        datas.bsz := 1;  // Работа проводится только по 1 элементу
+        labels.w := m_crossOut;
+        labels.h := 1;
+        labels.ch := 1;
+        labels.bsz := 1;  // Работа проводится только по 1 элементу
+        if m_fileLoad.Length > 0 then begin
+          returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent('Crashed load model weight', msError, VisualObject);
+            Exit;
+          end;
+        end else begin
+          ErrorEvent('Open weight file is crashed', msError, VisualObject);
+          Exit;
+        end;
+        returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
+        Y[1].Arr^[0] := runResult;
+        for I := 0 to Length(m_data^) - 1 do begin
+          Y[0].Arr^[I] := m_data^[I];
+        end;
       end;
 
       inc(stepCount);

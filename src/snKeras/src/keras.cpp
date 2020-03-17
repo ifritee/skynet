@@ -284,6 +284,25 @@ Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, L
   return STATUS_OK;
 }
 
+
+Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& result)
+{
+    sn::Net* model = modelSet[id];
+    if (!model) {
+        return STATUS_FAILURE;
+    }
+    if (labelsSize.bsz != dataSize.bsz) {
+        return STATUS_FAILURE;
+    }
+    sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
+    sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+    model->forward(false, inputLayer, outputLayer);
+    sn::snFloat* outData = outputLayer.data();
+    float* refOutput = outData;
+    result = std::distance(refOutput, std::max_element(refOutput, refOutput + labelsSize.w));
+    return STATUS_OK;
+}
+
 Status saveModel(int id, const char *filename)
 {
   sn::Net * model = modelSet[id];

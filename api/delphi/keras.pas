@@ -225,6 +225,10 @@ Function evaluate(id : Integer; data: PSingle; dataSize: TLayerSize;
                   verbose: Cardinal; var accuracy : Single
                   ): TStatus; cdecl; external KERAS_EXPORT;
 
+Function run(id : Integer; data: PSingle; dataSize: TLayerSize;
+                  labelsSize: TLayerSize; var result : Integer
+                  ): TStatus; cdecl; external KERAS_EXPORT;
+
 // saveModel Сохраняет модель с весами
 // filename имя с путем
 // return Статус сохранения

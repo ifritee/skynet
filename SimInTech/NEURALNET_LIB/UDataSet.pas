@@ -33,7 +33,7 @@ type
      m_trainlabel: String;  /// Расположение тренировочных меток
      m_testData: String;  /// Расположение тестовых данных
      m_testLabel: String; /// Расположение тестовых меток
-//     m_mnistData: TMNIST_DATA; /// Тренировочные данные о MNIST
+
      m_trainQty : Cardinal; /// Количество считываемых данны
      m_sendDataType : Cardinal; /// Тип отправляемых данных
   end;
