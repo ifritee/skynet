@@ -7,14 +7,6 @@
 extern "C" {
 #endif //__cplusplus
 
-/** @brief Данные для наборов MNIST */
-struct MnistDATA {
-  int quantity; ///< @brief Количество данных
-  int rows; ///< @brief Количество строк в одном данном
-  int cols; ///< @brief Количество столбцов в одном данном
-  int depth; ///< @brief Количество каналов
-};
-
 /**
  * @brief createMnistDataset Создает очередной dataset
  * @param dataFile файл с данными
@@ -36,7 +28,21 @@ KERAS_EXPORT Status readMnist(int id, float * datas, unsigned char * labels, uns
 /**
  * @brief mnistTrainParams Возвращает данные тренировочного набора MNIST
  */
-KERAS_EXPORT MnistDATA mnistParameters(int id);
+KERAS_EXPORT LayerSize mnistParameters(int id);
+
+KERAS_EXPORT Status bikeTrainData(const char * filename,
+                                  bool isDay, // Для дней или часов
+                                  float **data,
+                                  float **label,
+                                  LayerSize * sizeData,
+                                  LayerSize * sizeLabel);
+
+KERAS_EXPORT Status bostonTrainData(const char * filename,
+                                  float **data,
+                                  float **label,
+                                  LayerSize * sizeData,
+                                  LayerSize * sizeLabel);
+
 
 #if defined(__cplusplus)
 }

@@ -3,8 +3,11 @@
 #include "workingwine.h"
 #include "workingiris.h"
 #include "workingfahrenheit.h"
+#include "workingboston.h"
+#include "workingbike.h"
+#include "workingtitanic.h"
 
-#define NN_FAH
+#define NN_BOSTON
 
 int main()
 {
@@ -18,7 +21,13 @@ int main()
 #elif defined(NN_IRIS)
   exitStatus = iris::workingIris(false);
 #elif defined(NN_FAH)
-  exitStatus = fahrenheit::workingFahrenheit(false);
+  exitStatus = fahrenheit::workingFahrenheit(true);
+#elif defined(NN_BOSTON)
+  exitStatus = boston::workingBoston(true);
+#elif defined(NN_BIKE)
+  exitStatus = bike::workingBike(false);
+#elif defined(NN_TITANIC)
+  exitStatus = titanic::workingTitanic(true);
 #endif //NN_MNIST
   return exitStatus;
 }

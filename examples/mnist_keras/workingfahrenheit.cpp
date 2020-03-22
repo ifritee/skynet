@@ -21,7 +21,7 @@ namespace fahrenheit {
   float far[] = {-40, -20, -7,  0,   20, 28, 45, 90};
   float far2[] = {-53, -1, 22,  14,   70, 33, 11, 9};
   float cel[] = {-40, -29, -22, -18, -7, -2,  7, 32};
-  float cel2[8] = {0};
+  float cel2[8] = {0};  // Тут ответы будут
 
   int workingFahrenheit(bool isTraining)
   {
@@ -45,11 +45,11 @@ namespace fahrenheit {
       const int epoche = 600;
 
       for(int i = 0; i < epoche; ++i) {
-        layerDataSize.bsz = 8;
+        layerDataSize.bsz = sizeof (far) / sizeof(float);
         layerDataSize.ch = 1;
         layerDataSize.w = 1;
         layerDataSize.h = 1;
-        layerLabelSize.bsz = 8;
+        layerLabelSize.bsz = layerDataSize.bsz;
         layerLabelSize.w = 1;
         layerLabelSize.h = 1;
         layerLabelSize.ch = 1;
@@ -60,18 +60,14 @@ namespace fahrenheit {
     }
     //----- Тестирование --------------
     else {
-      layerDataSize.bsz = 8;
+      layerDataSize.bsz = sizeof (far2) / sizeof(float);
       layerDataSize.ch = 1;
       layerDataSize.w = 1;
       layerDataSize.h = 1;
-      layerLabelSize.bsz = 8;
-      layerLabelSize.w = 1;
-      layerLabelSize.h = 1;
-      layerLabelSize.ch = 1;
 
       loadModel(modelID, "00_fahrenheit.dat");
 
-      forecasting(modelID, far2, layerDataSize, cel2, layerLabelSize);
+      forecasting(modelID, far2, layerDataSize, cel2, layerDataSize);
       for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {
         std::cout<<"FAR: "<<far2[i]<<" CEL: "<<cel2[i]<<std::endl;
       }

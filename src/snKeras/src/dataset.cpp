@@ -3,6 +3,7 @@
 
 #include "mnistset.h"
 #include "dataset.h"
+#include "trainingdata.h"
 
 using namespace std;
 
@@ -42,17 +43,32 @@ Status readMnist(int id, float *datas, unsigned char *labels, unsigned int qty, 
   return STATUS_OK;
 }
 
-MnistDATA mnistParameters(int id)
+LayerSize mnistParameters(int id)
 {
-  MnistDATA mnistData;
+  LayerSize mnistData;
   cpp_keras::MnistSet * mnist = mnistSet[id];
   if(mnist) {
     cpp_keras::DatasetParameters param = mnist->trainParameters();
-    mnistData.quantity = param.m_batchs;
-    mnistData.rows = param.m_rows;
-    mnistData.cols = param.m_cols;
-    mnistData.depth = 1;
+    mnistData.bsz = param.m_batchs;
+    mnistData.w = param.m_rows;
+    mnistData.h = param.m_cols;
+    mnistData.ch = 1;
   }
   return mnistData;
 }
 
+
+Status bikeTrainData(const char * filename, bool isDay, float **data,
+                     float **label, LayerSize *sizeData, LayerSize *sizeLabel)
+{
+  TrainingData trainingData(filename, sizeData, sizeLabel);
+  trainingData.readBikeData(isDay, data, label);
+  return trainingData.lastStatus();
+}
+
+Status bostonTrainData(const char *filename, float **data, float **label, LayerSize *sizeData, LayerSize *sizeLabel)
+{
+  TrainingData trainingData(filename, sizeData, sizeLabel);
+  trainingData.readBostonData(data, label);
+  return trainingData.lastStatus();
+}

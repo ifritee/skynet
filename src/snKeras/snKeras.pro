@@ -12,7 +12,8 @@ SOURCES += \
     src/snNet.cpp \
     src/snOperator.cpp \
     src/snTensor.cpp \
-    src/snType.cpp
+    src/snType.cpp \
+    src/trainingdata.cpp
 
 HEADERS += \
     ../../src/skynet/skyNet.h \
@@ -23,7 +24,8 @@ HEADERS += \
     src/snOperator.h \
     src/snTensor.h \
     src/snType.h \
-    src/snkeras_global.h
+    src/snkeras_global.h \
+    src/trainingdata.h
 
 INCLUDEPATH += \
     $$PWD/src

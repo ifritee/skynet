@@ -227,9 +227,10 @@ Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerS
   sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
   sn::Tensor targetLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
   sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
-  accuracy = 0;
+
   int classes = labelsSize.w;
   for(unsigned int epoch = 0; epoch < epochs; ++epoch) {
+    accuracy = 0;
     for (unsigned int i = 0; i < dataSize.bsz; ++i) { // Запись распределения ответов по нейронам выходным
       float* tarData = targetLayer.data() + classes * i;
       tarData[label[i]] = 1;
@@ -277,12 +278,14 @@ Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerS
     float trainAccuracy = 0.f;
     model->training(learningRate, inputLayer, outputLayer, targetLayer, trainAccuracy);
     // Расчет ошибки -----
-    sn::snFloat* targetData = targetLayer.data();
-    sn::snFloat* outData = outputLayer.data();
-    for (size_t i = 0; i < dataSize.bsz; ++i) {
-//      float* refTarget = targetData + i * classes;
-//      float* refOutput = outData + i * classes;
-//      std::cout<<*refTarget<<" "<<*refOutput<<std::endl;
+    if (epoch >= epochs - 1) {
+      sn::snFloat* targetData = targetLayer.data();
+      sn::snFloat* outData = outputLayer.data();
+      for (size_t i = 0; i < dataSize.bsz; ++i) {
+        float* refTarget = targetData + i * classes;
+        float* refOutput = outData + i * classes;
+        std::cout<<*refTarget<<" "<<*refOutput<<std::endl;
+      }
     }
   }
   return STATUS_OK;

@@ -25,15 +25,13 @@ int workingMNIST(bool isTraining) {
   netArchitecture(modelID, buffer, 1024);
   cout<<buffer<<endl;
   //=================================
-
-  LayerSize layerDataSize, layerLabelSize;
   //----- Тренировка -----
   if (isTraining) {
     int id = createMnistDataset("../data/01_MNIST/train-images-idx3-ubyte", "../data/01_MNIST/train-labels-idx1-ubyte");
-    MnistDATA trainData = mnistParameters(id);
+    LayerSize layerLabelSize, layerDataSize = mnistParameters(id);
     const int qtyM = 60000, epoche = 10, reset = 1;
 
-    float * dataM = new float[qtyM * trainData.cols * trainData.rows];
+    float * dataM = new float[qtyM * layerDataSize.w * layerDataSize.h];
     uint8_t * labelM = new uint8_t[qtyM];
     float accuracySum = 0.f;
     for(int i = 0; i < epoche; ++i) {
@@ -42,9 +40,9 @@ int workingMNIST(bool isTraining) {
       }
       readMnist(id, dataM, labelM, qtyM, i);
       layerDataSize.bsz = qtyM;//trainData.quantity;
-      layerDataSize.ch = trainData.depth;
-      layerDataSize.w = trainData.rows;
-      layerDataSize.h = trainData.cols;
+//      layerDataSize.ch = trainData.depth;
+//      layerDataSize.w = trainData.rows;
+//      layerDataSize.h = trainData.cols;
       layerLabelSize.bsz = qtyM;//trainData.quantity;
       layerLabelSize.w = classCnt;
       layerLabelSize.h = 1;
@@ -64,16 +62,12 @@ int workingMNIST(bool isTraining) {
   //----- Тестирование --------------
   else {
     int id = createMnistDataset("../data/01_MNIST/t10k-images-idx3-ubyte", "../data/01_MNIST/t10k-labels-idx1-ubyte");
-    MnistDATA mnistDATA = mnistParameters(id);
-    float * dataM = new float[mnistDATA.quantity * mnistDATA.cols * mnistDATA.rows];
-    uint8_t * labelM = new uint8_t[mnistDATA.quantity];
+    LayerSize layerLabelSize, layerDataSize = mnistParameters(id);
+    float * dataM = new float[layerDataSize.bsz * layerDataSize.w * layerDataSize.h];
+    uint8_t * labelM = new uint8_t[layerDataSize.bsz];
     readMnist(id, dataM, labelM);
 
-    layerDataSize.bsz = mnistDATA.quantity;
-    layerDataSize.ch = mnistDATA.depth;
-    layerDataSize.w = mnistDATA.rows;
-    layerDataSize.h = mnistDATA.cols;
-    layerLabelSize.bsz = mnistDATA.quantity;
+    layerLabelSize.bsz = layerDataSize.bsz;
     layerLabelSize.w = classCnt;
     layerLabelSize.h = 1;
     layerLabelSize.ch = 1;
