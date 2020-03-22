@@ -240,6 +240,10 @@ KERAS_EXPORT Status fit(int id, float * data, LayerSize dataSize, unsigned char 
                         LayerSize labelsSize, unsigned int epochs,
                         float learningRate, float & accuracy);
 
+KERAS_EXPORT Status fitOneValue(int id, float * data, LayerSize dataSize, float * label,
+                        LayerSize labelsSize, unsigned int epochs,
+                        float learningRate);
+
 /**
  * @brief evaluate Проверка с тестовым сетом
  * @param data тестовые данные
@@ -251,6 +255,8 @@ KERAS_EXPORT Status fit(int id, float * data, LayerSize dataSize, unsigned char 
  */
 KERAS_EXPORT Status evaluate(int id, float * data, LayerSize dataSize, unsigned char * label,
                              LayerSize labelsSize, unsigned int verbose, float & accuracy);
+
+KERAS_EXPORT Status forecasting(int id, float * data, LayerSize dataSize, float * label, LayerSize labelsSize);
 
 KERAS_EXPORT Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& result);
 

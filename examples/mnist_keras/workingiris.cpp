@@ -12,11 +12,11 @@
 #include "keras.h"
 #include "dataset.h"
 
-#include "workingbreast.h"
+#include "workingiris.h"
 
 using namespace std;
 
-namespace breast {
+namespace iris {
 
   std::vector<std::string> getLinesFromFile(string filename)
   {
@@ -72,27 +72,17 @@ namespace breast {
     }
   }
 
-  int workingBreast(bool isTraining)
+  int workingIris(bool isTraining)
   {
     //----- Создание графа модели -----
     map<string, uint8_t> answerDict;
-#define BREAST_WPBC
-#if defined (BREAST_CANCER)
-    answerDict["2"] = 0;
-    answerDict["4"] = 1;
-    auto lines = getLinesFromFile("../data/02_BreastCancer/breast-cancer-wisconsin.data");
-    int id = 0, labelIndex = 10;
-#elif defined (BREAST_WDBC)
-    answerDict["M"] = 0;
-    answerDict["B"] = 1;
-    auto lines = getLinesFromFile("../data/02_BreastCancer/wdbc.data");
-    int id = 0, labelIndex = 1;
-#elif defined (BREAST_WPBC)
-    answerDict["R"] = 0;
-    answerDict["N"] = 1;
-    auto lines = getLinesFromFile("../data/02_BreastCancer/wpbc.data");
-    int id = 0, labelIndex = 1, shift = 1;
-#endif
+    answerDict["Iris-setosa"] = 0;
+    answerDict["Iris-versicolor"] = 1;
+    answerDict["Iris-virginica"] = 2;
+    auto lines = getLinesFromFile("../data/04_Iris/iris.data");
+    int id = -1, labelIndex = 4, shift = 1;
+    const char * weightName = "04_iris.dat";
+
     const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
     int classCnt = answerDict.size();  // выход: вероятностное распределение на N классов
     const int bsz = lines.size();
@@ -103,10 +93,9 @@ namespace breast {
     //----- Создание модели -----
     int modelID = createModel();
     addInput(modelID, "Input", "D1");
-    addDense(modelID, "D1", "D2", 200);
-    addDense(modelID, "D2", "D3", 400);
-    addDense(modelID, "D3", "D4", 800);
-    addDense(modelID, "D4", "LS", classCnt);
+    addDense(modelID, "D1", "D2", 100);
+    addDense(modelID, "D2", "D3", 300);
+    addDense(modelID, "D3", "LS", classCnt);
     addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
     //=================================
 
@@ -127,11 +116,11 @@ namespace breast {
         if(i % reset == 0) {
           accuracySum = 0.f;
         }
-        layerDataSize.bsz = bsz - 40;//trainData.quantity;
+        layerDataSize.bsz = bsz;
         layerDataSize.ch = 1;
         layerDataSize.w = dataQty;
         layerDataSize.h = 1;
-        layerLabelSize.bsz = bsz - 40;//trainData.quantity;
+        layerLabelSize.bsz = bsz;
         layerLabelSize.w = classCnt;
         layerLabelSize.h = 1;
         layerLabelSize.ch = 1;
@@ -141,7 +130,7 @@ namespace breast {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, "02_breast.dat");
+      saveModel(modelID, weightName);
     }
     //----- Тестирование --------------
     else {
@@ -154,7 +143,7 @@ namespace breast {
       layerLabelSize.h = 1;
       layerLabelSize.ch = 1;
 
-      loadModel(modelID, "02_breast.dat");
+      loadModel(modelID, weightName);
       float accuracy = 0.f;
       evaluate(modelID, &data[(bsz - 40) * dataQty], layerDataSize, &label[bsz - 40], layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;
@@ -166,4 +155,5 @@ namespace breast {
   }
 
 }
+
 

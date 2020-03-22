@@ -257,6 +257,37 @@ Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerS
   return STATUS_OK;
 }
 
+Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerSize labelsSize,
+           unsigned int epochs, float learningRate)
+{
+  sn::Net * model = modelSet[id];
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if (labelsSize.bsz != dataSize.bsz) {
+    return STATUS_FAILURE;
+  }
+  sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
+  sn::Tensor targetLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz), label);
+  sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  int classes = labelsSize.w;
+
+  for(unsigned int epoch = 0; epoch < epochs; ++epoch) {
+    // Запуск тренировки -----
+    float trainAccuracy = 0.f;
+    model->training(learningRate, inputLayer, outputLayer, targetLayer, trainAccuracy);
+    // Расчет ошибки -----
+    sn::snFloat* targetData = targetLayer.data();
+    sn::snFloat* outData = outputLayer.data();
+    for (size_t i = 0; i < dataSize.bsz; ++i) {
+//      float* refTarget = targetData + i * classes;
+//      float* refOutput = outData + i * classes;
+//      std::cout<<*refTarget<<" "<<*refOutput<<std::endl;
+    }
+  }
+  return STATUS_OK;
+}
+
 Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
                 unsigned int /*verbose*/, float & accuracy)
 {
@@ -284,6 +315,23 @@ Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, L
   return STATUS_OK;
 }
 
+Status forecasting(int id, float * data, LayerSize dataSize, float * label, LayerSize labelsSize)
+{
+  sn::Net * model = modelSet[id];
+  if(!model) {
+    return STATUS_FAILURE;
+  }
+  if (labelsSize.bsz != dataSize.bsz) {
+    return STATUS_FAILURE;
+  }
+  sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
+  sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
+  model->forward(false, inputLayer, outputLayer);
+  for(int i = 0; i < dataSize.bsz; ++i) {
+    label[i] = outputLayer.data()[i];
+  }
+  return STATUS_OK;
+}
 
 Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& result)
 {
