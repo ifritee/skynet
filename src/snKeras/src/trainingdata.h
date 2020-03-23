@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #include "keras.h"
 
@@ -22,6 +23,10 @@ public:
    */
   void readBikeData(bool isDay, float **data, float **label);
   void readBostonData(float **data, float **label);
+  void readBreastData(int flag, float **data, uint8_t **label);
+  void readIrisData(float **data, uint8_t **label);
+  void readWineData(float **data, uint8_t **label);
+  void readTitanicData(float **data, uint8_t **label);
 
   Status lastStatus() { return m_lastStatus; }
 
@@ -43,6 +48,8 @@ private:
 
   void setDatafromStrings(const std::vector<std::string> &lines, float * datas, float * labels, unsigned int labIndex,
                           const std::vector<uint32_t> &ign);
+  void setDatafromStrings(const std::vector<std::string> &lines, float * datas, uint8_t * labels, unsigned int labIndex,
+                          const std::vector<uint32_t> &ign, std::map<std::string, uint8_t> & answer);
 };
 
 #endif // TRAININGDATA_H

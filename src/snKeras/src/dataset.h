@@ -43,6 +43,31 @@ KERAS_EXPORT Status bostonTrainData(const char * filename,
                                   LayerSize * sizeData,
                                   LayerSize * sizeLabel);
 
+KERAS_EXPORT Status breastTrainData(const char * filename,
+                                  int flag, // 1 - Wisconsin, 2 - wdbc, 3 - wpbc
+                                  float **data,
+                                  unsigned char **label,
+                                  LayerSize * sizeData,
+                                  LayerSize * sizeLabel);
+
+KERAS_EXPORT Status irisTrainData(const char * filename,
+                                    float **data,
+                                    unsigned char **label,
+                                    LayerSize * sizeData,
+                                    LayerSize * sizeLabel);
+
+KERAS_EXPORT Status wineTrainData(const char * filename,
+                                  float **data,
+                                  unsigned char **label,
+                                  LayerSize * sizeData,
+                                  LayerSize * sizeLabel);
+
+KERAS_EXPORT Status titanicTrainData(const char * filename,
+                                  float **data,
+                                  unsigned char **label,
+                                  LayerSize * sizeData,
+                                  LayerSize * sizeLabel);
+
 
 #if defined(__cplusplus)
 }

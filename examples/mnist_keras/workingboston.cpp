@@ -18,58 +18,6 @@ using namespace std;
 
 namespace boston {
 
-  std::vector<std::string> getLinesFromFile(const std::string & filename)
-  {
-    std::vector<std::string> lines;
-    ifstream is(filename);
-    while(!is.eof()) {
-      string line;
-      is >> line;
-      if (line != "")
-        lines.push_back(line);
-    }
-    return lines;
-  }
-
-  std::vector<std::string> split(const string & s, char d)
-  {
-    vector<string> tokens;
-    string token;
-    istringstream ts(s);
-    while (std::getline(ts, token, d)) {
-      tokens.push_back(token);
-    }
-    return tokens;
-  }
-
-  void setDatafromStrings(std::vector<std::string> & lines, float * datas, float * labels, unsigned int labIndex)
-  {
-    int dataCount = 0, labelCount = 0;
-    for(auto line : lines) {
-      if (line != "") {
-        auto tokens = split(line, ',');
-        for(unsigned int i = 0; i < tokens.size(); ++i) {
-          if (i == labIndex) { // Метки
-            if(tokens[i] != "") {
-
-              float value = 0;
-              std::istringstream ss(tokens[i]);
-              ss >> value;
-              labels[labelCount++] = value;
-            }
-          } else {
-            if(tokens[i] != "") {
-              float value = 0;
-              std::istringstream ss(tokens[i]);
-              ss >> value;
-              datas[dataCount++] = value;
-            }
-          }
-        }
-      }
-    }
-  }
-
   int workingBoston(bool isTraining)
   {
     //----- Создание модели -----
@@ -101,6 +49,8 @@ namespace boston {
       //----- Эпохи не важны (1 штука) -----
       fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.001f);
       saveModel(modelID, "05_boston.dat");
+      delete [] data;
+      delete [] label;
     }
     //----- Тестирование --------------
     else {
@@ -113,24 +63,7 @@ namespace boston {
         exit (-1);
       }
       //=================================
-//      auto lines = getLinesFromFile("../data/05_boston/boston_data.csv");
-//      lines.erase(lines.begin());
-//      int labelIndex = 13, shift = 1;
-//      const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-//      const int bsz = lines.size();
-//      float * data = new float[bsz * dataQty];
-//      float * label = new float[bsz];
       float * out = new float[layerDataSize.bsz];
-//      setDatafromStrings(lines, data, label, labelIndex);
-
-//      layerDataSize.bsz = bsz;
-//      layerDataSize.ch = 1;
-//      layerDataSize.w = dataQty;
-//      layerDataSize.h = 1;
-//      layerLabelSize.bsz = bsz;
-//      layerLabelSize.w = 1;
-//      layerLabelSize.h = 1;
-//      layerLabelSize.ch = 1;
 
       loadModel(modelID, "05_boston.dat");
 
@@ -138,6 +71,8 @@ namespace boston {
       for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {
         std::cout<<" OUT: "<<out[i]<<std::endl;
       }
+      delete [] data;
+      delete [] out;
     }
     deleteModel(modelID);
     return 0;

@@ -7,7 +7,7 @@
 #include "workingbike.h"
 #include "workingtitanic.h"
 
-#define NN_BOSTON
+#define NN_TITANIC
 
 int main()
 {
@@ -15,19 +15,19 @@ int main()
 #if defined(NN_MNIST)
   exitStatus = workingMNIST(true);
 #elif defined(NN_BREAST)
-  exitStatus = breast::workingBreast(false);
+  exitStatus = breast::workingBreast(true);
 #elif defined(NN_WINE)
-  exitStatus = wine::workingWine(true);
+  exitStatus = wine::workingWine(false);
 #elif defined(NN_IRIS)
   exitStatus = iris::workingIris(false);
 #elif defined(NN_FAH)
   exitStatus = fahrenheit::workingFahrenheit(true);
 #elif defined(NN_BOSTON)
-  exitStatus = boston::workingBoston(true);
+  exitStatus = boston::workingBoston(false);
 #elif defined(NN_BIKE)
   exitStatus = bike::workingBike(false);
 #elif defined(NN_TITANIC)
-  exitStatus = titanic::workingTitanic(true);
+  exitStatus = titanic::workingTitanic(false);
 #endif //NN_MNIST
   return exitStatus;
 }

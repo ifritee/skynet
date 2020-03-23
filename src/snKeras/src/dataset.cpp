@@ -72,3 +72,35 @@ Status bostonTrainData(const char *filename, float **data, float **label, LayerS
   trainingData.readBostonData(data, label);
   return trainingData.lastStatus();
 }
+
+Status breastTrainData(const char *filename, int flag, float **data, unsigned char **label,
+                       LayerSize *sizeData, LayerSize *sizeLabel)
+{
+  TrainingData trainingData(filename, sizeData, sizeLabel);
+  trainingData.readBreastData(flag, data, label);
+  return trainingData.lastStatus();
+}
+
+Status irisTrainData(const char *filename, float **data, unsigned char **label,
+                       LayerSize *sizeData, LayerSize *sizeLabel)
+{
+  TrainingData trainingData(filename, sizeData, sizeLabel);
+  trainingData.readIrisData(data, label);
+  return trainingData.lastStatus();
+}
+
+Status wineTrainData(const char *filename, float **data, unsigned char **label,
+                     LayerSize *sizeData, LayerSize *sizeLabel)
+{
+  TrainingData trainingData(filename, sizeData, sizeLabel);
+  trainingData.readWineData(data, label);
+  return trainingData.lastStatus();
+}
+
+Status titanicTrainData(const char *filename, float **data, unsigned char **label,
+                     LayerSize *sizeData, LayerSize *sizeLabel)
+{
+  TrainingData trainingData(filename, sizeData, sizeLabel);
+  trainingData.readTitanicData(data, label);
+  return trainingData.lastStatus();
+}
