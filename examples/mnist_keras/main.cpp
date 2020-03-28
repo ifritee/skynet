@@ -7,13 +7,13 @@
 #include "workingbike.h"
 #include "workingtitanic.h"
 
-#define NN_TITANIC
+#define NN_MNIST
 
 int main()
 {
   int exitStatus = 0;
 #if defined(NN_MNIST)
-  exitStatus = workingMNIST(true);
+  exitStatus = mnist::workingMNIST(true);
 #elif defined(NN_BREAST)
   exitStatus = breast::workingBreast(true);
 #elif defined(NN_WINE)

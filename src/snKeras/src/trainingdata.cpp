@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <map>
+#include "rapidcsv.h"
 
 #include "trainingdata.h"
 
@@ -178,44 +179,104 @@ void TrainingData::readWineData(float **data, uint8_t **label)
   m_lastStatus = STATUS_OK;
 }
 
+void sexFunc(const std::string & pStr, float & pVal)
+{
+  if (pStr == "male") {
+    pVal = 1.f;
+  } else if (pStr == "female"){
+    pVal= 0.f;
+  }
+}
+
+void ageFunc(const std::string & pStr, float & pVal)
+{
+  if(pStr.size() == 0) {
+    pVal = 0.0f;
+  } else {
+    std::istringstream is(pStr);
+    is >> pVal;
+  }
+}
+
+void embarkedFunc(const std::string & pStr, float & pVal)
+{
+  if (pStr == "S" || pStr.size() == 0) {
+    pVal = 0.f;
+  } else if (pStr == "C"){
+    pVal= 1.f;
+  } else if (pStr == "Q"){
+    pVal= 2.f;
+  }
+}
+
+void nameFunc(const std::string & pStr, float & pVal)
+{
+  if(static_cast<int>(pStr.find("Mr.")) >= 0 ||
+     static_cast<int>(pStr.find("Sir.")) >= 0 ) {
+    pVal = 30.f;
+  } else if (static_cast<int>(pStr.find("Mrs.")) >= 0 ||
+             static_cast<int>(pStr.find("Lady.")) >= 0 ||
+             static_cast<int>(pStr.find("Mlle.")) >= 0) {
+    pVal = 35.f;
+  } else if (static_cast<int>(pStr.find("Mme.")) >= 0 ||
+             static_cast<int>(pStr.find("Ms.")) >= 0 ||
+             static_cast<int>(pStr.find("Countess")) >= 0) {
+    pVal = 45.f;
+  } else if (static_cast<int>(pStr.find("Master")) >= 0 ||
+             static_cast<int>(pStr.find("Don.")) >= 0  ||
+             static_cast<int>(pStr.find("Dr.")) >= 0 ||
+             static_cast<int>(pStr.find("Rev.")) >= 0 ||
+             static_cast<int>(pStr.find("Major.")) >= 0 ||
+             static_cast<int>(pStr.find("Col.")) >= 0) {
+    pVal = 50.f;
+  } else if (static_cast<int>(pStr.find("Miss.")) >= 0) {
+    pVal = 20.f;
+  } else if (static_cast<int>(pStr.find("Capt.")) >= 0) {
+    pVal = 40.f;
+  } else {
+    pVal = 50.f;
+  }
+}
+
 void TrainingData::readTitanicData(float **data, uint8_t **label)
 {
-  map<string, uint8_t> answerDict;
-  int id = 0, labelIndex = 1, shift = 2;
-  answerDict["0"] = 0;
-  answerDict["1"] = 1;
-  auto lines = getLinesFromFile(m_fileName);
-  lines.erase(lines.begin());
-  for(unsigned int i = 0; i < lines.size(); ++i) {
-    std::string temp; bool isQ = false;
-    for(unsigned int j = 0; j < lines[i].size(); ++j) {
-      if(lines[i][j] == '"') {
-        isQ = !isQ;
-        continue;
-      }
-      if(!isQ) {
-        temp.push_back(lines[i][j]);
-      }
-    }
-    lines[i] = temp;
-  }
+  rapidcsv::Document doc(m_fileName);
+  std::vector<float> survived = doc.GetColumn<float>("Survived");
+  std::vector<float> pclass = doc.GetColumn<float>("Pclass");
+  std::vector<float> name = doc.GetColumn<float>("Name", nameFunc);
+  std::vector<float> sex = doc.GetColumn<float>("Sex", sexFunc);
+  std::vector<float> age = doc.GetColumn<float>("Age", ageFunc);
+  std::vector<float> sibSp = doc.GetColumn<float>("SibSp");
+  std::vector<float> parch = doc.GetColumn<float>("Parch");
+  std::vector<float> fare = doc.GetColumn<float>("Fare");
+  std::vector<float> embarked = doc.GetColumn<float>("Embarked", embarkedFunc);
 
-  const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = lines.size();
+  const unsigned int bsz = static_cast<unsigned int>(age.size());
+  const int dataQty = 6;
+
   *data = new float[bsz * dataQty];
   *label = new uint8_t[bsz];
-  std::vector<uint32_t> ign;
-  ign.push_back(id);
-  ign.push_back(id);
+  unsigned int countData = 0;
+  for (unsigned int i = 0; i < bsz; ++i) {
+    (*label)[i] = static_cast<uint8_t>(survived[i]);
+    (*data)[countData++] = pclass[i];
+    (*data)[countData++] = sex[i];
+    if(age[i] < 1.f) {
+      age[i] = name[i];
+    }
+    (*data)[countData++] = age[i];
+    (*data)[countData++] = sibSp[i] + parch[i];  // Объединил родителей и детей
+    (*data)[countData++] = fare[i];
+    (*data)[countData++] = embarked[i];
+  }
 
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict);
   m_sizeData->bsz = bsz;
   m_sizeData->ch = 1;
   m_sizeData->w = dataQty;
   m_sizeData->h = 1;
 
   m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = answerDict.size();
+  m_sizeLabel->w = 2;
   m_sizeLabel->h = 1;
   m_sizeLabel->ch = 1;
 

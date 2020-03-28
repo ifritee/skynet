@@ -20,6 +20,7 @@ HEADERS += \
     src/dataset.h \
     src/keras.h \
     src/mnistset.h \
+    src/rapidcsv.h \
     src/snNet.h \
     src/snOperator.h \
     src/snTensor.h \
