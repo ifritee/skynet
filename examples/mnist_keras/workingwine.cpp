@@ -37,7 +37,7 @@ namespace wine {
 
     LayerSize layerDataSize, layerLabelSize;
     float * data; uint8_t * label;
-    wineTrainData("../data/03_Wine/wine.data", &data, &label, &layerDataSize, &layerLabelSize);
+    wineTrainData("../data/03_Wine/wine.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
     //----- Тренировка -----
     if (isTraining) {
 

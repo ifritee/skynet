@@ -2,7 +2,7 @@
 
 interface
 
-uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset;
+uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset, keras;
 
 type
   TTrainingBlock = class(TRunObject)
@@ -23,8 +23,8 @@ type
   strict private
     stepCount: NativeInt; // Счетчик шагов
     m_nnState: Boolean; // Состояние сети
-    m_trainData : pMNIST_DATA;
-    m_testData : pMNIST_DATA;
+    m_trainData : PLayerSize;
+    m_testData : PLayerSize;
 
     m_crossOut: NativeInt;
     m_learningRate : double;
@@ -39,10 +39,11 @@ type
   end;
 
 implementation
-  uses keras, UNNConstants;
+  uses UNNConstants;
 
 constructor  TTrainingBlock.Create;
 begin
+  m_id := -1;
   inherited;
 end;
 
@@ -125,6 +126,10 @@ begin
         Exit;
       end;
       m_id := Round(U[0].Arr^[0]);
+      if m_id = -1 then begin
+        ErrorEvent('Net ID is crashed (-1)', msError, VisualObject);
+        Exit;
+      end;
       p64 := Round(U[0].Arr^[1]);
       p64 := p64 shl 32;
       p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
@@ -146,7 +151,7 @@ begin
       inc(stepCount);
     end;
     f_Stop : begin
-      if m_fileSave.Length > 0 then begin
+      if (m_fileSave.Length > 0) AND (m_id >= 0) then begin
         returnCode := saveModel(m_id, PAnsiChar(AnsiString(m_fileSave)));
         if returnCode <> STATUS_OK then begin
           ErrorEvent('Crashed save model weight', msError, VisualObject);

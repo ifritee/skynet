@@ -64,10 +64,12 @@ procedure TLossFunction.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  returnCode := addLossFunction(id, PAnsiChar(shortName), PAnsiChar(nodes), m_lossType);
-  if returnCode <> STATUS_OK then begin
-    ErrorEvent('Neural model not added loss function', msError, VisualObject);
-    Exit;
+  if id = m_modelID then begin
+    returnCode := addLossFunction(id, PAnsiChar(shortName), PAnsiChar(nodes), m_lossType);
+    if returnCode <> STATUS_OK then begin
+      ErrorEvent('Neural model not added loss function', msError, VisualObject);
+      Exit;
+    end;
   end;
 end;
 
@@ -87,7 +89,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      cY[0] := 3;
+      cY[0] := 4;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -110,17 +112,19 @@ begin
     end;
     f_GoodStep: begin
 //      if isCreate = False then begin
-      if U[0].FCount > 0 then begin
-        rootIndex := Round(U[0].Arr^[0]);
+      if U[0].FCount > 1 then begin
+        m_modelID := Round(U[0].Arr^[0]);
+        rootIndex := Round(U[0].Arr^[1]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
           rootLayer := TAbstractLayer(LayersDict[rootIndex]);
           rootLayer.appendNode(String(shortName));
-          Y[0].Arr^[0] := getLayerNumber;
+          Y[0].Arr^[0] := m_modelID;
+          Y[0].Arr^[1] := getLayerNumber;
           isCreate := True;
         end;
-        if U[0].FCount = 3 then begin
-          Y[0].Arr^[1] := U[0].Arr^[1];
+        if U[0].FCount = 4 then begin
           Y[0].Arr^[2] := U[0].Arr^[2];
+          Y[0].Arr^[3] := U[0].Arr^[3];
         end;
       end;
 //      end;

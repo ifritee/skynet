@@ -21,12 +21,12 @@ public:
    * @brief readBikeData Чтение данных для набора BIKE
    * @param isDay true - для дней, false - для часов
    */
-  void readBikeData(bool isDay, float **data, float **label);
-  void readBostonData(float **data, float **label);
-  void readBreastData(int flag, float **data, uint8_t **label);
-  void readIrisData(float **data, uint8_t **label);
-  void readWineData(float **data, uint8_t **label);
-  void readTitanicData(float **data, uint8_t **label);
+  void readBikeData(bool isDay, float **data, float **label, int qty, unsigned int step);
+  void readBostonData(float **data, float **label, int qty, unsigned int step);
+  void readBreastData(int flag, float **data, uint8_t **label, int qty, unsigned int step);
+  void readIrisData(float **data, uint8_t **label, int qty, unsigned int step);
+  void readWineData(float **data, uint8_t **label, int qty, unsigned int step);
+  void readTitanicData(float **data, uint8_t **label, int qty, unsigned int step);
 
   Status lastStatus() { return m_lastStatus; }
 
@@ -47,9 +47,9 @@ private:
   std::vector<std::string> split(const std::string & s, char d);
 
   void setDatafromStrings(const std::vector<std::string> &lines, float * datas, float * labels, unsigned int labIndex,
-                          const std::vector<uint32_t> &ign);
+                          const std::vector<uint32_t> &ign, int qty, unsigned int step);
   void setDatafromStrings(const std::vector<std::string> &lines, float * datas, uint8_t * labels, unsigned int labIndex,
-                          const std::vector<uint32_t> &ign, std::map<std::string, uint8_t> & answer);
+                          const std::vector<uint32_t> &ign, std::map<std::string, uint8_t> & answer,int qty, unsigned int step);
 };
 
 #endif // TRAININGDATA_H

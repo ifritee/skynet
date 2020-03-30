@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "mnistset.h"
 #include "dataset.h"
@@ -41,48 +42,49 @@ Status mnistTrainData(const char * datafilename,
 }
 
 Status bikeTrainData(const char * filename, bool isDay, float **data,
-                     float **label, LayerSize *sizeData, LayerSize *sizeLabel)
+                     float **label, LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
-  trainingData.readBikeData(isDay, data, label);
+  trainingData.readBikeData(isDay, data, label, qty, step);
   return trainingData.lastStatus();
 }
 
-Status bostonTrainData(const char *filename, float **data, float **label, LayerSize *sizeData, LayerSize *sizeLabel)
+Status bostonTrainData(const char *filename, float **data, float **label, LayerSize *sizeData, LayerSize *sizeLabel,
+                       int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
-  trainingData.readBostonData(data, label);
+  trainingData.readBostonData(data, label, qty, step);
   return trainingData.lastStatus();
 }
 
 Status breastTrainData(const char *filename, int flag, float **data, unsigned char **label,
-                       LayerSize *sizeData, LayerSize *sizeLabel)
+                       LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
-  trainingData.readBreastData(flag, data, label);
+  trainingData.readBreastData(flag, data, label, qty, step);
   return trainingData.lastStatus();
 }
 
 Status irisTrainData(const char *filename, float **data, unsigned char **label,
-                       LayerSize *sizeData, LayerSize *sizeLabel)
+                       LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
-  trainingData.readIrisData(data, label);
+  trainingData.readIrisData(data, label, qty, step);
   return trainingData.lastStatus();
 }
 
 Status wineTrainData(const char *filename, float **data, unsigned char **label,
-                     LayerSize *sizeData, LayerSize *sizeLabel)
+                     LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
-  trainingData.readWineData(data, label);
+  trainingData.readWineData(data, label, qty, step);
   return trainingData.lastStatus();
 }
 
 Status titanicTrainData(const char *filename, float **data, unsigned char **label,
-                     LayerSize *sizeData, LayerSize *sizeLabel)
+                     LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
-  trainingData.readTitanicData(data, label);
+  trainingData.readTitanicData(data, label, qty, step);
   return trainingData.lastStatus();
 }

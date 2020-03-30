@@ -40,7 +40,7 @@ namespace iris {
 
     LayerSize layerDataSize, layerLabelSize;
     float * data; uint8_t * label;
-    irisTrainData("../data/04_Iris/iris.data", &data, &label, &layerDataSize, &layerLabelSize);
+    irisTrainData("../data/04_Iris/iris.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
     //----- Тренировка -----
     if (isTraining) {
 

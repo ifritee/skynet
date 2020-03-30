@@ -25,6 +25,7 @@ type
   protected
    shortName: AnsiString;
    nodes: AnsiString;
+   m_modelID : Integer;
 
   private
     layerNumber: NativeInt;
@@ -45,6 +46,7 @@ begin
   inc(LayerCount);
   LayersDict.Add(Self);
   nodes := '';
+  m_modelID := -1;
 end;
 
 function TAbstractLayer.getLayerNumber(): NativeInt;

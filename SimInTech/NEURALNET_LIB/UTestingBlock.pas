@@ -2,7 +2,7 @@
 
 interface
 
-uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset;
+uses Windows, Classes, DataTypes, SysUtils, RunObjts, dataset, keras;
 
 type
 
@@ -19,7 +19,7 @@ type
   strict private
     stepCount: NativeInt; // Счетчик шагов
     m_nnState: Boolean; // Состояние сети
-    m_testData : pMNIST_DATA;
+    m_testData : PLayerSize;
 
     m_crossOut: NativeInt;
     m_fileLoad: String;
@@ -29,7 +29,7 @@ type
   end;
 
 implementation
-  uses keras, UNNConstants;
+  uses UNNConstants;
 
 constructor  TTestingBlock.Create;
 begin
@@ -130,11 +130,20 @@ begin
         end;
         returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
         Y[1].Arr^[0] := accuracy;
-        for I := 0 to Length(m_data^) - 1 do begin
-          Y[0].Arr^[I] := m_data^[I];
+        if Length(m_data^) <= m_maxQty then begin
+          for I := 0 to Length(m_data^) - 1 do begin
+            Y[0].Arr^[I] := m_data^[I];
+          end;
+        end else begin
+          ErrorEvent('Data size more Output size!', msError, VisualObject);
         end;
       end else if cU.FCount = 4 then begin
         m_id := Round(U[0].Arr^[0]);
+        if m_id = -1 then begin
+          ErrorEvent('Net ID is crashed (-1)', msError, VisualObject);
+          Exit;
+        end;
+
         p64 := Round(U[0].Arr^[1]);
         p64 := p64 shl 32;
         p64 := p64 OR UInt64(Round(U[0].Arr^[2]));

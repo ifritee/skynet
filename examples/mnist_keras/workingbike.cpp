@@ -37,7 +37,8 @@ namespace bike {
     //----- Загрузка сета --------------
     LayerSize layerDataSize, layerLabelSize;
     float * data, * label;  // Используем указатели на указатели
-    int retCode = bikeTrainData("../data/07_bike/day.csv", true, &data, &label, &layerDataSize, &layerLabelSize);
+    int retCode = bikeTrainData("../data/07_bike/day.csv", true, &data, &label,
+                                &layerDataSize, &layerLabelSize, 0, 0);
     if(retCode != STATUS_OK) {
       cout<<"Read data file is failure!!!"<<endl;
       exit (-1);

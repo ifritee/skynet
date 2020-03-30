@@ -38,14 +38,15 @@ namespace breast {
 
     LayerSize layerDataSize, layerLabelSize;
     float * data; uint8_t * label;
-    breastTrainData("../data/02_BreastCancer/wdbc.data", 2, &data, &label,
-                    &layerDataSize, &layerLabelSize);
+
     //----- Тренировка -----
     if (isTraining) {
       float accuracySum = 0.f;
       const int epoche = 100, reset = 10;
 
       for(int i = 0; i < epoche; ++i) {
+        breastTrainData("../data/02_BreastCancer/breast-cancer-wisconsin.data", 1, &data, &label,
+                        &layerDataSize, &layerLabelSize, 100, i);
         if(i % reset == 0) {
           accuracySum = 0.f;
         }

@@ -41,6 +41,12 @@ constructor  TInputLayer.Create;
 begin
   inherited;
     shortName := 'Input';// + IntToStr(getLayerNumber);
+    m_modelID:= createModel();
+    // Проверим состояние создания модели
+    if m_modelID = -1 then begin
+      ErrorEvent('Neural model not created', msError, VisualObject);
+      Exit;
+    end;
 end;
 
 destructor   TInputLayer.Destroy;
@@ -75,10 +81,12 @@ procedure TInputLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  returnCode := addInput(id, PAnsiChar(shortName), PAnsiChar(nodes));
-  if returnCode <> STATUS_OK then begin
-    ErrorEvent('Neural model not added input layer', msError, VisualObject);
-    Exit;
+  if id = m_modelID then begin
+    returnCode := addInput(id, PAnsiChar(shortName), PAnsiChar(nodes));
+    if returnCode <> STATUS_OK then begin
+      ErrorEvent('Neural model not added input layer', msError, VisualObject);
+      Exit;
+    end;
   end;
 end;
 
@@ -90,8 +98,8 @@ begin
   case Action of
     i_GetCount: begin
       for I := 0 to m_outputQty - 1 do
-        cY[I] := 1;
-      cY[0] := 3;
+        cY[I] := 2;
+      cY[0] := 4;
       stepCount := 0;
     end;
     i_GetInit: begin
@@ -123,18 +131,17 @@ begin
       nodes := '';
     end;
     f_GoodStep: begin
-//      if stepCount = 0 then begin
-        for J := 0 to cY.Count - 1 do
-          Y[J].Arr^[0] := getLayerNumber;
-//        inc(stepCount);
-//      end;
+      for J := 0 to cY.Count - 1 do begin
+        Y[J].Arr^[0] := m_modelID;
+        Y[J].Arr^[1] := getLayerNumber;
+      end;
       SetLength(m_data, U[0].Count);
       for J := 0 to Length(m_data) - 1 do begin
         m_data[J] := U[0].Arr^[J];
       end;
         p64 := UInt64(@m_data);
-        Y[0].Arr^[1] := p64 shr 32;
-        Y[0].Arr^[2]:= (p64 shl 32) shr 32;
+        Y[0].Arr^[2] := p64 shr 32;
+        Y[0].Arr^[3] := (p64 shl 32) shr 32;
     end;
   end
 end;

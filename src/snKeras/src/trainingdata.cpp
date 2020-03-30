@@ -23,7 +23,7 @@ TrainingData::~TrainingData()
 
 }
 
-void TrainingData::readBikeData(bool isDay, float ** data, float ** label)
+void TrainingData::readBikeData(bool isDay, float ** data, float ** label, int qty, unsigned int step)
 {
   const int labelIndex = isDay ? 15 : 16;
   const int shift = 3;
@@ -34,13 +34,13 @@ void TrainingData::readBikeData(bool isDay, float ** data, float ** label)
   }
   lines.erase(lines.begin());
   const int dataQty = split(lines[0], ',').size() - shift;
-  const int bsz = lines.size();
+  const int bsz = (qty > 0 ? qty : lines.size());
   *data = new float[bsz * dataQty];
   *label = new float[bsz];
   std::vector<uint32_t> ign;
   ign.push_back(0);
   ign.push_back(1);
-  setDatafromStrings(lines, *data, *label, labelIndex, ign);
+  setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
   m_sizeData->bsz = bsz;
   m_sizeData->ch = 1;
   m_sizeData->w = dataQty;
@@ -52,7 +52,7 @@ void TrainingData::readBikeData(bool isDay, float ** data, float ** label)
   m_lastStatus = STATUS_OK;
 }
 
-void TrainingData::readBostonData(float **data, float **label)
+void TrainingData::readBostonData(float **data, float **label, int qty, unsigned int step)
 {
   const int labelIndex = (label == nullptr ? -1 : 13);
   const int shift = (label == nullptr ? 0 : 1);
@@ -63,14 +63,14 @@ void TrainingData::readBostonData(float **data, float **label)
   }
   lines.erase(lines.begin());
   const int dataQty = split(lines[0], ',').size() - shift;
-  const int bsz = lines.size();
+  const int bsz = (qty > 0 ? qty : lines.size());
   *data = new float[bsz * dataQty];
   std::vector<uint32_t> ign;
   if(label == nullptr) {
-    setDatafromStrings(lines, *data, (float * )(nullptr), labelIndex, ign);
+    setDatafromStrings(lines, *data, (float * )(nullptr), labelIndex, ign, bsz, step);
   } else {
     *label = new float[bsz];
-    setDatafromStrings(lines, *data, *label, labelIndex, ign);
+    setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
   }
 
   m_sizeData->bsz = bsz;
@@ -86,7 +86,7 @@ void TrainingData::readBostonData(float **data, float **label)
   m_lastStatus = STATUS_OK;
 }
 
-void TrainingData::readBreastData(int flag, float **data, uint8_t **label)
+void TrainingData::readBreastData(int flag, float **data, uint8_t **label, int qty, unsigned int step)
 {
   map<string, uint8_t> answerDict;
   int id = 0, labelIndex = 1, shift = 2;
@@ -103,12 +103,12 @@ void TrainingData::readBreastData(int flag, float **data, uint8_t **label)
   }
   auto lines = getLinesFromFile(m_fileName);
   const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = lines.size();
+  const int bsz = (qty > 0 ? qty : lines.size());
   *data = new float[bsz * dataQty];
   *label = new uint8_t[bsz];
   std::vector<uint32_t> ign;
   ign.push_back(id);
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict);
+  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
   m_sizeData->bsz = bsz;
   m_sizeData->ch = 1;
   m_sizeData->w = dataQty;
@@ -122,7 +122,7 @@ void TrainingData::readBreastData(int flag, float **data, uint8_t **label)
   m_lastStatus = STATUS_OK;
 }
 
-void TrainingData::readIrisData(float **data, uint8_t **label)
+void TrainingData::readIrisData(float **data, uint8_t **label, int qty, unsigned int step)
 {
   map<string, uint8_t> answerDict;
   int labelIndex = 4, shift = 1;
@@ -132,11 +132,11 @@ void TrainingData::readIrisData(float **data, uint8_t **label)
 
   auto lines = getLinesFromFile(m_fileName);
   const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = lines.size();
+  const int bsz = (qty > 0 ? qty : lines.size());
   *data = new float[bsz * dataQty];
   *label = new uint8_t[bsz];
   std::vector<uint32_t> ign;
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict);
+  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
   m_sizeData->bsz = bsz;
   m_sizeData->ch = 1;
   m_sizeData->w = dataQty;
@@ -151,7 +151,7 @@ void TrainingData::readIrisData(float **data, uint8_t **label)
 }
 
 
-void TrainingData::readWineData(float **data, uint8_t **label)
+void TrainingData::readWineData(float **data, uint8_t **label, int qty, unsigned int step)
 {
   map<string, uint8_t> answerDict;
   int labelIndex = 0, shift = 1;
@@ -161,11 +161,11 @@ void TrainingData::readWineData(float **data, uint8_t **label)
 
   auto lines = getLinesFromFile(m_fileName);
   const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = lines.size();
+  const int bsz = (qty > 0 ? qty : lines.size());
   *data = new float[bsz * dataQty];
   *label = new uint8_t[bsz];
   std::vector<uint32_t> ign;
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict);
+  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
   m_sizeData->bsz = bsz;
   m_sizeData->ch = 1;
   m_sizeData->w = dataQty;
@@ -238,7 +238,7 @@ void nameFunc(const std::string & pStr, float & pVal)
   }
 }
 
-void TrainingData::readTitanicData(float **data, uint8_t **label)
+void TrainingData::readTitanicData(float **data, uint8_t **label, int qty, unsigned int step)
 {
   rapidcsv::Document doc(m_fileName);
   std::vector<float> survived = doc.GetColumn<float>("Survived");
@@ -311,10 +311,11 @@ std::vector<std::string> TrainingData::split(const string & s, char d)
 }
 
 void TrainingData::setDatafromStrings(const std::vector<std::string> & lines, float * datas, float * labels,
-                                      unsigned int labIndex, const std::vector<uint32_t> & ign)
+                                      unsigned int labIndex, const std::vector<uint32_t> & ign, int qty, unsigned int step)
 {
-  int dataCount = 0, labelCount = 0;
-  for(auto line : lines) {
+  int dataCount = 0, labelCount = 0, begin = qty * step % lines.size();
+  for(unsigned int num = begin; num < lines.size(); ++num) {
+    std::string line = lines[num];
     if (line != "") {
       auto tokens = split(line, ',');
       for(unsigned int i = 0; i < tokens.size(); ++i) {
@@ -337,15 +338,21 @@ void TrainingData::setDatafromStrings(const std::vector<std::string> & lines, fl
         }
       }
     }
+    if (qty == labelCount) {
+      break;
+    } else if (num == (lines.size() - 1)) {
+      num = 0;
+    }
   }
 }
 
 void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *datas,
                                       uint8_t *labels, unsigned int labIndex, const std::vector<uint32_t> &ign,
-                                      std::map<std::string, uint8_t> & answer)
+                                      std::map<std::string, uint8_t> & answer, int qty, unsigned int step)
 {
-  int dataCount = 0, labelCount = 0;
-  for(auto line : lines) {
+  int dataCount = 0, labelCount = 0, begin = qty * step % lines.size();
+  for(unsigned int num = begin; num < lines.size(); ++num) {
+    std::string line = lines[num];
     if (line != "") {
       auto tokens = split(line, ',');
       for(unsigned int i = 0; i < tokens.size(); ++i) {
@@ -369,6 +376,11 @@ void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *d
           }
         }
       }
+    }
+    if (qty == labelCount) {
+      break;
+    } else if (num == (lines.size() - 1)) {
+      num = 0;
     }
   }
 }

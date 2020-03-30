@@ -54,6 +54,8 @@ namespace mnist {
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
       saveModel(modelID, "01_mnist.dat");
+      delete [] data;
+      delete [] label;
     }
   //  //----- Тестирование --------------
     else {
@@ -71,9 +73,9 @@ namespace mnist {
       float accuracy = 0.f;
       evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;
+      delete [] data;
+      delete [] label;
     }
-    delete [] data;
-    delete [] label;
 
   //  deleteModel(modelID);
     return 0;

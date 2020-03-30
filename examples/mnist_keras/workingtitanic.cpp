@@ -36,7 +36,7 @@ namespace titanic {
 
     LayerSize layerDataSize, layerLabelSize;
     float * data; uint8_t * label;
-    titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize);
+    titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
     //----- Тренировка -----
     if (isTraining) {
 

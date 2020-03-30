@@ -7,7 +7,7 @@
 #include "workingbike.h"
 #include "workingtitanic.h"
 
-#define NN_MNIST
+#define NN_BREAST
 
 int main()
 {

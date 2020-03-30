@@ -39,7 +39,8 @@ namespace boston {
       //----- Загрузка сета --------------
       LayerSize layerDataSize, layerLabelSize;
       float * data, * label;  // Используем указатели на указатели
-      int retCode = bostonTrainData("../data/05_boston/boston_data.csv", &data, &label, &layerDataSize, &layerLabelSize);
+      int retCode = bostonTrainData("../data/05_boston/boston_data.csv", &data, &label,
+                                    &layerDataSize, &layerLabelSize, 0, 0);
       if(retCode != STATUS_OK) {
         cout<<"Read data file is failure!!!"<<endl;
         exit (-1);
@@ -57,7 +58,8 @@ namespace boston {
       //----- Загрузка сета --------------
       LayerSize layerDataSize, layerLabelSize;
       float * data;  // Используем указатели на указатели
-      int retCode = bostonTrainData("../data/05_boston/boston_test_data.csv", &data, nullptr, &layerDataSize, &layerLabelSize);
+      int retCode = bostonTrainData("../data/05_boston/boston_test_data.csv", &data, nullptr,
+                                    &layerDataSize, &layerLabelSize, 0, 0);
       if(retCode != STATUS_OK) {
         cout<<"Read data file is failure!!!"<<endl;
         exit (-1);

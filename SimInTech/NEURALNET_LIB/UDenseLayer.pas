@@ -90,16 +90,18 @@ procedure TDenseLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  returnCode := addDense(id, PAnsiChar(shortName),
-                         PAnsiChar(nodes),
-                         m_units, 
-                         m_activate, 
-                         m_opimized,
-                         m_dropout, 
-                         m_batchnorm);
-  if returnCode <> STATUS_OK then begin
-    ErrorEvent('Neural model not added dense layer', msError, VisualObject);
-    Exit;
+  if id = m_modelID then begin
+    returnCode := addDense(id, PAnsiChar(shortName),
+                           PAnsiChar(nodes),
+                           m_units,
+                           m_activate,
+                           m_opimized,
+                           m_dropout,
+                           m_batchnorm);
+    if returnCode <> STATUS_OK then begin
+      ErrorEvent('Neural model not added dense layer', msError, VisualObject);
+      Exit;
+    end;
   end;
 end;
 
@@ -120,8 +122,8 @@ begin
   case Action of
     i_GetCount: begin
       for I := 0 to m_outputQty - 1 do
-        cY[I] := 1;
-      cY[0] := 3;
+        cY[I] := 2;
+      cY[0] := 4;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -145,18 +147,21 @@ begin
     end;
     f_GoodStep: begin
 //      if isCreate = False then begin
-      if U[0].FCount > 0 then begin
-        rootIndex := Round(U[0].Arr^[0]);
+      if U[0].FCount > 1 then begin
+        m_modelID := Round(U[0].Arr^[0]);
+        rootIndex := Round(U[0].Arr^[1]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
           rootLayer := TAbstractLayer(LayersDict[rootIndex]);
           rootLayer.appendNode(shortName);
-          for J := 0 to cY.Count - 1 do
-            Y[J].Arr^[0] := getLayerNumber;
+          for J := 0 to cY.Count - 1 do begin
+            Y[J].Arr^[0] := m_modelID;
+            Y[J].Arr^[1] := getLayerNumber;
+          end;
           isCreate := True;
         end;
-        if U[0].FCount = 3 then begin
-          Y[0].Arr^[1] := U[0].Arr^[1];
+        if U[0].FCount = 4 then begin
           Y[0].Arr^[2] := U[0].Arr^[2];
+          Y[0].Arr^[3] := U[0].Arr^[3];
         end;
       end;
 //      end;
