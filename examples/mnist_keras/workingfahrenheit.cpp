@@ -54,7 +54,9 @@ namespace fahrenheit {
         layerLabelSize.h = 1;
         layerLabelSize.ch = 1;
         //----- Эпохи не важны (1 штука) -----
-        fitOneValue(modelID, far, layerDataSize, cel, layerLabelSize, 1, 0.1f);
+        float accuracy = 0.f;
+        fitOneValue(modelID, far, layerDataSize, cel, layerLabelSize, 1, 0.1f, accuracy);
+        std::cout<<"ACCURACY: "<<accuracy<<std::endl;
       }
       saveModel(modelID, "00_fahrenheit.dat");
     }

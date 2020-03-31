@@ -83,7 +83,7 @@ var
   m_data: PDataArr; /// Данные, которые проходят через слои модели
   accuracy : Single;
   runResult : Integer;
-  //color, alpha : Integer;
+  labelPoint: array of Single;   /// Метки для
 begin
  Result:=0;
   case Action of
@@ -166,8 +166,15 @@ begin
           ErrorEvent('Open weight file is crashed', msError, VisualObject);
           Exit;
         end;
-        returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
-        Y[1].Arr^[0] := runResult;
+        if m_crossOut = 1 then begin
+          SetLength(labelPoint, datas.bsz);
+          returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
+          Y[1].Arr^[0] := labelPoint[0];
+        end else begin
+          returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
+          Y[1].Arr^[0] := runResult;
+        end;
+
         for I := 0 to Length(m_data^) - 1 do begin
           Y[0].Arr^[I] := m_data^[I];
         end;

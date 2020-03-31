@@ -215,7 +215,8 @@ Function fit(id : Integer; data: PSingle; dataSize: TLayerSize;
 
 Function fitOneValue(id : Integer; data: PSingle; dataSize: TLayerSize;
                      label_: PSingle; labelsSize: TLayerSize;
-                      epochs: Cardinal; learningRate: Single) : TStatus; cdecl; external KERAS_EXPORT;
+                     epochs: Cardinal; learningRate: Single; var accuracy : Single
+                     ) : TStatus; cdecl; external KERAS_EXPORT;
 
 // evaluate Проверка с тестовым сетом
 // data тестовые данные

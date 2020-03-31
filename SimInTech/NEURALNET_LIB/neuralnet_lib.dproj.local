@@ -1,26 +1,46 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.953,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UTrainingBlock.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.953,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.846,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDanseLayer.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.455,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.891,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.833,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Blocks.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.213,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\ULossFunction.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.510,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.735,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UTestingBlock.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.971,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UOutputLayer.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.690,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDanseLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDenseLayer.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.987,C:\SimInTech64\source\MBTY\NEURALNET_LIB\gidro_lib.dproj=C:\SimInTech64\source\MBTY\NEURALNET_LIB\neuralnet_lib.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.861,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\sn\keras.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.695,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UCropLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.690,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDenseLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDanseLayer.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.987,C:\SimInTech64\source\MBTY\NEURALNET_LIB\neuralnet_lib.dproj=C:\SimInTech64\source\MBTY\NEURALNET_LIB\gidro_lib.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.549,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UInputLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.846,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\sn\dataset.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.453,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.344,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UNNConstants.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.953,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.177,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDataSet.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.242,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UConcatLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.086,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDeconvolutionLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.213,C:\SimInTech64\source\MBTY\NEURALNET_LIB\ULossFunction.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.971,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UOutputLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.492,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UConvolutionLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.735,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UTestingBlock.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.833,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Blocks.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.617,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UPoolingLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.726,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UActivatorLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.953,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UTrainingBlock.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.758,C:\SimInTech64\source\MBTY\NEURALNET_LIB\USummatorLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.086,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.927,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.768,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.549,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UInputLayer.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.320,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.883,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.861,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\sn\keras.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.976,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UResizeLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.846,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDanseLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.305,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.055,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.891,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.440,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.177,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UDataSet.pas</Transaction>
-    <Transaction>2020.03.01 13:28:23.453,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
-    <Transaction>2020.03.01 13:28:44.515,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UAbstractLayer.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.455,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.328,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.070,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.555,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.510,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.086,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.515,C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\UAbstractLayer.pas</Transaction>
+    <Transaction>2020.03.16 22:24:07.898,=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
+    <Transaction>2020.03.16 22:24:19.726,C:\SimInTech64\source\MBTY\NEURALNET_LIB\UMNISTPixel.pas=C:\SimInTech64\source\MBTY\NEURALNET_LIB\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

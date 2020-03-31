@@ -19,16 +19,19 @@
     <ClCompile Include="..\..\src\snKeras\src\snOperator.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\snTensor.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\snType.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\trainingdata.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\snKeras\src\dataset.h" />
     <ClInclude Include="..\..\src\snKeras\src\keras.h" />
     <ClInclude Include="..\..\src\snKeras\src\mnistset.h" />
+    <ClInclude Include="..\..\src\snKeras\src\rapidcsv.h" />
     <ClInclude Include="..\..\src\snKeras\src\snkeras_global.h" />
     <ClInclude Include="..\..\src\snKeras\src\snNet.h" />
     <ClInclude Include="..\..\src\snKeras\src\snOperator.h" />
     <ClInclude Include="..\..\src\snKeras\src\snTensor.h" />
     <ClInclude Include="..\..\src\snKeras\src\snType.h" />
+    <ClInclude Include="..\..\src\snKeras\src\trainingdata.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6B29FC3D-F957-48E6-ADD8-15C33590D9B0}</ProjectGuid>

@@ -242,7 +242,7 @@ KERAS_EXPORT Status fit(int id, float * data, LayerSize dataSize, unsigned char 
 
 KERAS_EXPORT Status fitOneValue(int id, float * data, LayerSize dataSize, float * label,
                         LayerSize labelsSize, unsigned int epochs,
-                        float learningRate);
+                        float learningRate, float & accuracy);
 
 /**
  * @brief evaluate Проверка с тестовым сетом

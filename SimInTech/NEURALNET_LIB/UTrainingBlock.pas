@@ -32,6 +32,7 @@ type
     m_fileLoad: String;
 
     m_label: array of Byte;
+    m_fLabel: array of Single;
 
     m_lastDataType : Integer;
 
@@ -135,8 +136,13 @@ begin
       p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
       m_data := PDataArr(p64);
       SetLength(m_label, U[1].Count);
+      SetLength(m_flabel, U[1].Count);
       for I := 0 to Length(m_label) - 1 do begin
-        m_label[I] := Round(U[1].Arr^[I]);
+        if m_crossOut = 1 then begin
+          m_flabel[I] := U[1].Arr^[I];
+        end else begin
+          m_label[I] := Round(U[1].Arr^[I]);
+        end;
       end;
       datas.w := Round(U[2].Arr^[0]);
       datas.h := Round(U[3].Arr^[0]);
@@ -146,7 +152,12 @@ begin
       labels.h := 1;
       labels.ch := 1;
       labels.bsz := Length(m_label);
-      fit(m_id, @m_data^[0], datas, @m_label[0], labels, 1, m_learningRate, accuracy);
+      if m_crossOut = 1 then begin
+        fitOneValue(m_id, @m_data^[0], datas, @m_flabel[0], labels, 1, m_learningRate, accuracy);
+        accuracy := 1.0 - accuracy;
+      end else begin
+        fit(m_id, @m_data^[0], datas, @m_label[0], labels, 1, m_learningRate, accuracy);
+      end;
       Y[0].Arr^[0] := accuracy;
       inc(stepCount);
     end;

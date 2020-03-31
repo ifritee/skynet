@@ -60,7 +60,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      cY[0] := 2;
+      cY[0] := 3;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);

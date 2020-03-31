@@ -47,8 +47,10 @@ namespace boston {
       }
       //=================================
       const int epoches = 5000;
+      float accuracy = 0.f;
       //----- Эпохи не важны (1 штука) -----
-      fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.001f);
+      fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.001f, accuracy);
+      std::cout<<"ACCURACY: "<<accuracy<<std::endl;
       saveModel(modelID, "05_boston.dat");
       delete [] data;
       delete [] label;
@@ -65,6 +67,8 @@ namespace boston {
         exit (-1);
       }
       //=================================
+      layerDataSize.bsz = 1;
+      layerLabelSize.bsz = 1;
       float * out = new float[layerDataSize.bsz];
 
       loadModel(modelID, "05_boston.dat");

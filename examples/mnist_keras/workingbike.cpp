@@ -46,7 +46,9 @@ namespace bike {
     //=================================
     if (isTraining) { //----- Тренировка -----
       const int epoches = 5000;
-      fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.01f);
+      float accuracy = 0.f;
+      fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.01f, accuracy);
+      std::cout<<"ACCURACY: "<<accuracy<<std::endl;
       saveModel(modelID, "07_bike.dat");
     } else {  //----- Тестирование --------------
       float * out = new float[layerDataSize.bsz];

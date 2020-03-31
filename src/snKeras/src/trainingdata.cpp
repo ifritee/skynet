@@ -313,8 +313,9 @@ std::vector<std::string> TrainingData::split(const string & s, char d)
 void TrainingData::setDatafromStrings(const std::vector<std::string> & lines, float * datas, float * labels,
                                       unsigned int labIndex, const std::vector<uint32_t> & ign, int qty, unsigned int step)
 {
-  int dataCount = 0, labelCount = 0, begin = qty * step % lines.size();
+  int dataCount = 0, labelCount = 0, begin = qty * step % lines.size(), fullDataCount = 0;
   for(unsigned int num = begin; num < lines.size(); ++num) {
+    ++fullDataCount;
     std::string line = lines[num];
     if (line != "") {
       auto tokens = split(line, ',');
@@ -338,7 +339,7 @@ void TrainingData::setDatafromStrings(const std::vector<std::string> & lines, fl
         }
       }
     }
-    if (qty == labelCount) {
+    if (qty == fullDataCount) {
       break;
     } else if (num == (lines.size() - 1)) {
       num = 0;

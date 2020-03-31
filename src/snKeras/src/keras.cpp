@@ -307,7 +307,7 @@ Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerS
 }
 
 Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerSize labelsSize,
-           unsigned int epochs, float learningRate)
+           unsigned int epochs, float learningRate, float & accuracy)
 {
   if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
@@ -335,10 +335,11 @@ Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerS
       for (size_t i = 0; i < dataSize.bsz; ++i) {
         float* refTarget = targetData + i * classes;
         float* refOutput = outData + i * classes;
-        std::cout<<*refTarget<<" "<<*refOutput<<std::endl;
+        accuracy += std::abs(*refTarget - *refOutput);
       }
     }
   }
+  accuracy /= (epochs * labelsSize.bsz);
   return STATUS_OK;
 }
 

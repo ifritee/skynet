@@ -1,4 +1,4 @@
-unit UAbstractLayer;
+﻿unit UAbstractLayer;
 
 interface
   uses

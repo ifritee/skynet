@@ -78,7 +78,7 @@ begin
       DataType:=dtDouble;    
       Exit;
     end else if StrEqu(ParamName,'batchnorm') then begin
-      Result:=NativeInt(@m_dropout);
+      Result:=NativeInt(@m_batchnorm);
       DataType:=dtInteger;    
       Exit;
     end;
@@ -94,7 +94,7 @@ begin
     returnCode := addDense(id, PAnsiChar(shortName),
                            PAnsiChar(nodes),
                            m_units,
-                           m_activate,
+                           m_activate - 1,
                            m_opimized,
                            m_dropout,
                            m_batchnorm);
