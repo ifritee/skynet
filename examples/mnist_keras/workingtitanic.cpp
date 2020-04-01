@@ -35,11 +35,11 @@ namespace titanic {
     //=================================
 
     LayerSize layerDataSize, layerLabelSize;
-    float * data; uint8_t * label;
-    titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+    float * data;
     //----- Тренировка -----
     if (isTraining) {
-
+      uint8_t * label;
+      titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 3);
       float accuracySum = 0.f;
       const int epoche = 130, reset = 10;
 
@@ -54,16 +54,19 @@ namespace titanic {
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
       saveModel(modelID, "08_titanic.dat");
+      delete [] label;
     }
     //----- Тестирование --------------
     else {
+      titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 0, 0);
       loadModel(modelID, "08_titanic.dat");
       float accuracy = 0.f;
-      evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
+      unsigned char * ans = new unsigned char[layerDataSize.bsz];
+      evaluate(modelID, data, layerDataSize, nullptr, layerLabelSize, 2, accuracy, ans);
       cout<<"Testing: "<<accuracy<<endl;
+      delete [] ans;
     }
     delete [] data;
-    delete [] label;
     deleteModel(modelID);
     return 0;
   }

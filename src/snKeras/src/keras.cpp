@@ -344,7 +344,7 @@ Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerS
 }
 
 Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
-                unsigned int /*verbose*/, float & accuracy)
+                unsigned int /*verbose*/, float & accuracy, unsigned char * ans)
 {
   if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
@@ -365,8 +365,12 @@ Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, L
   for (size_t i = 0; i < dataSize.bsz; ++i) {
     float* refOutput = outData + i * labelsSize.w;
     auto maxOutInx = std::distance(refOutput, std::max_element(refOutput, refOutput + labelsSize.w));
-    if(label[i] != maxOutInx) {
-      ++errors;
+    if ( label != nullptr) {  // Если нужно провести сравнение
+      if(label[i] != maxOutInx) {
+        ++errors;
+      }
+    } else if (ans != nullptr) { // Если нужны ответы
+      ans[i] = maxOutInx;
     }
   }
   accuracy = 1.f - (float(errors) / float(dataSize.bsz));

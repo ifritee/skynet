@@ -238,27 +238,47 @@ void nameFunc(const std::string & pStr, float & pVal)
   }
 }
 
+void fareFunc(const std::string & pStr, float & pVal)
+{
+  if(pStr.size() == 0) {
+    pVal = 10.0f;
+  } else {
+    std::istringstream is(pStr);
+    is >> pVal;
+  }
+}
+
 void TrainingData::readTitanicData(float **data, uint8_t **label, int qty, unsigned int step)
 {
   rapidcsv::Document doc(m_fileName);
-  std::vector<float> survived = doc.GetColumn<float>("Survived");
+  std::vector<float> survived;
+  if (label != nullptr) {
+    survived = doc.GetColumn<float>("Survived");
+  }
   std::vector<float> pclass = doc.GetColumn<float>("Pclass");
   std::vector<float> name = doc.GetColumn<float>("Name", nameFunc);
   std::vector<float> sex = doc.GetColumn<float>("Sex", sexFunc);
   std::vector<float> age = doc.GetColumn<float>("Age", ageFunc);
   std::vector<float> sibSp = doc.GetColumn<float>("SibSp");
   std::vector<float> parch = doc.GetColumn<float>("Parch");
-  std::vector<float> fare = doc.GetColumn<float>("Fare");
+  std::vector<float> fare = doc.GetColumn<float>("Fare", fareFunc);
   std::vector<float> embarked = doc.GetColumn<float>("Embarked", embarkedFunc);
 
-  const unsigned int bsz = static_cast<unsigned int>(age.size());
+//  const unsigned int bsz = static_cast<unsigned int>(age.size());
+  const unsigned int bsz = (qty > 0 ? qty : age.size());
   const int dataQty = 6;
+  unsigned int begin = bsz * step % age.size(), fullDataCount = 0;;
 
   *data = new float[bsz * dataQty];
-  *label = new uint8_t[bsz];
+  if (label != nullptr) {
+    *label = new uint8_t[bsz];
+  }
   unsigned int countData = 0;
-  for (unsigned int i = 0; i < bsz; ++i) {
-    (*label)[i] = static_cast<uint8_t>(survived[i]);
+  for (unsigned int i = begin; i < bsz; ++i) {
+    ++fullDataCount;
+    if (label != nullptr) {
+      (*label)[i] = static_cast<uint8_t>(survived[i]);
+    }
     (*data)[countData++] = pclass[i];
     (*data)[countData++] = sex[i];
     if(age[i] < 1.f) {
@@ -268,6 +288,12 @@ void TrainingData::readTitanicData(float **data, uint8_t **label, int qty, unsig
     (*data)[countData++] = sibSp[i] + parch[i];  // Объединил родителей и детей
     (*data)[countData++] = fare[i];
     (*data)[countData++] = embarked[i];
+
+    if (bsz == fullDataCount) {
+      break;
+    } else if (i == (age.size() - 1)) {
+      i = 0;
+    }
   }
 
   m_sizeData->bsz = bsz;
@@ -351,8 +377,9 @@ void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *d
                                       uint8_t *labels, unsigned int labIndex, const std::vector<uint32_t> &ign,
                                       std::map<std::string, uint8_t> & answer, int qty, unsigned int step)
 {
-  int dataCount = 0, labelCount = 0, begin = qty * step % lines.size();
+  int dataCount = 0, labelCount = 0, begin = qty * step % lines.size(), fullDataCount = 0;
   for(unsigned int num = begin; num < lines.size(); ++num) {
+    ++fullDataCount;
     std::string line = lines[num];
     if (line != "") {
       auto tokens = split(line, ',');
@@ -378,7 +405,7 @@ void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *d
         }
       }
     }
-    if (qty == labelCount) {
+    if (qty == fullDataCount) {
       break;
     } else if (num == (lines.size() - 1)) {
       num = 0;
