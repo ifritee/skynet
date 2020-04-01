@@ -228,36 +228,71 @@ KERAS_EXPORT Status netArchitecture(int id, char * buffer, unsigned int length);
 
 /**
  * @brief fit Запуск упрощенной тренировки для известных наборов
+ * @param id Итендификатор сети
  * @param data тренировочные данные
  * @param dataSize количество тренировочных данных
  * @param label метки тренировочных данных
  * @param labelsSize количество меток
- * @param epochs Эпохи
+ * @param epochs Количество эпох обучения
  * @param learningRate Шаг обучения
+ * @param accuracy Степень точности обучения
  * @return Статус тренировки
  */
 KERAS_EXPORT Status fit(int id, float * data, LayerSize dataSize, unsigned char * label,
                         LayerSize labelsSize, unsigned int epochs,
                         float learningRate, float & accuracy);
 
+/**
+ * @brief fitOneValue Обучение модели для одного значения (float)
+ * @param id Итендификатор сети
+ * @param data тестовые данные
+ * @param dataSize количество тестовых данных
+ * @param label метки тестовые данных
+ * @param labelsSize количество меток
+ * @param epochs Количество эпох обучения
+ * @param learningRate Шаг обучения
+ * @param accuracy Степень точности обучения
+ * @return Статус обучения
+ */
 KERAS_EXPORT Status fitOneValue(int id, float * data, LayerSize dataSize, float * label,
                         LayerSize labelsSize, unsigned int epochs,
                         float learningRate, float & accuracy);
 
 /**
  * @brief evaluate Проверка с тестовым сетом
+ * @param id Итендификатор сети
  * @param data тестовые данные
  * @param dataSize количество тестовых данных
  * @param label метки тестовые данных
  * @param labelsSize количество меток
  * @param verbose уровень подробности
+ * @param accuracy Степень точности тестирования
+ * @param ans Запись значений
  * @return Статус тестирования
  */
 KERAS_EXPORT Status evaluate(int id, float * data, LayerSize dataSize, unsigned char * label,
                              LayerSize labelsSize, unsigned int verbose, float & accuracy, unsigned char * ans = nullptr);
 
+/**
+ * @brief forecasting Запуск Нейронки на определение значений
+ * @param id Итендификатор сети
+ * @param data Данные для расчета
+ * @param dataSize Размеры данных
+ * @param label Указатель на массив в который будут записаны значения
+ * @param labelsSize Размеры данных в которые будут записаны значения
+ * @return Состояние работы
+ */
 KERAS_EXPORT Status forecasting(int id, float * data, LayerSize dataSize, float * label, LayerSize labelsSize);
 
+/**
+ * @brief run Производит пасчет одного данного по обученой модели
+ * @param id Итендификатор сети
+ * @param data Данные для расчета
+ * @param dataSize Размеры данных
+ * @param labelsSize Размеры данных для подсчета результата
+ * @param result Вывод результата
+ * @return Состояние работы
+ */
 KERAS_EXPORT Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& result);
 
 /**

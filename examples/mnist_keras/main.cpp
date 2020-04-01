@@ -7,7 +7,7 @@
 #include "workingbike.h"
 #include "workingtitanic.h"
 
-#define NN_TITANIC
+#define NN_IRIS
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
 #elif defined(NN_BIKE)
   exitStatus = bike::workingBike(false);
 #elif defined(NN_TITANIC)
-  exitStatus = titanic::workingTitanic(true);
+  exitStatus = titanic::workingTitanic(false);
 #endif //NN_MNIST
   return exitStatus;
 }

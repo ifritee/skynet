@@ -14,6 +14,8 @@ type
   TAbstractLayer = class(TRunObject)
   public
     constructor Create(Owner: TObject); override;
+    // Деструктор
+    destructor Destroy; override;
     function getLayerNumber(): NativeInt;
     function getShortName(): String;
     // Добавляет данный слой в модель
@@ -47,6 +49,13 @@ begin
   LayersDict.Add(Self);
   nodes := '';
   m_modelID := -1;
+end;
+
+constructor  TAbstractLayer.Destroy;
+begin
+  inherited;
+  dec(LayerCount);
+  LayersDict.Remove(Self);
 end;
 
 function TAbstractLayer.getLayerNumber(): NativeInt;

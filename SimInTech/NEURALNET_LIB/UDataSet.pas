@@ -235,8 +235,8 @@ begin
                         @dataParam, @labelParam,0,0);
         end else begin
           titanicTrainData(PAnsiChar(AnsiString(m_titanicTest)),
-                        @m_dataPoint, @m_labelPoint,
-                        @dataParam, @labelParam,0,0);
+                        @m_dataPoint, 0,
+                        @dataParam, @labelParam, 0,0);
         end;
         m_width := dataParam.w;
         m_height := dataParam.h;
@@ -348,7 +348,7 @@ begin
                                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end else begin
           retCode := titanicTrainData(PAnsiChar(AnsiString(m_titanicTest)),
-                                      @m_dataPoint, @m_labelPoint,
+                                      @m_dataPoint, 0,
                                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end;
         dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
@@ -361,8 +361,12 @@ begin
               Y[1].Arr^[I] := m_fLabelPoint[I];
           end;
         end else begin
-          for I := 0 to labelParam.bsz - 1 do
-            Y[1].Arr^[I] := m_labelPoint[I];
+          if (m_datasetType = Integer(dtTITANIC)) AND (m_sendDataType = 1) then begin
+
+          end else begin
+            for I := 0 to labelParam.bsz - 1 do
+              Y[1].Arr^[I] := m_labelPoint[I];
+          end;
         end;
         Y[2].Arr^[0] := m_width;
         Y[3].Arr^[0] := m_height;

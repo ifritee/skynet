@@ -58,13 +58,16 @@ namespace titanic {
     }
     //----- Тестирование --------------
     else {
-      titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 0, 0);
-      loadModel(modelID, "08_titanic.dat");
-      float accuracy = 0.f;
-      unsigned char * ans = new unsigned char[layerDataSize.bsz];
-      evaluate(modelID, data, layerDataSize, nullptr, layerLabelSize, 2, accuracy, ans);
-      cout<<"Testing: "<<accuracy<<endl;
-      delete [] ans;
+      for(unsigned int i = 0; i < 100; ++i) {
+        titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 1, i);
+        loadModel(modelID, "08_titanic.dat");
+        float accuracy = 0.f;
+        unsigned char * ans = new unsigned char[layerDataSize.bsz];
+        evaluate(modelID, data, layerDataSize, nullptr, layerLabelSize, 2, accuracy, ans);
+        cout<<"Testing: "<<(int)ans[0]<<endl;
+        delete [] ans;
+      }
+
     }
     delete [] data;
     deleteModel(modelID);

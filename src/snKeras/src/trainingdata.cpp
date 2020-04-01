@@ -274,7 +274,7 @@ void TrainingData::readTitanicData(float **data, uint8_t **label, int qty, unsig
     *label = new uint8_t[bsz];
   }
   unsigned int countData = 0;
-  for (unsigned int i = begin; i < bsz; ++i) {
+  for (unsigned int i = begin; i < age.size(); ++i) {
     ++fullDataCount;
     if (label != nullptr) {
       (*label)[i] = static_cast<uint8_t>(survived[i]);

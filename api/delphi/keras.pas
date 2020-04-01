@@ -213,6 +213,11 @@ Function fit(id : Integer; data: PSingle; dataSize: TLayerSize;
              epochs: Cardinal; learningRate: Single; var accuracy : Single
              ): TStatus; cdecl; external KERAS_EXPORT;
 
+Function fitOneValue(id : Integer; data: PSingle; dataSize: TLayerSize;
+                     label_: PSingle; labelsSize: TLayerSize;
+                     epochs: Cardinal; learningRate: Single; var accuracy : Single
+                     ) : TStatus; cdecl; external KERAS_EXPORT;
+
 // evaluate Проверка с тестовым сетом
 // data тестовые данные
 // dataSize количество тестовых данных
@@ -222,8 +227,12 @@ Function fit(id : Integer; data: PSingle; dataSize: TLayerSize;
 // return Статус тестирования
 Function evaluate(id : Integer; data: PSingle; dataSize: TLayerSize;
                   label_: PByte; labelsSize: TLayerSize;
-                  verbose: Cardinal; var accuracy : Single
+                  verbose: Cardinal; var accuracy : Single; ans_: PByte = 0
                   ): TStatus; cdecl; external KERAS_EXPORT;
+
+Function forecasting(id : Integer; data: PSingle; dataSize: TLayerSize;
+                     label_: PSingle; labelsSize : TLayerSize
+                    ): TStatus; cdecl; external KERAS_EXPORT;
 
 Function run(id : Integer; data: PSingle; dataSize: TLayerSize;
                   labelsSize: TLayerSize; var result : Integer

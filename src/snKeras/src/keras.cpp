@@ -29,7 +29,7 @@ int createModel()
 
 Status deleteModel( int id )
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -40,7 +40,7 @@ Status deleteModel( int id )
 
 Status addInput(int id, const char * name, const char * nodes)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -56,7 +56,7 @@ Status addConvolution(int id, const char * name, const char * nodes, unsigned in
                       unsigned int fHeight_, int padding_, unsigned int stride_, unsigned int dilate_,
                       unsigned int gpuDeviceId_)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -77,7 +77,7 @@ Status addDeconvolution(int id, const char *name, const char *nodes, unsigned in
                         Optimizer opt_, float dropOut_, BatchNormType bnorm_, unsigned int fWidth_,
                         unsigned int fHeight_, unsigned int stride_, unsigned int gpuDeviceId_)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -98,7 +98,7 @@ Status addDeconvolution(int id, const char *name, const char *nodes, unsigned in
 Status addPooling(int id, const char *name, const char *nodes, unsigned int kernel_, unsigned int stride_,
                   PoolType pool_, unsigned int gpuDeviceId_)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -116,7 +116,7 @@ Status addPooling(int id, const char *name, const char *nodes, unsigned int kern
 Status addDense(int id, const char *name, const char *nodes, unsigned int units_, Activation act_, Optimizer opt_,
                 float dropOut_, BatchNormType bnorm_, unsigned int gpuDeviceId_)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -135,7 +135,7 @@ Status addDense(int id, const char *name, const char *nodes, unsigned int units_
 
 Status addConcat(int id, const char *name, const char *nodes, const char * sequence)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -149,7 +149,7 @@ Status addConcat(int id, const char *name, const char *nodes, const char * seque
 Status addResize(int id, const char *name, const char *nodes, unsigned int fwdBegin, unsigned int fwdEnd,
                  unsigned int bwdBegin, unsigned int bwdEnd)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -163,7 +163,7 @@ Status addResize(int id, const char *name, const char *nodes, unsigned int fwdBe
 Status addCrop(int id, const char *name, const char *nodes, unsigned int x, unsigned int y,
                unsigned int w, unsigned int h)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -176,7 +176,7 @@ Status addCrop(int id, const char *name, const char *nodes, unsigned int x, unsi
 
 Status addSummator(int id, const char *name, const char *nodes, SummatorType type)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -189,7 +189,7 @@ Status addSummator(int id, const char *name, const char *nodes, SummatorType typ
 
 Status addActivator(int id, const char *name, const char *nodes, Activation active)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -202,7 +202,7 @@ Status addActivator(int id, const char *name, const char *nodes, Activation acti
 
 Status addLossFunction(int id, const char *name, const char *nodes, LossType loss_)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -215,7 +215,7 @@ Status addLossFunction(int id, const char *name, const char *nodes, LossType los
 
 Status netArchitecture(int id, char * buffer, unsigned int length)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -234,7 +234,7 @@ Status netArchitecture(int id, char * buffer, unsigned int length)
 
 void lastError(int id, char *buffer, unsigned int length)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return;
   }
   sn::Net * model = modelSet[id];
@@ -248,7 +248,7 @@ void lastError(int id, char *buffer, unsigned int length)
 
 void printLastError(int id, Status status)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return;
   }
   sn::Net * model = modelSet[id];
@@ -262,7 +262,7 @@ void printLastError(int id, Status status)
 Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
            unsigned int epochs, float learningRate, float & accuracy)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -309,7 +309,7 @@ Status fit(int id, float *data, LayerSize dataSize, unsigned char *label, LayerS
 Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerSize labelsSize,
            unsigned int epochs, float learningRate, float & accuracy)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -346,7 +346,7 @@ Status fitOneValue(int id, float *data, LayerSize dataSize, float *label, LayerS
 Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, LayerSize labelsSize,
                 unsigned int /*verbose*/, float & accuracy, unsigned char * ans)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -369,7 +369,8 @@ Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, L
       if(label[i] != maxOutInx) {
         ++errors;
       }
-    } else if (ans != nullptr) { // Если нужны ответы
+    }
+    if (ans != nullptr) { // Если нужны ответы
       ans[i] = maxOutInx;
     }
   }
@@ -379,7 +380,7 @@ Status evaluate(int id, float *data, LayerSize dataSize, unsigned char *label, L
 
 Status forecasting(int id, float * data, LayerSize dataSize, float * label, LayerSize labelsSize)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
@@ -392,7 +393,7 @@ Status forecasting(int id, float * data, LayerSize dataSize, float * label, Laye
   sn::Tensor inputLayer(sn::snLSize(dataSize.w, dataSize.h, dataSize.ch, dataSize.bsz), data);
   sn::Tensor outputLayer(sn::snLSize(labelsSize.w, labelsSize.h, labelsSize.ch, dataSize.bsz));
   model->forward(false, inputLayer, outputLayer);
-  for(int i = 0; i < dataSize.bsz; ++i) {
+  for(unsigned int i = 0; i < dataSize.bsz; ++i) {
     label[i] = outputLayer.data()[i];
   }
   return STATUS_OK;
@@ -400,7 +401,7 @@ Status forecasting(int id, float * data, LayerSize dataSize, float * label, Laye
 
 Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& result)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net* model = modelSet[id];
@@ -421,7 +422,7 @@ Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& r
 
 Status saveModel(int id, const char *filename)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id]; 
@@ -436,7 +437,7 @@ Status saveModel(int id, const char *filename)
 
 Status loadModel(int id, const char *filename)
 {
-  if (id > modelSet.size() - 1 || id < 0) { // Нет этой модели
+  if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
   }
   sn::Net * model = modelSet[id];
