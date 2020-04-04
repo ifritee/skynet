@@ -49,7 +49,7 @@ type
      m_bikeTime: Cardinal; /// Тип набора (0 - по дням, 1 - по часам)
      m_titanicTrain: String;  /// Выживет ли пассажир (тренировка)
      m_titanicTest: String; /// Выживет ли пассажир (тест)
-     m_trainQty : Cardinal; /// Количество считываемых данны
+     m_trainQty : Integer; /// Количество считываемых данны
 
      /// Проверка наличия файлов с датасетом
      Function checkFiles(): Boolean;
@@ -57,7 +57,7 @@ type
 
 implementation
 
-uses keras, UNNConstants;
+uses keras, UNNConstants, NN_Texts;
 
 constructor  TDataSet.Create;
 begin
@@ -73,9 +73,6 @@ end;
 destructor   TDataSet.Destroy;
 begin
   inherited;
-//  if m_id >= 0 then begin
-//    dataset.deleteMnistDataset(m_id);
-//  end;
 end;
 
 function    TDataSet.GetParamID;
@@ -205,7 +202,7 @@ begin
                           @dataParam, @labelParam,0,0);
         end else begin
           bostonTrainData(PAnsiChar(AnsiString(m_bostonTest)),
-                          @m_dataPoint, 0,
+                          @m_dataPoint, Nil,
                           @dataParam, @labelParam,0,0);
         end;
         m_width := dataParam.w;
@@ -235,7 +232,7 @@ begin
                         @dataParam, @labelParam,0,0);
         end else begin
           titanicTrainData(PAnsiChar(AnsiString(m_titanicTest)),
-                        @m_dataPoint, 0,
+                        @m_dataPoint, Nil,
                         @dataParam, @labelParam, 0,0);
         end;
         m_width := dataParam.w;
@@ -258,15 +255,13 @@ end;
 function   TDataSet.RunFunc;
 var
   returnCode: TStatus;
-//  p64: UInt64;
-  i, j, retCode: Integer;
-//  isWorkDone: Boolean;
-//  datas, labels : String;
+  i, j: Integer;
   dataParam, labelParam: keras.TLayerSize;
   dataLength: Integer;
 begin
   Result:=0;
-//  isWorkDone := True;
+  dataLength := 0;
+  returnCode := 0;
   case Action of
     f_UpdateOuts: begin
 
@@ -287,14 +282,14 @@ begin
     f_GoodStep: begin
       if m_datasetType = Integer(dtMNIST) then begin  // MNIST
         if m_sendDataType = 0 then begin
-          retCode := mnistTrainData(PAnsiChar(AnsiString(m_trainData)),
+          returnCode := mnistTrainData(PAnsiChar(AnsiString(m_trainData)),
                                     PAnsiChar(AnsiString(m_trainlabel)),
                                     @m_dataPoint, @m_labelPoint,
                                     @dataParam, @labelParam,
                                     m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
         end else begin
-          retCode := mnistTrainData(PAnsiChar(AnsiString(m_testData)),
+          returnCode := mnistTrainData(PAnsiChar(AnsiString(m_testData)),
                                     PAnsiChar(AnsiString(m_testLabel)),
                                     @m_dataPoint, @m_labelPoint,
                                     @dataParam, @labelParam,
@@ -302,57 +297,62 @@ begin
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
         end;
       end else if m_datasetType = Integer(dtBREAST) then begin // BREAST (Опухоль)
-          retCode := breastTrainData(PAnsiChar(AnsiString(m_breastFile)),
+          returnCode := breastTrainData(PAnsiChar(AnsiString(m_breastFile)),
                         m_breastSorce + 1, @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,
                         m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
       end else if m_datasetType = Integer(dtWINE) then begin // WINE (Классификация вин)
-          retCode := wineTrainData(PAnsiChar(AnsiString(m_wine)),
+          returnCode := wineTrainData(PAnsiChar(AnsiString(m_wine)),
                         @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,
                         m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
       end else if m_datasetType = Integer(dtIRIS) then begin // WINE (Классификация вин)
-          retCode := irisTrainData(PAnsiChar(AnsiString(m_iris)),
+          returnCode := irisTrainData(PAnsiChar(AnsiString(m_iris)),
                         @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,
                         m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
       end else if m_datasetType = Integer(dtBOSTON) then begin //
       if m_sendDataType = 0 then begin
-          retCode := bostonTrainData(PAnsiChar(AnsiString(m_bostonTrain)),
+          returnCode := bostonTrainData(PAnsiChar(AnsiString(m_bostonTrain)),
                           @m_dataPoint, @m_fLabelPoint,
                           @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end else begin
-          retCode := bostonTrainData(PAnsiChar(AnsiString(m_bostonTest)),
-                          @m_dataPoint, 0,
+          returnCode := bostonTrainData(PAnsiChar(AnsiString(m_bostonTest)),
+                          @m_dataPoint, Nil,
                           @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end;
         dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
       end else if m_datasetType = Integer(dtBIKE) then begin // WINE (Классификация вин)
         if m_bikeTime = 0 then begin
-          bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), True,
+          returnCode := bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), True,
                       @m_dataPoint, @m_flabelPoint,
                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end else begin
-          bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), False,
+          returnCode := bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), False,
                       @m_dataPoint, @m_flabelPoint,
                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end;
         dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
       end else if m_datasetType = Integer(dtTITANIC) then begin // TITANIC (Выживет ли пассажир)
         if m_sendDataType = 0 then begin
-          retCode := titanicTrainData(PAnsiChar(AnsiString(m_titanicTrain)),
+          returnCode := titanicTrainData(PAnsiChar(AnsiString(m_titanicTrain)),
                                       @m_dataPoint, @m_labelPoint,
                                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end else begin
-          retCode := titanicTrainData(PAnsiChar(AnsiString(m_titanicTest)),
-                                      @m_dataPoint, 0,
+          returnCode := titanicTrainData(PAnsiChar(AnsiString(m_titanicTest)),
+                                      @m_dataPoint, Nil,
                                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end;
         dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
       end;
+      if returnCode <> STATUS_OK then begin
+        ErrorEvent(txtDS_NotLoaded, msError, VisualObject);
+      Exit;
+      end;
+
         for I := 0 to dataLength - 1 do
           Y[0].Arr^[I] := m_dataPoint[I];
         if (m_datasetType = Integer(dtBOSTON)) OR (m_datasetType = Integer(dtBIKE)) then begin
@@ -400,6 +400,5 @@ end;
         Result := False;
       end;
     end;
-
   end;
 end.

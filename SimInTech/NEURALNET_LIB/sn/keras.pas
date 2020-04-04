@@ -227,7 +227,7 @@ Function fitOneValue(id : Integer; data: PSingle; dataSize: TLayerSize;
 // return Статус тестирования
 Function evaluate(id : Integer; data: PSingle; dataSize: TLayerSize;
                   label_: PByte; labelsSize: TLayerSize;
-                  verbose: Cardinal; var accuracy : Single; ans_: PByte = 0
+                  verbose: Cardinal; var accuracy : Single; ans_: PByte = Nil
                   ): TStatus; cdecl; external KERAS_EXPORT;
 
 Function forecasting(id : Integer; data: PSingle; dataSize: TLayerSize;

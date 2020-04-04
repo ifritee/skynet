@@ -25,7 +25,7 @@ type
 
 implementation
 
-uses keras, UNNConstants;
+uses keras, UNNConstants, NN_Texts;
 
 constructor TOutputLayer.Create;
 begin
@@ -55,7 +55,6 @@ begin
 end;
 
 function TOutputLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
-  var i: integer;
 begin
   Result:=0;
   case Action of
@@ -119,7 +118,7 @@ begin
         end;
       end;
       Y[0].Arr^[0] := m_modelID; // Пошлем ID сети или -1
-      if U[0].FCount = 4 then begin
+      if U[0].FCount = UNN_SIZE_WITHDATA then begin
         Y[0].Arr^[1] := U[0].Arr^[2];
         Y[0].Arr^[2] := U[0].Arr^[3];
       end;

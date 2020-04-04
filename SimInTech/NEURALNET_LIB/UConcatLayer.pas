@@ -32,12 +32,12 @@ type
   end;
 
 implementation
-  uses keras;
+  uses keras, NN_Texts, UNNConstants;
 
 constructor  TConcatLayer.Create;
 begin
   inherited;
-  shortName := 'CC' + IntToStr(getLayerNumber);
+  shortName := AnsiString('CC' + IntToStr(getLayerNumber));
   isCreate := False;
 end;
 
@@ -68,7 +68,7 @@ begin
                             PAnsiChar(nodes),
                             PAnsiChar(m_ccNodes));
     if returnCode <> STATUS_OK then begin
-      ErrorEvent('Neural model not added dense layer', msError, VisualObject);
+      ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
       Exit;
     end;
   end;
@@ -76,9 +76,6 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TConcatLayer.EditFunc;
-var
-  InputPortsNmb, OutputPortsNmb: integer;
-  MsgLength: Integer;
 begin
   SetCondPortCount(VisualObject, m_inputQty - 1,  pmInput,  PortType, sdLeft,  'inport_1');
   SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
@@ -117,7 +114,6 @@ begin
       isCreate := False;
     end;
     f_GoodStep: begin
-//      if isCreate = False then begin
       for I := 0 to cU.FCount - 1 do begin
         m_modelID := Round(U[I].Arr^[0]);
         rootIndex := Round(U[I].Arr^[1]);
@@ -125,7 +121,7 @@ begin
           rootLayer := TAbstractLayer(LayersDict[rootIndex]);
           rootLayer.appendNode(shortName);
           if Length(m_ccNodes) > 0 then begin
-            m_ccNodes := m_ccNodes + ' ' + rootLayer.getShortName;
+            m_ccNodes := m_ccNodes + AnsiString(' ') + rootLayer.getShortName;
           end else begin
             m_ccNodes := rootLayer.getShortName;
           end;
@@ -135,12 +131,11 @@ begin
           end;
           isCreate := True;
         end;
-        if U[0].FCount = 4 then begin
+        if U[0].FCount = UNN_SIZE_WITHDATA then begin
           Y[0].Arr^[2] := U[0].Arr^[2];
           Y[0].Arr^[3] := U[0].Arr^[3];
         end;
       end;
-//      end;
     end;
   end
 end;

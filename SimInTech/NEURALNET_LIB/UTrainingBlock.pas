@@ -22,9 +22,6 @@ type
 
   strict private
     stepCount: NativeInt; // Счетчик шагов
-    m_nnState: Boolean; // Состояние сети
-    m_trainData : PLayerSize;
-    m_testData : PLayerSize;
 
     m_crossOut: NativeInt;
     m_learningRate : double;
@@ -40,7 +37,7 @@ type
   end;
 
 implementation
-  uses UNNConstants;
+  uses UNNConstants, NN_Texts;
 
 constructor  TTrainingBlock.Create;
 begin
@@ -79,11 +76,7 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TTrainingBlock.EditFunc;
-var
-  InputPortsNmb, OutputPortsNmb: integer;
-  MsgLength: Integer;
 begin
-//  SetCondPortCount(VisualObject, 0, pmInput, 0, sdLeft, 'label');
 end;
 
 function TTrainingBlock.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
@@ -100,7 +93,7 @@ end;
 
 function   TTrainingBlock.RunFunc;
 var
-  i, val : NativeInt;
+  i : NativeInt;
   p64: UInt64;
   accuracy : Single;
   m_data: PDataArr; /// Данные, которые проходят через слои модели
@@ -123,12 +116,12 @@ begin
         // Вход 0 - данные
         // Вход 1 - метки
       if cU.FCount <> 5 then begin
-        ErrorEvent('Output ports qty != 5', msError, VisualObject);
+        ErrorEvent(txtNN_DataSize, msError, VisualObject);
         Exit;
       end;
       m_id := Round(U[0].Arr^[0]);
       if m_id = -1 then begin
-        ErrorEvent('Net ID is crashed (-1)', msError, VisualObject);
+        ErrorEvent(txtNN_NCreated, msError, VisualObject);
         Exit;
       end;
       p64 := Round(U[0].Arr^[1]);
@@ -165,7 +158,7 @@ begin
       if (m_fileSave.Length > 0) AND (m_id >= 0) then begin
         returnCode := saveModel(m_id, PAnsiChar(AnsiString(m_fileSave)));
         if returnCode <> STATUS_OK then begin
-          ErrorEvent('Crashed save model weight', msError, VisualObject);
+          ErrorEvent(txtNN_WeightSave, msError, VisualObject);
           Exit;
         end;
       end;

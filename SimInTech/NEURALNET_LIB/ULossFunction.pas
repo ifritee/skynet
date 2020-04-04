@@ -33,12 +33,12 @@ type
   end;
 
 implementation
- uses keras;
+ uses keras, NN_Texts, UNNConstants;
 
 constructor TLossFunction.Create;
 begin
   inherited;
-  shortName := 'LF' + IntToStr(getLayerNumber);
+  shortName := AnsiString('LF' + IntToStr(getLayerNumber));
   isCreate := False;
 end;
 
@@ -67,7 +67,7 @@ begin
   if id = m_modelID then begin
     returnCode := addLossFunction(id, PAnsiChar(shortName), PAnsiChar(nodes), m_lossType);
     if returnCode <> STATUS_OK then begin
-      ErrorEvent('Neural model not added loss function', msError, VisualObject);
+      ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
       Exit;
     end;
   end;
@@ -75,16 +75,11 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TLossFunction.EditFunc;
-var
-  InputPortsNmb, OutputPortsNmb: integer;
-  MsgLength: Integer;
 begin
 //  SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
 end;
 
 function TLossFunction.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
-var
-  I : Integer;
 begin
   Result:=0;
   case Action of
@@ -117,12 +112,12 @@ begin
         rootIndex := Round(U[0].Arr^[1]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
           rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-          rootLayer.appendNode(String(shortName));
+          rootLayer.appendNode(shortName);
           Y[0].Arr^[0] := m_modelID;
           Y[0].Arr^[1] := getLayerNumber;
           isCreate := True;
         end;
-        if U[0].FCount = 4 then begin
+        if U[0].FCount = UNN_SIZE_WITHDATA then begin
           Y[0].Arr^[2] := U[0].Arr^[2];
           Y[0].Arr^[3] := U[0].Arr^[3];
         end;

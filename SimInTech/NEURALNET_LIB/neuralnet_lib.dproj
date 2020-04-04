@@ -888,6 +888,7 @@
         <DCCReference Include="UDeconvolutionLayer.pas"/>
         <DCCReference Include="UPoolingLayer.pas"/>
         <DCCReference Include="UMNISTPixel.pas"/>
+        <DCCReference Include="NN_Texts.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -17,12 +17,12 @@ type
     // Деструктор
     destructor Destroy; override;
     function getLayerNumber(): NativeInt;
-    function getShortName(): String;
+    function getShortName(): AnsiString;
     // Добавляет данный слой в модель
     procedure addLayerToModel(id : Integer); virtual; abstract;
 
     // Добавляет очередную ноду связи к слою
-    procedure appendNode(nodeName: String);
+    procedure appendNode(nodeName: AnsiString);
 
   protected
    shortName: AnsiString;
@@ -51,7 +51,7 @@ begin
   m_modelID := -1;
 end;
 
-constructor  TAbstractLayer.Destroy;
+destructor  TAbstractLayer.Destroy;
 begin
   inherited;
   dec(LayerCount);
@@ -63,12 +63,12 @@ begin
   Result:= layerNumber;
 end;
 
-function TAbstractLayer.getShortName : String;
+function TAbstractLayer.getShortName : AnsiString;
 begin
   Result:= shortName;
 end;
 
-procedure TAbstractLayer.appendNode(nodeName: String);
+procedure TAbstractLayer.appendNode(nodeName: AnsiString);
 begin
   if Length(nodes) > 0 then begin
     nodes := nodes + ' ' + nodeName;

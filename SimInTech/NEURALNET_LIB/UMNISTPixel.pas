@@ -54,15 +54,10 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TMNISTPixel.EditFunc;
-var
-  InputPortsNmb, OutputPortsNmb: integer;
-  MsgLength: Integer;
 begin
 end;
 
 function TMNISTPixel.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
-  var
-  i: integer;
 begin
   Result:=0;
   case Action of

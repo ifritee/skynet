@@ -38,12 +38,12 @@ type
 
 implementation
 
-uses keras;
+uses keras, NN_Texts, UNNConstants;
 
 constructor  TDenseLayer.Create;
 begin
   inherited;
-  shortName := 'DN' + IntToStr(getLayerNumber);
+  shortName := AnsiString('DN' + IntToStr(getLayerNumber));
   isCreate := False;
 end;
 
@@ -99,7 +99,7 @@ begin
                            m_dropout,
                            m_batchnorm);
     if returnCode <> STATUS_OK then begin
-      ErrorEvent('Neural model not added dense layer', msError, VisualObject);
+      ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
       Exit;
     end;
   end;
@@ -107,9 +107,6 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TDenseLayer.EditFunc;
-var
-  InputPortsNmb, OutputPortsNmb: integer;
-  MsgLength: Integer;
 begin
   SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
 end;
@@ -159,7 +156,7 @@ begin
           end;
           isCreate := True;
         end;
-        if U[0].FCount = 4 then begin
+        if U[0].FCount = UNN_SIZE_WITHDATA then begin
           Y[0].Arr^[2] := U[0].Arr^[2];
           Y[0].Arr^[3] := U[0].Arr^[3];
         end;

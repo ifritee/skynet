@@ -12,14 +12,12 @@ type
     constructor  Create(Owner: TObject); override;
     // Деструктор
     destructor   Destroy; override;
-    function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
-    function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
-    function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+    function     InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
+    function     RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
+    function     GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
 
   strict private
     stepCount: NativeInt; // Счетчик шагов
-    m_nnState: Boolean; // Состояние сети
-    m_testData : PLayerSize;
     m_workType : NativeInt;
 
     m_crossOut: NativeInt;
@@ -30,7 +28,7 @@ type
   end;
 
 implementation
-  uses UNNConstants;
+  uses UNNConstants, NN_Texts;
 
 constructor  TTestingBlock.Create;
 begin
@@ -127,18 +125,27 @@ begin
         if m_fileLoad.Length > 0 then begin
           returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
           if returnCode <> STATUS_OK then begin
-            ErrorEvent('Crashed load model weight', msError, VisualObject);
+            ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
             Exit;
           end;
         end else begin
-          ErrorEvent('Open weight file is crashed', msError, VisualObject);
+          ErrorEvent(txtNN_WeightOpen, msError, VisualObject);
           Exit;
         end;
         if m_workType = 0 then begin // Для сравнения с тестовыми значениями
           returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+            Exit;
+          end;
+
           Y[1].Arr^[0] := accuracy;
         end else begin // Для определения значений
-          returnCode := evaluate(m_id, @m_data^[0], datas, 0, labels, 2, accuracy, @m_label[0]);
+          returnCode := evaluate(m_id, @m_data^[0], datas, Nil, labels, 2, accuracy, @m_label[0]);
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+            Exit;
+          end;
           Y[1].Arr^[0] := m_label[0];
         end;
         if Length(m_data^) <= m_maxQty then begin
@@ -146,12 +153,12 @@ begin
             Y[0].Arr^[I] := m_data^[I];
           end;
         end else begin
-          ErrorEvent('Data size more Output size!', msError, VisualObject);
+          ErrorEvent(txtNN_DataSize, msError, VisualObject);
         end;
       end else if cU.FCount = 4 then begin
         m_id := Round(U[0].Arr^[0]);
         if m_id = -1 then begin
-          ErrorEvent('Net ID is crashed (-1)', msError, VisualObject);
+          ErrorEvent(txtNN_NCreated, msError, VisualObject);
           Exit;
         end;
 
@@ -170,19 +177,27 @@ begin
         if m_fileLoad.Length > 0 then begin
           returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
           if returnCode <> STATUS_OK then begin
-            ErrorEvent('Crashed load model weight', msError, VisualObject);
+            ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
             Exit;
           end;
         end else begin
-          ErrorEvent('Open weight file is crashed', msError, VisualObject);
+          ErrorEvent(txtNN_WeightOpen, msError, VisualObject);
           Exit;
         end;
         if m_crossOut = 1 then begin
           SetLength(labelPoint, datas.bsz);
           returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+            Exit;
+          end;
           Y[1].Arr^[0] := labelPoint[0];
         end else begin
           returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
+          if returnCode <> STATUS_OK then begin
+            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+            Exit;
+          end;
           Y[1].Arr^[0] := runResult;
         end;
 

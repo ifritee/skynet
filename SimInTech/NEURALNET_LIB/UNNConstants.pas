@@ -11,6 +11,8 @@ const
   UNN_DATASEMNIST = 2; // Окончании считывани¤ MNIST и отправка всего набора
   UNN_DATASTEPBYSTEP = 3; // Пойдут наборы данных шаг за шагом
 
+  UNN_SIZE_WITHDATA = 4; // Размер данных выходного порта (с данными)
+
 implementation
 
 end.

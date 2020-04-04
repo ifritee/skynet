@@ -35,7 +35,7 @@ type
 
 implementation
 
-uses keras;
+uses keras, NN_Texts, UNNConstants;
 
 constructor  TInputLayer.Create;
 begin
@@ -44,7 +44,7 @@ begin
     m_modelID:= createModel();
     // Проверим состояние создания модели
     if m_modelID = -1 then begin
-      ErrorEvent('Neural model not created', msError, VisualObject);
+      ErrorEvent(txtNN_NCreated, msError, VisualObject);
       Exit;
     end;
 end;
@@ -69,9 +69,6 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TInputLayer.EditFunc;
-var
-  InputPortsNmb, OutputPortsNmb: integer;
-  MsgLength: Integer;
 begin
 //  SetCondPortCount(VisualObject, fAbonentsQty,  pmInput,  PortType, sdLeft,  'inport_1');
   SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
@@ -84,7 +81,7 @@ begin
   if id = m_modelID then begin
     returnCode := addInput(id, PAnsiChar(shortName), PAnsiChar(nodes));
     if returnCode <> STATUS_OK then begin
-      ErrorEvent('Neural model not added input layer', msError, VisualObject);
+      ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
       Exit;
     end;
   end;
@@ -99,7 +96,7 @@ begin
     i_GetCount: begin
       for I := 0 to m_outputQty - 1 do
         cY[I] := 2;
-      cY[0] := 4;
+      cY[0] := UNN_SIZE_WITHDATA;
       stepCount := 0;
     end;
     i_GetInit: begin
