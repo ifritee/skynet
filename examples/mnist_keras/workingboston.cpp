@@ -51,7 +51,7 @@ namespace boston {
       //----- Эпохи не важны (1 штука) -----
       fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.001f, accuracy);
       std::cout<<"ACCURACY: "<<accuracy<<std::endl;
-      saveModel(modelID, "05_boston.dat");
+      saveModel(modelID, "05_boston.json", "05_boston.dat");
       delete [] data;
       delete [] label;
     }
@@ -71,7 +71,7 @@ namespace boston {
       layerLabelSize.bsz = 1;
       float * out = new float[layerDataSize.bsz];
 
-      loadModel(modelID, "05_boston.dat");
+      loadWeight(modelID, "05_boston.dat");
 
       forecasting(modelID, data, layerDataSize, out, layerLabelSize);
       for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {

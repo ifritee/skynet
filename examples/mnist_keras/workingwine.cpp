@@ -54,11 +54,11 @@ namespace wine {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, "03_wine.dat");
+      saveModel(modelID, "03_wine.json", "03_wine.dat");
     }
     //----- Тестирование --------------
     else {
-      loadModel(modelID, "03_wine.dat");
+      loadWeight(modelID, "03_wine.dat");
       float accuracy = 0.f;
       evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;

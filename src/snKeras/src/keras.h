@@ -10,6 +10,7 @@ extern "C" {
 #define STATUS_OK 0 ///< Успешное выполнение задачи
 #define STATUS_FAILURE 1 ///< Критическая ошибка
 #define STATUS_WARNING 2 ///< Задача выполнена, но были проблемы
+#define STATUS_FILECRASHED 3 ///< Проблемы с обработкой файла
 
 typedef int Status; ///< @brief Статус выполнения задачи
 
@@ -66,7 +67,7 @@ struct LayerSize
  * @brief CreateModel Создание модели
  * @return -1 - ошибка создания модели 0... - id модели
  */
-KERAS_EXPORT int createModel();
+KERAS_EXPORT int createModel(const char * jnNet = "", const char * weightPath = "");
 /** @brief Удаление модели */
 KERAS_EXPORT Status deleteModel(int id);
 
@@ -300,14 +301,14 @@ KERAS_EXPORT Status run(int id, float* data, LayerSize dataSize, LayerSize label
  * @param filename имя с путем
  * @return Статус сохранения
  */
-KERAS_EXPORT Status saveModel(int id, const char * filename);
+KERAS_EXPORT Status saveModel(int id, const char * fileNet, const char * fileWeight);
 
 /**
  * @brief loadModel Загружает модель с весами
  * @param filename имя с путем
  * @return Статус загрузки
  */
-KERAS_EXPORT Status loadModel(int id, const char * filename);
+KERAS_EXPORT Status loadWeight(int id, const char * filename);
 
 /**
  * @brief lastError Вывод последней ошибки в буфер

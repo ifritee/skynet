@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <string.h>
 #include <vector>
@@ -15,10 +16,30 @@ namespace sn = SN_API;
 
 static std::vector<sn::Net *> modelSet; ///< @brief Набор моделей
 
-int createModel()
+int createModel(const char * jnNet, const char * weightPath)
 {
   try {
-    sn::Net * model = new sn::Net;
+    std::string netText = "";
+    if( strcmp(jnNet, "") != 0) {
+      std::ifstream ifs(jnNet);
+      if(ifs.fail()) {
+        // file not found
+        return -1;
+      } else {
+        ifs.seekg(0, std::ios::end);
+        netText.reserve(ifs.tellg());
+        ifs.seekg(0, std::ios::beg);
+        netText.assign(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
+      }
+    }
+    if( strcmp(weightPath, "") != 0) {
+      std::ifstream ifs(weightPath);
+      if(ifs.fail()) {
+        // file not found
+        return -1;
+      }
+    }
+    sn::Net * model = new sn::Net(netText , weightPath);
     modelSet.push_back(model);
     return modelSet.size() - 1;
   } catch(...) {
@@ -420,7 +441,7 @@ Status run(int id, float* data, LayerSize dataSize, LayerSize labelsSize, int& r
   return STATUS_OK;
 }
 
-Status saveModel(int id, const char *filename)
+Status saveModel(int id, const char * fileNet, const char * fileWeight)
 {
   if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;
@@ -429,13 +450,22 @@ Status saveModel(int id, const char *filename)
   if(!model) { // Модель была удалена
     return STATUS_FAILURE;
   }
-  if(!model->saveAllWeightToFile(filename)) {
-    return STATUS_FAILURE;
+  if(!model->saveAllWeightToFile(fileWeight)) {
+    return STATUS_FILECRASHED;
+  }
+  //----- Сохранение сети в файл (для упрощенной загрузки) -----
+  std::ofstream ofs;
+  ofs.open(fileNet);
+  if(ofs.good()) {
+    ofs <<  model->getArchitecNetJN();
+    ofs.close();
+  } else {
+    return STATUS_FILECRASHED;
   }
   return STATUS_OK;
 }
 
-Status loadModel(int id, const char *filename)
+Status loadWeight(int id, const char *filename)
 {
   if (id > static_cast<int>(modelSet.size()) - 1 || id < 0) { // Нет этой модели
     return STATUS_FAILURE;

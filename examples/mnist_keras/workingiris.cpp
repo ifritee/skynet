@@ -22,27 +22,28 @@ namespace iris {
   {
     //----- Создание графа модели -----
     const char * weightName = "04_iris.dat";
-
-    //----- Создание модели -----
-    int modelID = createModel();
-    addInput(modelID, "Input", "D1");
-    addDense(modelID, "D1", "D2", 100);
-    addDense(modelID, "D2", "D3", 300);
-    addDense(modelID, "D3", "LS", 3);
-    addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
-    //=================================
-
-    //----- Вывод модели --------------
-    char buffer[2048];
-    netArchitecture(modelID, buffer, sizeof(buffer));
-    cout<<buffer<<endl;
-    //=================================
-
+    const char * netName = "04_iris.json";
+    //----- Загрузка сета -----
     LayerSize layerDataSize, layerLabelSize;
     float * data; uint8_t * label;
     irisTrainData("../data/04_Iris/iris.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+
     //----- Тренировка -----
     if (isTraining) {
+      //----- Создание модели -----
+      int modelID = createModel();
+      addInput(modelID, "Input", "D1");
+      addDense(modelID, "D1", "D2", 100);
+      addDense(modelID, "D2", "D3", 300);
+      addDense(modelID, "D3", "LS", 3);
+      addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
+      //=================================
+
+      //----- Вывод модели --------------
+      char buffer[2048];
+      netArchitecture(modelID, buffer, sizeof(buffer));
+      cout<<buffer<<endl;
+      //=================================
 
       float accuracySum = 0.f;
       const int epoche = 300, reset = 10;
@@ -57,18 +58,21 @@ namespace iris {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, weightName);
+      saveModel(modelID, netName, weightName);
+      deleteModel(modelID);
     }
     //----- Тестирование --------------
     else {
-      loadModel(modelID, weightName);
+      int modelID = createModel(netName, weightName);
+//      loadWeight(modelID, weightName);
       float accuracy = 0.f;
       evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;
+      deleteModel(modelID);
     }
     delete [] data;
     delete [] label;
-    deleteModel(modelID);
+
     return 0;
   }
 

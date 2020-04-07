@@ -53,7 +53,7 @@ namespace mnist {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, "01_mnist.dat");
+      saveModel(modelID, "01_mnist.json", "01_mnist.dat");
       delete [] data;
       delete [] label;
     }
@@ -69,7 +69,7 @@ namespace mnist {
         cout<<"Read test data file is failure!!!"<<endl;
         exit (-1);
       }
-      loadModel(modelID, "01_mnist.dat");
+      loadWeight(modelID, "01_mnist.dat");
       float accuracy = 0.f;
       evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;

@@ -8,6 +8,7 @@ SOURCES += \
     src/dataset.cpp \
     src/dllmain.cpp \
     src/keras.cpp \
+    src/lodepng.cpp \
     src/mnistset.cpp \
     src/snNet.cpp \
     src/snOperator.cpp \
@@ -19,6 +20,7 @@ HEADERS += \
     ../../src/skynet/skyNet.h \
     src/dataset.h \
     src/keras.h \
+    src/lodepng.h \
     src/mnistset.h \
     src/rapidcsv.h \
     src/snNet.h \

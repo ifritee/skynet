@@ -57,11 +57,11 @@ namespace breast {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, "02_breast.dat");
+      saveModel(modelID, "02_breast.json", "02_breast.dat");
     }
     //----- Тестирование --------------
     else {
-      loadModel(modelID, "02_breast.dat");
+      loadWeight(modelID, "02_breast.dat");
       float accuracy = 0.f;
       evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;

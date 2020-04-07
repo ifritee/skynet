@@ -49,10 +49,10 @@ namespace bike {
       float accuracy = 0.f;
       fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.01f, accuracy);
       std::cout<<"ACCURACY: "<<accuracy<<std::endl;
-      saveModel(modelID, "07_bike.dat");
+      saveModel(modelID, "07_bike.json", "07_bike.dat");
     } else {  //----- Тестирование --------------
       float * out = new float[layerDataSize.bsz];
-      loadModel(modelID, "07_bike.dat");
+      loadWeight(modelID, "07_bike.dat");
       forecasting(modelID, data, layerDataSize, out, layerLabelSize);
       for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {
         std::cout<<"LABEL: "<<label[i]<<" OUT: "<<out[i]<<std::endl;

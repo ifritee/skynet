@@ -58,7 +58,7 @@ namespace fahrenheit {
         fitOneValue(modelID, far, layerDataSize, cel, layerLabelSize, 1, 0.1f, accuracy);
         std::cout<<"ACCURACY: "<<accuracy<<std::endl;
       }
-      saveModel(modelID, "00_fahrenheit.dat");
+      saveModel(modelID, "00_fahrenheit.json", "00_fahrenheit.dat");
     }
     //----- Тестирование --------------
     else {
@@ -67,7 +67,7 @@ namespace fahrenheit {
       layerDataSize.w = 1;
       layerDataSize.h = 1;
 
-      loadModel(modelID, "00_fahrenheit.dat");
+      loadWeight(modelID, "00_fahrenheit.dat");
 
       forecasting(modelID, far2, layerDataSize, cel2, layerDataSize);
       for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {

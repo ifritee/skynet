@@ -53,14 +53,14 @@ namespace titanic {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, "08_titanic.dat");
+      saveModel(modelID, "08_titanic.json", "08_titanic.dat");
       delete [] label;
     }
     //----- Тестирование --------------
     else {
       for(unsigned int i = 0; i < 100; ++i) {
         titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 1, i);
-        loadModel(modelID, "08_titanic.dat");
+        loadWeight(modelID, "08_titanic.dat");
         float accuracy = 0.f;
         unsigned char * ans = new unsigned char[layerDataSize.bsz];
         evaluate(modelID, data, layerDataSize, nullptr, layerLabelSize, 2, accuracy, ans);
