@@ -25,7 +25,8 @@ type
 
     m_crossOut: NativeInt;
     m_learningRate : double;
-    m_fileSave : String;
+    m_fileSaveWeight : String;
+    m_fileSaveNet : String;
     m_fileLoad: String;
 
     m_label: array of Byte;
@@ -42,6 +43,7 @@ implementation
 constructor  TTrainingBlock.Create;
 begin
   m_id := -1;
+  m_fileSaveNet := '';
   inherited;
 end;
 
@@ -63,11 +65,15 @@ begin
       DataType:=dtDouble;
       Exit;
     end else if StrEqu(ParamName,'file_save') then begin
-      Result:=NativeInt(@m_fileSave);
+      Result:=NativeInt(@m_fileSaveWeight);
       DataType:=dtString;
       Exit;
     end else if StrEqu(ParamName,'file_load') then begin
       Result:=NativeInt(@m_fileLoad);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'file_save_net') then begin
+      Result:=NativeInt(@m_fileSaveNet);
       DataType:=dtString;
       Exit;
     end;
@@ -155,8 +161,9 @@ begin
       inc(stepCount);
     end;
     f_Stop : begin
-      if (m_fileSave.Length > 0) AND (m_id >= 0) then begin
-        returnCode := saveModel(m_id, PAnsiChar(AnsiString(m_fileSave)));
+      if (m_fileSaveWeight.Length > 0) AND (m_id >= 0) AND (m_fileSaveNet.Length > 0) then begin
+        returnCode := saveModel(m_id, PAnsiChar(AnsiString(m_fileSaveNet)),
+                                PAnsiChar(AnsiString(m_fileSaveWeight)));
         if returnCode <> STATUS_OK then begin
           ErrorEvent(txtNN_WeightSave, msError, VisualObject);
           Exit;

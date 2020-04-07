@@ -41,7 +41,7 @@ constructor  TInputLayer.Create;
 begin
   inherited;
     shortName := 'Input';// + IntToStr(getLayerNumber);
-    m_modelID:= createModel();
+    m_modelID:= createModel('','');
     // Проверим состояние создания модели
     if m_modelID = -1 then begin
       ErrorEvent(txtNN_NCreated, msError, VisualObject);

@@ -27,9 +27,10 @@ type
      end;
 
 const
-  STATUS_OK = 0; ///< Успешное выполнение задачи
-  STATUS_FAILURE = 1; ///< Критическая ошибка
-  STATUS_WARNING = 2; ///< Задача выполнена, но были проблемы
+  STATUS_OK = 0; /// Успешное выполнение задачи
+  STATUS_FAILURE = 1; /// Критическая ошибка
+  STATUS_WARNING = 2; /// Задача выполнена, но были проблемы
+  STATUS_FILECRASHED = 3; ///
 
   ACTIV_NONE = -1;      // Без функции активации
   ACTIV_SIGMOID = 0;    // Сигмойдная функция
@@ -61,7 +62,7 @@ const
 
 // Создание модели
 // return id модели или -1
-Function createModel(): Integer; cdecl; external KERAS_EXPORT;
+Function createModel(jnNet: PAnsiChar; weightPath: PAnsiChar): Integer; cdecl; external KERAS_EXPORT;
 
 /// Удаление модели
 Function deleteModel(id : Integer): TStatus; cdecl; external KERAS_EXPORT;
@@ -241,12 +242,12 @@ Function run(id : Integer; data: PSingle; dataSize: TLayerSize;
 // saveModel Сохраняет модель с весами
 // filename имя с путем
 // return Статус сохранения
-Function saveModel(id : Integer; filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+Function saveModel(id : Integer; fileNet: PAnsiChar; fileWeight: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // saveModel Загружает модель с весами
 // filename имя с путем
 // return Статус загрузки
-Function loadModel(id : Integer; filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
+Function loadWeight(id : Integer; filename: PAnsiChar): TStatus; cdecl; external KERAS_EXPORT;
 
 // lastError Вывод последней ошибки в буфер
 // buffer Буфер для текста ошибки
