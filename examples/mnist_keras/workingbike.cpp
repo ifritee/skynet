@@ -20,19 +20,8 @@ namespace bike {
 
   int workingBike(bool isTraining)
   {
-    //----- Создание модели -----
-    int modelID = createModel();
-    addInput(modelID, "Input", "D2");
-    addDense(modelID, "D2", "D4", 52, ACTIV_NONE, OPTIM_ADAM, 0.0, BATCH_POST_ACTIVE);
-    addDense(modelID, "D4", "LS", 1, ACTIV_NONE, OPTIM_ADAM, 0.0, BATCH_POST_ACTIVE);
-    addLossFunction(modelID, "LS", "Output", LOSS_REGRESSION_MSE);
-    //=================================
-
-    //----- Вывод модели --------------
-    char buffer[2048];
-    netArchitecture(modelID, buffer, sizeof(buffer));
-    cout<<buffer<<endl;
-    //=================================
+    const char * netName = "07_bike.json";
+    const char * weightName = "07_bike.dat";
 
     //----- Загрузка сета --------------
     LayerSize layerDataSize, layerLabelSize;
@@ -45,22 +34,38 @@ namespace bike {
     }
     //=================================
     if (isTraining) { //----- Тренировка -----
+      //----- Создание модели -----
+      int modelID = createModel();
+      addInput(modelID, "Input", "D2");
+      addDense(modelID, "D2", "D4", 52, ACTIV_NONE, OPTIM_ADAM, 0.0, BATCH_POST_ACTIVE);
+      addDense(modelID, "D4", "LS", 1, ACTIV_NONE, OPTIM_ADAM, 0.0, BATCH_POST_ACTIVE);
+      addLossFunction(modelID, "LS", "Output", LOSS_REGRESSION_MSE);
+      //=================================
+
+      //----- Вывод модели --------------
+      char buffer[2048];
+      netArchitecture(modelID, buffer, sizeof(buffer));
+      cout<<buffer<<endl;
+      //=================================
       const int epoches = 5000;
       float accuracy = 0.f;
       fitOneValue(modelID, data, layerDataSize, label, layerLabelSize, epoches, 0.01f, accuracy);
       std::cout<<"ACCURACY: "<<accuracy<<std::endl;
-      saveModel(modelID, "07_bike.json", "07_bike.dat");
+      saveModel(modelID, netName, weightName);
+      deleteModel(modelID);
+      delete [] data;
+      delete [] label;
     } else {  //----- Тестирование --------------
+      int modelID = createModel(netName, weightName);
       float * out = new float[layerDataSize.bsz];
-      loadWeight(modelID, "07_bike.dat");
       forecasting(modelID, data, layerDataSize, out, layerLabelSize);
       for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {
         std::cout<<"LABEL: "<<label[i]<<" OUT: "<<out[i]<<std::endl;
       }
+      deleteModel(modelID);
+      delete [] data;
+      delete [] label;
     }
-    delete [] data;
-    delete [] label;
-    deleteModel(modelID);
     return 0;
   }
 }

@@ -20,24 +20,26 @@ namespace titanic {
 
   int workingTitanic(bool isTraining)
   {
-    //----- Создание модели -----
-    int modelID = createModel();
-    addInput(modelID, "Input", "D1");
-    addDense(modelID, "D1", "D2", 400, ACTIV_SIGMOID);
-    addDense(modelID, "D2", "LS", 2);
-    addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
-    //=================================
-
-    //----- Вывод модели --------------
-    char buffer[2048];
-    netArchitecture(modelID, buffer, sizeof(buffer));
-    cout<<buffer<<endl;
-    //=================================
+    const char * netName = "08_titanic.json";
+    const char * weightName = "08_titanic.dat";
 
     LayerSize layerDataSize, layerLabelSize;
     float * data;
     //----- Тренировка -----
     if (isTraining) {
+      //----- Создание модели -----
+      int modelID = createModel();
+      addInput(modelID, "Input", "D1");
+      addDense(modelID, "D1", "D2", 400, ACTIV_SIGMOID);
+      addDense(modelID, "D2", "LS", 2);
+      addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
+      //=================================
+
+      //----- Вывод модели --------------
+      char buffer[2048];
+      netArchitecture(modelID, buffer, sizeof(buffer));
+      cout<<buffer<<endl;
+      //=================================
       uint8_t * label;
       titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 3);
       float accuracySum = 0.f;
@@ -53,11 +55,13 @@ namespace titanic {
         accuracySum += accuracy;
         cout<<"EPOCHE "<<i<<" ==> "<<accuracySum / ((i % reset) + 1)<<endl;
       }
-      saveModel(modelID, "08_titanic.json", "08_titanic.dat");
+      saveModel(modelID, netName, weightName);
       delete [] label;
+      deleteModel(modelID);
     }
     //----- Тестирование --------------
     else {
+      int modelID = createModel(netName, weightName);
       for(unsigned int i = 0; i < 100; ++i) {
         titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 1, i);
         loadWeight(modelID, "08_titanic.dat");
@@ -67,10 +71,10 @@ namespace titanic {
         cout<<"Testing: "<<(int)ans[0]<<endl;
         delete [] ans;
       }
-
+      deleteModel(modelID);
     }
     delete [] data;
-    deleteModel(modelID);
+
     return 0;
   }
 
