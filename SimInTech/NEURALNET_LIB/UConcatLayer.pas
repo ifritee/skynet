@@ -63,7 +63,7 @@ procedure TConcatLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  if id = m_modelID then begin
+  if (id = m_modelID)  AND (LayersFromJSON = False) then begin
     returnCode := addConcat(id, PAnsiChar(shortName),
                             PAnsiChar(nodes),
                             PAnsiChar(m_ccNodes));
@@ -118,8 +118,10 @@ begin
         m_modelID := Round(U[I].Arr^[0]);
         rootIndex := Round(U[I].Arr^[1]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
-          rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-          rootLayer.appendNode(shortName);
+          if isCreate = False then begin
+            rootLayer := TAbstractLayer(LayersDict[rootIndex]);
+            rootLayer.appendNode(shortName);
+          end;
           if Length(m_ccNodes) > 0 then begin
             m_ccNodes := m_ccNodes + AnsiString(' ') + rootLayer.getShortName;
           end else begin

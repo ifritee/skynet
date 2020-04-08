@@ -123,7 +123,7 @@ begin
         labels.ch := 1;
         labels.bsz := Length(m_label);
         if m_fileLoad.Length > 0 then begin
-          returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
+          returnCode := loadWeight(m_id, PAnsiChar(AnsiString(m_fileLoad)));
           if returnCode <> STATUS_OK then begin
             ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
             Exit;
@@ -175,7 +175,7 @@ begin
         labels.ch := 1;
         labels.bsz := 1;  // Работа проводится только по 1 элементу
         if m_fileLoad.Length > 0 then begin
-          returnCode := loadModel(m_id, PAnsiChar(AnsiString(m_fileLoad)));
+          returnCode := loadWeight(m_id, PAnsiChar(AnsiString(m_fileLoad)));
           if returnCode <> STATUS_OK then begin
             ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
             Exit;

@@ -36,8 +36,9 @@ type
   PAbstractLayer = ^TAbstractLayer;
 
 var
-  LayersDict: TList<TObject>;
-  LayerCount: NativeInt;
+  LayersDict: TList<TObject>;// Список слоев
+  LayerCount: NativeInt;     // Счетчик слоев
+  LayersFromJSON: Boolean;   // Флаг загрузки сети из файла
 
 implementation
 
@@ -47,6 +48,7 @@ begin
   layerNumber:= LayerCount;
   inc(LayerCount);
   LayersDict.Add(Self);
+  LayersFromJSON := False;
   nodes := '';
   m_modelID := -1;
 end;
@@ -54,8 +56,8 @@ end;
 destructor  TAbstractLayer.Destroy;
 begin
   inherited;
-  dec(LayerCount);
-  LayersDict.Remove(Self);
+//  dec(LayerCount);
+  LayersDict[layerNumber] := Nil;;
 end;
 
 function TAbstractLayer.getLayerNumber(): NativeInt;

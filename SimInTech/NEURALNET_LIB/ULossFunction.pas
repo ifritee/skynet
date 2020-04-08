@@ -64,7 +64,7 @@ procedure TLossFunction.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  if id = m_modelID then begin
+  if (id = m_modelID) AND (LayersFromJSON = False) then begin
     returnCode := addLossFunction(id, PAnsiChar(shortName), PAnsiChar(nodes), m_lossType);
     if returnCode <> STATUS_OK then begin
       ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
@@ -111,8 +111,10 @@ begin
         m_modelID := Round(U[0].Arr^[0]);
         rootIndex := Round(U[0].Arr^[1]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
-          rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-          rootLayer.appendNode(shortName);
+          if isCreate = False then begin
+            rootLayer := TAbstractLayer(LayersDict[rootIndex]);
+            rootLayer.appendNode(shortName);
+          end;
           Y[0].Arr^[0] := m_modelID;
           Y[0].Arr^[1] := getLayerNumber;
           isCreate := True;

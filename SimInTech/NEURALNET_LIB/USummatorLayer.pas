@@ -66,7 +66,7 @@ procedure TSummatorLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  if id = m_modelID then begin
+  if (id = m_modelID) AND (LayersFromJSON = False) then begin
     returnCode := addSummator(id, PAnsiChar(shortName),
                               PAnsiChar(nodes),
                               m_sumType);
@@ -119,8 +119,10 @@ begin
         m_modelID := Round(U[0].Arr^[0]);
         rootIndex := Round(U[0].Arr^[1]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
-          rootLayer := TAbstractLayer(LayersDict[rootIndex]);
-          rootLayer.appendNode(shortName);
+          if isCreate = False then begin
+            rootLayer := TAbstractLayer(LayersDict[rootIndex]);
+            rootLayer.appendNode(shortName);
+          end;
           for J := 0 to cY.Count - 1 do begin
             Y[J].Arr^[0] := m_modelID;
             Y[J].Arr^[1] := getLayerNumber;

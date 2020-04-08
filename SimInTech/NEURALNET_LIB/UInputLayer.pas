@@ -26,6 +26,10 @@ type
   strict private
     stepCount: NativeInt; // Счетчик шагов
     m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_netFile : String; // Файл с описанием сети
+    m_isSaveNet : Boolean; // Флаг сохранения сети по окончании работы
+    m_saveWeightFile : String; // Файл расчитанных весов
+    m_saveNetFile : String; // Файл сохранения состояния сети
     m_data: array of Single;  /// Данные, которые проходят через слои модели
 
   const
@@ -40,13 +44,7 @@ uses keras, NN_Texts, UNNConstants;
 constructor  TInputLayer.Create;
 begin
   inherited;
-    shortName := 'Input';// + IntToStr(getLayerNumber);
-    m_modelID:= createModel('','');
-    // Проверим состояние создания модели
-    if m_modelID = -1 then begin
-      ErrorEvent(txtNN_NCreated, msError, VisualObject);
-      Exit;
-    end;
+    shortName := 'Input';
 end;
 
 destructor   TInputLayer.Destroy;
@@ -61,6 +59,26 @@ begin
     if StrEqu(ParamName,'output_qty') then begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'net_from_file') then begin
+      Result:=NativeInt(@LayersFromJSON);
+      DataType:=dtBool;
+      Exit;
+    end else if StrEqu(ParamName,'net_file') then begin
+      Result:=NativeInt(@m_netFile);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'is_save_net') then begin
+      Result:=NativeInt(@m_isSaveNet);
+      DataType:=dtBool;
+      Exit;
+    end else if StrEqu(ParamName,'save_weight_file') then begin
+      Result:=NativeInt(@m_saveWeightFile);
+      DataType:=dtString;
+      Exit;
+    end else if StrEqu(ParamName,'save_net_file') then begin
+      Result:=NativeInt(@m_saveNetFile);
+      DataType:=dtString;
       Exit;
     end;
 
@@ -78,7 +96,7 @@ procedure TInputLayer.addLayerToModel(id : Integer);
 var
   returnCode: TStatus;
 begin
-  if id = m_modelID then begin
+  if (id = m_modelID) AND (LayersFromJSON = False) then begin
     returnCode := addInput(id, PAnsiChar(shortName), PAnsiChar(nodes));
     if returnCode <> STATUS_OK then begin
       ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
@@ -117,6 +135,7 @@ function   TInputLayer.RunFunc;
 var
   J : Integer;
   p64: UInt64;
+  returnCode : TStatus;
 begin
   Result:=0;
   case Action of
@@ -126,6 +145,16 @@ begin
     f_InitState: begin
       stepCount:= 0;
       nodes := '';
+    if LayersFromJSON = True then begin
+      m_modelID:= createModel(PAnsiChar(AnsiString(m_netFile)),'');
+    end else begin
+      m_modelID:= createModel('','');
+    end;
+    // Проверим состояние создания модели
+    if m_modelID = -1 then begin
+      ErrorEvent(txtNN_NCreated, msError, VisualObject);
+      Exit;
+    end;
     end;
     f_GoodStep: begin
       for J := 0 to cY.Count - 1 do begin
@@ -139,6 +168,17 @@ begin
         p64 := UInt64(@m_data);
         Y[0].Arr^[2] := p64 shr 32;
         Y[0].Arr^[3] := (p64 shl 32) shr 32;
+    end;
+    f_Stop: begin
+      if (m_isSaveNet = True) AND (m_modelID >= 0) then begin
+        returnCode := saveModel(m_modelID, PAnsiChar(AnsiString(m_saveNetFile)),
+                                PAnsiChar(AnsiString(m_saveWeightFile)));
+        if returnCode <> STATUS_OK then begin
+          ErrorEvent(txtNN_WeightSave, msError, VisualObject);
+          Exit;
+        end;
+      end;
+      deleteModel(m_modelID);
     end;
   end
 end;

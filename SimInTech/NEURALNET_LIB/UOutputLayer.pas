@@ -93,25 +93,28 @@ begin
             rootLayer.appendNode(shortName);
             isCreate := True;
             //----- Проходим по всем слоям нейронной сети -----
-//            m_modelID:= createModel();
-//            // Проверим состояние создания модели
-//            if m_modelID = -1 then begin
-//              ErrorEvent('Neural model not created', msError, VisualObject);
-//              Exit;
-//            end;
-            for i := 0 to LayersDict.Count - 1 do begin
+            for i := 0 to LayersDict.Count - 1 do begin // Сначала Input (точка входа)
                layer := TAbstractLayer(LayersDict[i]);
-               layer.addLayerToModel(m_modelID);
+               if layer <> Nil then begin
+                 if (layer.getShortName = AnsiString('Input')) then begin
+                   layer.addLayerToModel(m_modelID);
+                 end;
+               end;
             end;
+            for i := 0 to LayersDict.Count - 1 do begin // Затем все остальное
+               layer := TAbstractLayer(LayersDict[i]);
+               if layer <> Nil then begin
+                 if (layer.getShortName <> AnsiString('Input')) then begin
+                   layer.addLayerToModel(m_modelID);
+                 end;
+               end;
+            end;
+
             returnCode := netArchitecture(m_modelID, netJSON, Length(netJSON));
-//            Y[0].Arr^[0] := UNN_NNMAGICWORD;
             if returnCode <> STATUS_OK then begin
               lastError(m_modelID, netJSON, Length(netJSON));
               ErrorEvent(String(netJSON), msError, VisualObject);
-//              Y[0].Arr^[0] := -1; // Укажем, что были проблемы
               Exit;
-//            end else begin
-//              Y[0].Arr^[1] := 1; // Укажем, что создание сети успешно
             end;
             ErrorEvent(String(netJSON), msInfo, VisualObject);
           end;
