@@ -13,15 +13,15 @@ int main()
 {
   int exitStatus = 0;
 #if defined(NN_MNIST)
-  exitStatus = mnist::workingMNIST(false);
+  exitStatus = mnist::workingMNIST(true);
 #elif defined(NN_BREAST)
   exitStatus = breast::workingBreast(false);
 #elif defined(NN_WINE)
-  exitStatus = wine::workingWine(true);
+  exitStatus = wine::workingWine(false);
 #elif defined(NN_IRIS)
   exitStatus = iris::workingIris(false);
 #elif defined(NN_FAH)
-  exitStatus = fahrenheit::workingFahrenheit(true);
+  exitStatus = fahrenheit::workingFahrenheit(false);
 #elif defined(NN_BOSTON)
   exitStatus = boston::workingBoston(false);
 #elif defined(NN_BIKE)

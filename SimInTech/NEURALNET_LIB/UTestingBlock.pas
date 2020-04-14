@@ -209,7 +209,8 @@ begin
       inc(stepCount);
     end;
     f_Stop : begin
-
+      SetLength(m_label, 0);
+      SetLength(labelPoint, 0);
     end;
   end;
 end;

@@ -144,6 +144,10 @@ begin
       Y[0].Arr^[0] := accuracy;
       inc(stepCount);
     end;
+    f_Stop: begin
+      SetLength(m_label, 0);
+      SetLength(m_flabel, 0);
+    end;
   end;
 end;
 end.

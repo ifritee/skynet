@@ -66,6 +66,10 @@ Function titanicTrainData(filename : PAnsiChar;
                            sizeLabel : PLayerSize;
                           qty: Integer; step: Integer
                            ) : keras.TStatus; cdecl; external KERAS_EXPORT;
+Procedure freeTrainData(data_ : PPSingle; label_ : PPByte); cdecl; external KERAS_EXPORT;
+
+Procedure freeTrainDataF(data_ : PPSingle; label_ : PPSingle); cdecl; external KERAS_EXPORT;
+
 implementation
 
 end.

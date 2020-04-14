@@ -26,7 +26,7 @@ namespace breast {
     LayerSize layerDataSize, layerLabelSize;
     //----- Тренировка -----
     if (isTraining) {
-      float * data; uint8_t * label;
+      float * data = nullptr; uint8_t * label = nullptr;
       //----- Создание модели -----
       int modelID = createModel();
       addInput(modelID, "Input", "D1");
@@ -65,7 +65,7 @@ namespace breast {
     }
     //----- Тестирование --------------
     else {
-      float * data; uint8_t * label;
+      float * data = nullptr; uint8_t * label = nullptr;
       int modelID = createModel(netName, weightName);
       breastTrainData("../data/02_BreastCancer/breast-cancer-wisconsin.data", 1, &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
 //      loadWeight(modelID, "02_breast.dat");

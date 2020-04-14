@@ -70,7 +70,7 @@ namespace fahrenheit {
       loadWeight(modelID, "00_fahrenheit.dat");
 
       forecasting(modelID, far2, layerDataSize, cel2, layerDataSize);
-      for(unsigned int i = 0; i < layerLabelSize.bsz; ++i) {
+      for(unsigned int i = 0; i < layerDataSize.bsz; ++i) {
         std::cout<<"FAR: "<<far2[i]<<" CEL: "<<cel2[i]<<std::endl;
       }
     }

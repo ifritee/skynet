@@ -18,8 +18,8 @@ namespace mnist {
     const char * weightName = "01_mnist.dat";
     //=================================
     LayerSize layerDataSize, layerLabelSize;
-    float * data;
-    unsigned char * label;  // Используем указатели на указатели
+    float * data = nullptr;
+    unsigned char * label = nullptr;  // Используем указатели на указатели
     //----- Тренировка -----
     if (isTraining) {
       int modelID = createModel();

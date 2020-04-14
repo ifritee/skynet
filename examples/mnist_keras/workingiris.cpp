@@ -25,7 +25,7 @@ namespace iris {
     const char * netName = "04_iris.json";
     //----- Загрузка сета -----
     LayerSize layerDataSize, layerLabelSize;
-    float * data; uint8_t * label;
+    float * data = nullptr; uint8_t * label = nullptr;
     irisTrainData("../data/04_Iris/iris.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
 
     //----- Тренировка -----

@@ -179,6 +179,7 @@ begin
         end;
       end;
       deleteModel(m_modelID);
+      SetLength(m_data, 0);
     end;
   end
 end;

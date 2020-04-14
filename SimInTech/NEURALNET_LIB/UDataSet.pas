@@ -68,6 +68,9 @@ begin
   m_depth := 1;
   m_id := -1;
   m_bikeTime := 0;
+  m_dataPoint := Nil;
+  m_labelPoint := Nil;
+  m_fLabelPoint := Nil;
 end;
 
 destructor   TDataSet.Destroy;
@@ -374,7 +377,11 @@ begin
       inc(m_stepNumber);
     end;
     f_Stop: begin
-
+      if (m_datasetType = Integer(dtBOSTON)) OR (m_datasetType = Integer(dtBIKE)) then begin
+        freeTrainDataF(@m_dataPoint, @m_flabelPoint);
+      end else begin
+        freeTrainData(@m_dataPoint, @m_labelPoint);
+      end;
     end;
   end
 end;

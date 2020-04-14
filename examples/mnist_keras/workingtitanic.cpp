@@ -24,7 +24,7 @@ namespace titanic {
     const char * weightName = "08_titanic.dat";
 
     LayerSize layerDataSize, layerLabelSize;
-    float * data;
+    float * data = nullptr;
     //----- Тренировка -----
     if (isTraining) {
       //----- Создание модели -----
@@ -40,7 +40,7 @@ namespace titanic {
       netArchitecture(modelID, buffer, sizeof(buffer));
       cout<<buffer<<endl;
       //=================================
-      uint8_t * label;
+      uint8_t * label = nullptr;
       titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 3);
       float accuracySum = 0.f;
       const int epoche = 130, reset = 10;

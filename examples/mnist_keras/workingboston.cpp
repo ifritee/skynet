@@ -39,7 +39,7 @@ namespace boston {
       //=================================
       //----- Загрузка сета --------------
       LayerSize layerDataSize, layerLabelSize;
-      float * data, * label;  // Используем указатели на указатели
+      float * data = nullptr, * label = nullptr;  // Используем указатели на указатели
       int retCode = bostonTrainData("../data/05_boston/boston_data.csv", &data, &label,
                                     &layerDataSize, &layerLabelSize, 0, 0);
       if(retCode != STATUS_OK) {
@@ -62,7 +62,7 @@ namespace boston {
       int modelID = createModel(netName, weightName);
       //----- Загрузка сета --------------
       LayerSize layerDataSize, layerLabelSize;
-      float * data;  // Используем указатели на указатели
+      float * data = nullptr;  // Используем указатели на указатели
       int retCode = bostonTrainData("../data/05_boston/boston_test_data.csv", &data, nullptr,
                                     &layerDataSize, &layerLabelSize, 0, 0);
       if(retCode != STATUS_OK) {

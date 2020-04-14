@@ -29,6 +29,7 @@ Status mnistTrainData(const char * datafilename,
     sizeData->ch = sizeLabel->ch = 1;
     sizeLabel->w = 10;
     sizeLabel->h = 1;
+    freeTrainData(data, label);
     *data = new float[sizeData->bsz * sizeData->w * sizeData->h];
     *label = new uint8_t[sizeData->bsz];
     if( !mnistObj.readData(qty, step, *data, *label) ) {
@@ -45,6 +46,7 @@ Status bikeTrainData(const char * filename, bool isDay, float **data,
                      float **label, LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
+  freeTrainDataF(data, label);
   trainingData.readBikeData(isDay, data, label, qty, step);
   return trainingData.lastStatus();
 }
@@ -53,6 +55,7 @@ Status bostonTrainData(const char *filename, float **data, float **label, LayerS
                        int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
+  freeTrainDataF(data, label);
   trainingData.readBostonData(data, label, qty, step);
   return trainingData.lastStatus();
 }
@@ -61,6 +64,7 @@ Status breastTrainData(const char *filename, int flag, float **data, unsigned ch
                        LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
+  freeTrainData(data, label);
   trainingData.readBreastData(flag, data, label, qty, step);
   return trainingData.lastStatus();
 }
@@ -69,6 +73,7 @@ Status irisTrainData(const char *filename, float **data, unsigned char **label,
                        LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
+  freeTrainData(data, label);
   trainingData.readIrisData(data, label, qty, step);
   return trainingData.lastStatus();
 }
@@ -77,6 +82,7 @@ Status wineTrainData(const char *filename, float **data, unsigned char **label,
                      LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
+  freeTrainData(data, label);
   trainingData.readWineData(data, label, qty, step);
   return trainingData.lastStatus();
 }
@@ -85,6 +91,27 @@ Status titanicTrainData(const char *filename, float **data, unsigned char **labe
                      LayerSize *sizeData, LayerSize *sizeLabel, int qty, unsigned int step)
 {
   TrainingData trainingData(filename, sizeData, sizeLabel);
+  freeTrainData(data, label);
   trainingData.readTitanicData(data, label, qty, step);
   return trainingData.lastStatus();
+}
+
+void freeTrainData(float** data, unsigned char** label)
+{
+  if (data != nullptr && (*data) != nullptr) {
+    delete[] * data;
+  }
+  if (label != nullptr && (*label) != nullptr) {
+    delete[] * label;
+  }
+}
+
+void freeTrainDataF(float** data, float** label)
+{
+  if (data != nullptr && (*data) != nullptr) {
+    delete[] * data;
+  }
+  if (label != nullptr && (*label) != nullptr) {
+    delete[] * label;
+  }
 }

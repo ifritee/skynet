@@ -59,6 +59,8 @@ KERAS_EXPORT Status titanicTrainData(const char * filename,
                                   LayerSize * sizeLabel,
                                   int qty, unsigned int step);
 
+KERAS_EXPORT void freeTrainData(float** data, unsigned char** label);
+KERAS_EXPORT void freeTrainDataF(float** data, float** label);
 
 #if defined(__cplusplus)
 }
