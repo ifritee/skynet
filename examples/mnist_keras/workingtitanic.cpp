@@ -41,7 +41,13 @@ namespace titanic {
       cout<<buffer<<endl;
       //=================================
       uint8_t * label = nullptr;
-      titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 3);
+      Status retStatus = titanicTrainData("../data/08_titanic/train.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 3);
+      if(retStatus != STATUS_OK) {
+        char errBuffer[1024];
+        dsLastError(errBuffer, sizeof (errBuffer));
+        cout<<"(ERROR): "<<errBuffer<<endl;
+        return 1;
+      }
       float accuracySum = 0.f;
       const int epoche = 130, reset = 10;
 
@@ -63,7 +69,14 @@ namespace titanic {
     else {
       int modelID = createModel(netName, weightName);
       for(unsigned int i = 0; i < 100; ++i) {
-        titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 1, i);
+        Status retStatus = titanicTrainData("../data/08_titanic/test.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 1, i);
+        if(retStatus != STATUS_OK) {
+          char errBuffer[1024];
+          dsLastError(errBuffer, sizeof (errBuffer));
+          cout<<"(ERROR): "<<errBuffer<<endl;
+          return 1;
+        }
+
         loadWeight(modelID, "08_titanic.dat");
         float accuracy = 0.f;
         unsigned char * ans = new unsigned char[layerDataSize.bsz];

@@ -12,7 +12,8 @@ class TrainingData
   std::string m_fileName;
   LayerSize * m_sizeData = nullptr;
   LayerSize * m_sizeLabel = nullptr;
-  Status m_lastStatus = STATUS_OK;
+  Status m_lastStatus = STATUS_OK; ///< @brief Последний статус
+  std::string m_lastError;  ///< @brief Последняя ошибка
 
 public:
   TrainingData(const char * filename, LayerSize *sizeData, LayerSize *sizeLabel);
@@ -29,6 +30,11 @@ public:
   void readTitanicData(float **data, uint8_t **label, int qty, unsigned int step);
 
   Status lastStatus() { return m_lastStatus; }
+  /**
+   * @brief lastError Возвращает последнюю ошибку
+   * @return строка с ошибкой
+   */
+  std::string lastError() { return m_lastError; }
 
 private:
   /**

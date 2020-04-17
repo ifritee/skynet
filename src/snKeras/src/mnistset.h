@@ -29,6 +29,7 @@ namespace cpp_keras {
     std::string m_dataFile; ///< @brief Файл данных
     std::string m_labelFile; ///< @brief Файл меток
     DatasetParameters m_trainParameters;
+    std::string m_lastError;  ///< @brief Последняя ошибка
 
   public:
     /**
@@ -49,6 +50,11 @@ namespace cpp_keras {
     bool readData(unsigned int qty = 0, unsigned int step = 0, float * data = nullptr, uint8_t * labels = nullptr);
 
     DatasetParameters trainParameters();
+    /**
+     * @brief lastError Возвращает последнюю ошибку
+     * @return Строка с ошибкой
+     */
+    std::string lastError() { return m_lastError; };
 
   private:
     DatasetParameters extractDatasetParameters(std::ifstream & is);

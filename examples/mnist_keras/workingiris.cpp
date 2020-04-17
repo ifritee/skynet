@@ -26,8 +26,13 @@ namespace iris {
     //----- Загрузка сета -----
     LayerSize layerDataSize, layerLabelSize;
     float * data = nullptr; uint8_t * label = nullptr;
-    irisTrainData("../data/04_Iris/iris.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
-
+    Status retStatus = irisTrainData("../data/04_Iris/iris.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+    if(retStatus != STATUS_OK) {
+      char errBuffer[1024];
+      dsLastError(errBuffer, sizeof (errBuffer));
+      cout<<"(ERROR): "<<errBuffer<<endl;
+      return 1;
+    }
     //----- Тренировка -----
     if (isTraining) {
       //----- Создание модели -----

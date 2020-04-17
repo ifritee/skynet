@@ -25,158 +25,200 @@ TrainingData::~TrainingData()
 
 void TrainingData::readBikeData(bool isDay, float ** data, float ** label, int qty, unsigned int step)
 {
-  const int labelIndex = isDay ? 15 : 16;
-  const int shift = 3;
-  auto lines = getLinesFromFile(m_fileName);
-  if(lines.size() == 0) {
+  try {
+    const int labelIndex = isDay ? 15 : 16;
+    const int shift = 3;
+    auto lines = getLinesFromFile(m_fileName);
+    if(lines.size() == 0) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "File size = 0";
+      return;
+    }
+    lines.erase(lines.begin());
+    const int dataQty = split(lines[0], ',').size() - shift;
+    const int bsz = (qty > 0 ? qty : lines.size());
+    *data = new float[bsz * dataQty];
+    *label = new float[bsz];
+    std::vector<uint32_t> ign;
+    ign.push_back(0);
+    ign.push_back(1);
+    setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
+    m_sizeData->bsz = bsz;
+    m_sizeData->ch = 1;
+    m_sizeData->w = dataQty;
+    m_sizeData->h = 1;
+    m_sizeLabel->bsz = bsz;
+    m_sizeLabel->w = 1;
+    m_sizeLabel->h = 1;
+    m_sizeLabel->ch = 1;
+    m_lastStatus = STATUS_OK;
+  } catch(std::exception & e) {
+    m_lastError = e.what();
     m_lastStatus = STATUS_FAILURE;
-    return;
   }
-  lines.erase(lines.begin());
-  const int dataQty = split(lines[0], ',').size() - shift;
-  const int bsz = (qty > 0 ? qty : lines.size());
-  *data = new float[bsz * dataQty];
-  *label = new float[bsz];
-  std::vector<uint32_t> ign;
-  ign.push_back(0);
-  ign.push_back(1);
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
-  m_sizeData->bsz = bsz;
-  m_sizeData->ch = 1;
-  m_sizeData->w = dataQty;
-  m_sizeData->h = 1;
-  m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = 1;
-  m_sizeLabel->h = 1;
-  m_sizeLabel->ch = 1;
-  m_lastStatus = STATUS_OK;
 }
 
 void TrainingData::readBostonData(float **data, float **label, int qty, unsigned int step)
 {
-  const int labelIndex = (label == nullptr ? -1 : 13);
-  const int shift = (label == nullptr ? 0 : 1);
-  auto lines = getLinesFromFile(m_fileName);
-  if(lines.size() == 0) {
+  try {
+    const int labelIndex = (label == nullptr ? -1 : 13);
+    const int shift = (label == nullptr ? 0 : 1);
+    auto lines = getLinesFromFile(m_fileName);
+    if(lines.size() == 0) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "File size = 0";
+      return;
+    }
+    lines.erase(lines.begin());
+    const int dataQty = split(lines[0], ',').size() - shift;
+    const int bsz = (qty > 0 ? qty : lines.size());
+    *data = new float[bsz * dataQty];
+    std::vector<uint32_t> ign;
+    if(label == nullptr) {
+      setDatafromStrings(lines, *data, (float * )(nullptr), labelIndex, ign, bsz, step);
+    } else {
+      *label = new float[bsz];
+      setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
+    }
+
+    m_sizeData->bsz = bsz;
+    m_sizeData->ch = 1;
+    m_sizeData->w = dataQty;
+    m_sizeData->h = 1;
+
+    m_sizeLabel->bsz = bsz;
+    m_sizeLabel->w = 1;
+    m_sizeLabel->h = 1;
+    m_sizeLabel->ch = 1;
+
+    m_lastStatus = STATUS_OK;
+  } catch(std::exception & e) {
+    m_lastError = e.what();
     m_lastStatus = STATUS_FAILURE;
-    return;
   }
-  lines.erase(lines.begin());
-  const int dataQty = split(lines[0], ',').size() - shift;
-  const int bsz = (qty > 0 ? qty : lines.size());
-  *data = new float[bsz * dataQty];
-  std::vector<uint32_t> ign;
-  if(label == nullptr) {
-    setDatafromStrings(lines, *data, (float * )(nullptr), labelIndex, ign, bsz, step);
-  } else {
-    *label = new float[bsz];
-    setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
-  }
-
-  m_sizeData->bsz = bsz;
-  m_sizeData->ch = 1;
-  m_sizeData->w = dataQty;
-  m_sizeData->h = 1;
-
-  m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = 1;
-  m_sizeLabel->h = 1;
-  m_sizeLabel->ch = 1;
-
-  m_lastStatus = STATUS_OK;
 }
 
 void TrainingData::readBreastData(int flag, float **data, uint8_t **label, int qty, unsigned int step)
 {
-  map<string, uint8_t> answerDict;
-  int id = 0, labelIndex = 1, shift = 2;
-  if(flag == 1) {
-    answerDict["2"] = 0;
-    answerDict["4"] = 1;
-    labelIndex = 10;
-  } else if (flag == 2) {
-    answerDict["M"] = 0;
-    answerDict["B"] = 1;
-  } else if (flag == 3) {
-    answerDict["R"] = 0;
-    answerDict["N"] = 1;
+  try {
+    map<string, uint8_t> answerDict;
+    int id = 0, labelIndex = 1, shift = 2;
+    if(flag == 1) {
+      answerDict["2"] = 0;
+      answerDict["4"] = 1;
+      labelIndex = 10;
+    } else if (flag == 2) {
+      answerDict["M"] = 0;
+      answerDict["B"] = 1;
+    } else if (flag == 3) {
+      answerDict["R"] = 0;
+      answerDict["N"] = 1;
+    }
+    auto lines = getLinesFromFile(m_fileName);
+    if(lines.size() == 0) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "File size = 0";
+      return;
+    }
+    const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
+    const int bsz = (qty > 0 ? qty : lines.size());
+    *data = new float[bsz * dataQty];
+    *label = new uint8_t[bsz];
+    std::vector<uint32_t> ign;
+    ign.push_back(id);
+    setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
+    m_sizeData->bsz = bsz;
+    m_sizeData->ch = 1;
+    m_sizeData->w = dataQty;
+    m_sizeData->h = 1;
+
+    m_sizeLabel->bsz = bsz;
+    m_sizeLabel->w = answerDict.size();
+    m_sizeLabel->h = 1;
+    m_sizeLabel->ch = 1;
+
+    m_lastStatus = STATUS_OK;
+  } catch(std::exception & e) {
+    m_lastError = e.what();
+    m_lastStatus = STATUS_FAILURE;
   }
-  auto lines = getLinesFromFile(m_fileName);
-  const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = (qty > 0 ? qty : lines.size());
-  *data = new float[bsz * dataQty];
-  *label = new uint8_t[bsz];
-  std::vector<uint32_t> ign;
-  ign.push_back(id);
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
-  m_sizeData->bsz = bsz;
-  m_sizeData->ch = 1;
-  m_sizeData->w = dataQty;
-  m_sizeData->h = 1;
-
-  m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = answerDict.size();
-  m_sizeLabel->h = 1;
-  m_sizeLabel->ch = 1;
-
-  m_lastStatus = STATUS_OK;
 }
 
 void TrainingData::readIrisData(float **data, uint8_t **label, int qty, unsigned int step)
 {
-  map<string, uint8_t> answerDict;
-  int labelIndex = 4, shift = 1;
-  answerDict["Iris-setosa"] = 0;
-  answerDict["Iris-versicolor"] = 1;
-  answerDict["Iris-virginica"] = 2;
+  try {
+    map<string, uint8_t> answerDict;
+    int labelIndex = 4, shift = 1;
+    answerDict["Iris-setosa"] = 0;
+    answerDict["Iris-versicolor"] = 1;
+    answerDict["Iris-virginica"] = 2;
 
-  auto lines = getLinesFromFile(m_fileName);
-  const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = (qty > 0 ? qty : lines.size());
-  *data = new float[bsz * dataQty];
-  *label = new uint8_t[bsz];
-  std::vector<uint32_t> ign;
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
-  m_sizeData->bsz = bsz;
-  m_sizeData->ch = 1;
-  m_sizeData->w = dataQty;
-  m_sizeData->h = 1;
+    auto lines = getLinesFromFile(m_fileName);
+    if(lines.size() == 0) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "File size = 0";
+      return;
+    }
+    const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
+    const int bsz = (qty > 0 ? qty : lines.size());
+    *data = new float[bsz * dataQty];
+    *label = new uint8_t[bsz];
+    std::vector<uint32_t> ign;
+    setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
+    m_sizeData->bsz = bsz;
+    m_sizeData->ch = 1;
+    m_sizeData->w = dataQty;
+    m_sizeData->h = 1;
 
-  m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = answerDict.size();
-  m_sizeLabel->h = 1;
-  m_sizeLabel->ch = 1;
+    m_sizeLabel->bsz = bsz;
+    m_sizeLabel->w = answerDict.size();
+    m_sizeLabel->h = 1;
+    m_sizeLabel->ch = 1;
 
-  m_lastStatus = STATUS_OK;
+    m_lastStatus = STATUS_OK;
+  } catch(std::exception & e) {
+    m_lastError = e.what();
+    m_lastStatus = STATUS_FAILURE;
+  }
 }
 
 
 void TrainingData::readWineData(float **data, uint8_t **label, int qty, unsigned int step)
 {
-  map<string, uint8_t> answerDict;
-  int labelIndex = 0, shift = 1;
-  answerDict["1"] = 0;
-  answerDict["2"] = 1;
-  answerDict["3"] = 2;
+  try {
+    map<string, uint8_t> answerDict;
+    int labelIndex = 0, shift = 1;
+    answerDict["1"] = 0;
+    answerDict["2"] = 1;
+    answerDict["3"] = 2;
 
-  auto lines = getLinesFromFile(m_fileName);
-  const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-  const int bsz = (qty > 0 ? qty : lines.size());
-  *data = new float[bsz * dataQty];
-  *label = new uint8_t[bsz];
-  std::vector<uint32_t> ign;
-  setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
-  m_sizeData->bsz = bsz;
-  m_sizeData->ch = 1;
-  m_sizeData->w = dataQty;
-  m_sizeData->h = 1;
+    auto lines = getLinesFromFile(m_fileName);
+    if(lines.size() == 0) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "File size = 0";
+      return;
+    }
+    const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
+    const int bsz = (qty > 0 ? qty : lines.size());
+    *data = new float[bsz * dataQty];
+    *label = new uint8_t[bsz];
+    std::vector<uint32_t> ign;
+    setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
+    m_sizeData->bsz = bsz;
+    m_sizeData->ch = 1;
+    m_sizeData->w = dataQty;
+    m_sizeData->h = 1;
 
-  m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = answerDict.size();
-  m_sizeLabel->h = 1;
-  m_sizeLabel->ch = 1;
+    m_sizeLabel->bsz = bsz;
+    m_sizeLabel->w = answerDict.size();
+    m_sizeLabel->h = 1;
+    m_sizeLabel->ch = 1;
 
-  m_lastStatus = STATUS_OK;
+    m_lastStatus = STATUS_OK;
+  } catch(std::exception & e) {
+    m_lastError = e.what();
+    m_lastStatus = STATUS_FAILURE;
+  }
 }
 
 void sexFunc(const std::string & pStr, float & pVal)
@@ -250,63 +292,68 @@ void fareFunc(const std::string & pStr, float & pVal)
 
 void TrainingData::readTitanicData(float **data, uint8_t **label, int qty, unsigned int step)
 {
-  rapidcsv::Document doc(m_fileName);
-  std::vector<float> survived;
-  if (label != nullptr) {
-    survived = doc.GetColumn<float>("Survived");
-  }
-  std::vector<float> pclass = doc.GetColumn<float>("Pclass");
-  std::vector<float> name = doc.GetColumn<float>("Name", nameFunc);
-  std::vector<float> sex = doc.GetColumn<float>("Sex", sexFunc);
-  std::vector<float> age = doc.GetColumn<float>("Age", ageFunc);
-  std::vector<float> sibSp = doc.GetColumn<float>("SibSp");
-  std::vector<float> parch = doc.GetColumn<float>("Parch");
-  std::vector<float> fare = doc.GetColumn<float>("Fare", fareFunc);
-  std::vector<float> embarked = doc.GetColumn<float>("Embarked", embarkedFunc);
-
-//  const unsigned int bsz = static_cast<unsigned int>(age.size());
-  const unsigned int bsz = (qty > 0 ? qty : age.size());
-  const int dataQty = 6;
-  unsigned int begin = bsz * step % age.size(), fullDataCount = 0;;
-
-  *data = new float[bsz * dataQty];
-  if (label != nullptr) {
-    *label = new uint8_t[bsz];
-  }
-  unsigned int countData = 0;
-  for (unsigned int i = begin; i < age.size(); ++i) {
-    ++fullDataCount;
+  try {
+    rapidcsv::Document doc(m_fileName);
+    std::vector<float> survived;
     if (label != nullptr) {
-      (*label)[i] = static_cast<uint8_t>(survived[i]);
+      survived = doc.GetColumn<float>("Survived");
     }
-    (*data)[countData++] = pclass[i];
-    (*data)[countData++] = sex[i];
-    if(age[i] < 1.f) {
-      age[i] = name[i];
-    }
-    (*data)[countData++] = age[i];
-    (*data)[countData++] = sibSp[i] + parch[i];  // Объединил родителей и детей
-    (*data)[countData++] = fare[i];
-    (*data)[countData++] = embarked[i];
+    std::vector<float> pclass = doc.GetColumn<float>("Pclass");
+    std::vector<float> name = doc.GetColumn<float>("Name", nameFunc);
+    std::vector<float> sex = doc.GetColumn<float>("Sex", sexFunc);
+    std::vector<float> age = doc.GetColumn<float>("Age", ageFunc);
+    std::vector<float> sibSp = doc.GetColumn<float>("SibSp");
+    std::vector<float> parch = doc.GetColumn<float>("Parch");
+    std::vector<float> fare = doc.GetColumn<float>("Fare", fareFunc);
+    std::vector<float> embarked = doc.GetColumn<float>("Embarked", embarkedFunc);
 
-    if (bsz == fullDataCount) {
-      break;
-    } else if (i == (age.size() - 1)) {
-      i = 0;
+  //  const unsigned int bsz = static_cast<unsigned int>(age.size());
+    const unsigned int bsz = (qty > 0 ? qty : age.size());
+    const int dataQty = 6;
+    unsigned int begin = bsz * step % age.size(), fullDataCount = 0;;
+
+    *data = new float[bsz * dataQty];
+    if (label != nullptr) {
+      *label = new uint8_t[bsz];
     }
+    unsigned int countData = 0;
+    for (unsigned int i = begin; i < age.size(); ++i) {
+      ++fullDataCount;
+      if (label != nullptr) {
+        (*label)[i] = static_cast<uint8_t>(survived[i]);
+      }
+      (*data)[countData++] = pclass[i];
+      (*data)[countData++] = sex[i];
+      if(age[i] < 1.f) {
+        age[i] = name[i];
+      }
+      (*data)[countData++] = age[i];
+      (*data)[countData++] = sibSp[i] + parch[i];  // Объединил родителей и детей
+      (*data)[countData++] = fare[i];
+      (*data)[countData++] = embarked[i];
+
+      if (bsz == fullDataCount) {
+        break;
+      } else if (i == (age.size() - 1)) {
+        i = 0;
+      }
+    }
+
+    m_sizeData->bsz = bsz;
+    m_sizeData->ch = 1;
+    m_sizeData->w = dataQty;
+    m_sizeData->h = 1;
+
+    m_sizeLabel->bsz = bsz;
+    m_sizeLabel->w = 2;
+    m_sizeLabel->h = 1;
+    m_sizeLabel->ch = 1;
+
+    m_lastStatus = STATUS_OK;
+  } catch(std::exception & e) {
+    m_lastError = e.what();
+    m_lastStatus = STATUS_FAILURE;
   }
-
-  m_sizeData->bsz = bsz;
-  m_sizeData->ch = 1;
-  m_sizeData->w = dataQty;
-  m_sizeData->h = 1;
-
-  m_sizeLabel->bsz = bsz;
-  m_sizeLabel->w = 2;
-  m_sizeLabel->h = 1;
-  m_sizeLabel->ch = 1;
-
-  m_lastStatus = STATUS_OK;
 }
 
 std::vector<std::string> TrainingData::getLinesFromFile(const std::string & filename)

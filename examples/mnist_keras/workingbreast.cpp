@@ -46,8 +46,13 @@ namespace breast {
       const int epoche = 100, reset = 10;
 
       for(int i = 0; i < epoche; ++i) {
-        breastTrainData("../data/02_BreastCancer/breast-cancer-wisconsin.data", 1, &data, &label,
-                        &layerDataSize, &layerLabelSize, 100, i);
+        Status retStatus = breastTrainData("../data/02_BreastCancer/breast-cancer-wisconsin.data", 1, &data, &label, &layerDataSize, &layerLabelSize, 100, i);
+        if(retStatus != STATUS_OK) {
+          char errBuffer[1024];
+          dsLastError(errBuffer, sizeof (errBuffer));
+          cout<<"(ERROR): "<<errBuffer<<endl;
+          return 1;
+        }
         if(i % reset == 0) {
           accuracySum = 0.f;
         }
@@ -67,8 +72,13 @@ namespace breast {
     else {
       float * data = nullptr; uint8_t * label = nullptr;
       int modelID = createModel(netName, weightName);
-      breastTrainData("../data/02_BreastCancer/breast-cancer-wisconsin.data", 1, &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
-//      loadWeight(modelID, "02_breast.dat");
+      Status retStatus = breastTrainData("../data/02_BreastCancer/breast-cancer-wisconsin.data", 1, &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+      if(retStatus != STATUS_OK) {
+        char errBuffer[1024];
+        dsLastError(errBuffer, sizeof (errBuffer));
+        cout<<"(ERROR): "<<errBuffer<<endl;
+        return 1;
+      }
       float accuracy = 0.f;
       evaluate(modelID, data, layerDataSize, label, layerLabelSize, 2, accuracy);
       cout<<"Testing: "<<accuracy<<endl;

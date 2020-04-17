@@ -26,11 +26,12 @@ namespace bike {
     //----- Загрузка сета --------------
     LayerSize layerDataSize, layerLabelSize;
     float * data = nullptr, * label = nullptr;  // Используем указатели на указатели
-    int retCode = bikeTrainData("../data/07_bike/day.csv", true, &data, &label,
-                                &layerDataSize, &layerLabelSize, 0, 0);
-    if(retCode != STATUS_OK) {
-      cout<<"Read data file is failure!!!"<<endl;
-      exit (-1);
+    Status retStatus = bikeTrainData("../data/07_bike/day.csv", true, &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+    if(retStatus != STATUS_OK) {
+      char errBuffer[1024];
+      dsLastError(errBuffer, sizeof (errBuffer));
+      cout<<"(ERROR): "<<errBuffer<<endl;
+      return 1;
     }
     //=================================
     if (isTraining) { //----- Тренировка -----

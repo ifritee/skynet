@@ -40,11 +40,12 @@ namespace boston {
       //----- Загрузка сета --------------
       LayerSize layerDataSize, layerLabelSize;
       float * data = nullptr, * label = nullptr;  // Используем указатели на указатели
-      int retCode = bostonTrainData("../data/05_boston/boston_data.csv", &data, &label,
-                                    &layerDataSize, &layerLabelSize, 0, 0);
-      if(retCode != STATUS_OK) {
-        cout<<"Read data file is failure!!!"<<endl;
-        exit (-1);
+      Status retStatus = bostonTrainData("../data/05_boston/boston_data.csv", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+      if(retStatus != STATUS_OK) {
+        char errBuffer[1024];
+        dsLastError(errBuffer, sizeof (errBuffer));
+        cout<<"(ERROR): "<<errBuffer<<endl;
+        return 1;
       }
       //=================================
       const int epoches = 5000;
@@ -63,11 +64,12 @@ namespace boston {
       //----- Загрузка сета --------------
       LayerSize layerDataSize, layerLabelSize;
       float * data = nullptr;  // Используем указатели на указатели
-      int retCode = bostonTrainData("../data/05_boston/boston_test_data.csv", &data, nullptr,
-                                    &layerDataSize, &layerLabelSize, 0, 0);
-      if(retCode != STATUS_OK) {
-        cout<<"Read data file is failure!!!"<<endl;
-        exit (-1);
+      Status retStatus = bostonTrainData("../data/05_boston/boston_test_data.csv", &data, nullptr, &layerDataSize, &layerLabelSize, 0, 0);
+      if(retStatus != STATUS_OK) {
+        char errBuffer[1024];
+        dsLastError(errBuffer, sizeof (errBuffer));
+        cout<<"(ERROR): "<<errBuffer<<endl;
+        return 1;
       }
       //=================================
 //      layerDataSize.bsz = 1;

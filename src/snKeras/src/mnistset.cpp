@@ -55,7 +55,7 @@ namespace cpp_keras {
         labelsStream.close();
       }
     } catch (std::logic_error & e) {
-      cerr<<e.what()<<endl;
+      m_lastError = e.what();
       datasetStream.close();
       labelsStream.close();
       return false;
