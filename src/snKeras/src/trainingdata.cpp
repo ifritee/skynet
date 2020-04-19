@@ -27,7 +27,7 @@ void TrainingData::readBikeData(bool isDay, float ** data, float ** label, int q
 {
   try {
     const int labelIndex = isDay ? 15 : 16;
-    const int shift = 3;
+    const size_t shift = 3;
     auto lines = getLinesFromFile(m_fileName);
     if(lines.size() == 0) {
       m_lastStatus = STATUS_FAILURE;
@@ -35,8 +35,8 @@ void TrainingData::readBikeData(bool isDay, float ** data, float ** label, int q
       return;
     }
     lines.erase(lines.begin());
-    const int dataQty = split(lines[0], ',').size() - shift;
-    const int bsz = (qty > 0 ? qty : lines.size());
+    const int dataQty = static_cast<int>(split(lines[0], ',').size() - shift);
+    const int bsz = static_cast<int>(qty > 0 ? qty : lines.size());
     *data = new float[bsz * dataQty];
     *label = new float[bsz];
     std::vector<uint32_t> ign;
@@ -66,7 +66,7 @@ void TrainingData::readBostonData(float **data, float **label, int qty, unsigned
 {
   try {
     const int labelIndex = (label == nullptr ? -1 : 13);
-    const int shift = (label == nullptr ? 0 : 1);
+    const size_t shift = (label == nullptr ? 0 : 1);
     auto lines = getLinesFromFile(m_fileName);
     if(lines.size() == 0) {
       m_lastStatus = STATUS_FAILURE;
@@ -74,8 +74,8 @@ void TrainingData::readBostonData(float **data, float **label, int qty, unsigned
       return;
     }
     lines.erase(lines.begin());
-    const int dataQty = split(lines[0], ',').size() - shift;
-    const int bsz = (qty > 0 ? qty : lines.size());
+    const int dataQty = static_cast<int>(split(lines[0], ',').size() - shift);
+    const int bsz = static_cast<int>(qty > 0 ? qty : lines.size());
     *data = new float[bsz * dataQty];
     std::vector<uint32_t> ign;
     if(label == nullptr) {
@@ -114,7 +114,8 @@ void TrainingData::readBreastData(int flag, float **data, uint8_t **label, int q
 {
   try {
     map<string, uint8_t> answerDict;
-    int id = 0, labelIndex = 1, shift = 2;
+    int id = 0, labelIndex = 1;
+    size_t shift = 2;
     if(flag == 1) {
       answerDict["2"] = 0;
       answerDict["4"] = 1;
@@ -132,8 +133,8 @@ void TrainingData::readBreastData(int flag, float **data, uint8_t **label, int q
       m_lastError = "File size = 0";
       return;
     }
-    const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-    const int bsz = (qty > 0 ? qty : lines.size());
+    const int dataQty = static_cast<int>(split(lines[0], ',').size() - shift);  // Количество значений - id - label
+    const int bsz = static_cast<int>(qty > 0 ? qty : lines.size());
     *data = new float[bsz * dataQty];
     *label = new uint8_t[bsz];
     std::vector<uint32_t> ign;
@@ -149,7 +150,7 @@ void TrainingData::readBreastData(int flag, float **data, uint8_t **label, int q
     m_sizeData->h = 1;
 
     m_sizeLabel->bsz = bsz;
-    m_sizeLabel->w = answerDict.size();
+    m_sizeLabel->w = static_cast<unsigned int>(answerDict.size());
     m_sizeLabel->h = 1;
     m_sizeLabel->ch = 1;
 
@@ -164,7 +165,8 @@ void TrainingData::readIrisData(float **data, uint8_t **label, int qty, unsigned
 {
   try {
     map<string, uint8_t> answerDict;
-    int labelIndex = 4, shift = 1;
+    int labelIndex = 4;
+    size_t shift = 1;
     answerDict["Iris-setosa"] = 0;
     answerDict["Iris-versicolor"] = 1;
     answerDict["Iris-virginica"] = 2;
@@ -175,8 +177,8 @@ void TrainingData::readIrisData(float **data, uint8_t **label, int qty, unsigned
       m_lastError = "File size = 0";
       return;
     }
-    const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-    const int bsz = (qty > 0 ? qty : lines.size());
+    const int dataQty = static_cast<int>(split(lines[0], ',').size() - shift);  // Количество значений - id - label
+    const int bsz = static_cast<int>(qty > 0 ? qty : lines.size());
     *data = new float[bsz * dataQty];
     *label = new uint8_t[bsz];
     std::vector<uint32_t> ign;
@@ -191,7 +193,7 @@ void TrainingData::readIrisData(float **data, uint8_t **label, int qty, unsigned
     m_sizeData->h = 1;
 
     m_sizeLabel->bsz = bsz;
-    m_sizeLabel->w = answerDict.size();
+    m_sizeLabel->w = static_cast<unsigned int>(answerDict.size());
     m_sizeLabel->h = 1;
     m_sizeLabel->ch = 1;
 
@@ -207,7 +209,8 @@ void TrainingData::readWineData(float **data, uint8_t **label, int qty, unsigned
 {
   try {
     map<string, uint8_t> answerDict;
-    int labelIndex = 0, shift = 1;
+    int labelIndex = 0;
+    size_t shift = 1;
     answerDict["1"] = 0;
     answerDict["2"] = 1;
     answerDict["3"] = 2;
@@ -218,8 +221,8 @@ void TrainingData::readWineData(float **data, uint8_t **label, int qty, unsigned
       m_lastError = "File size = 0";
       return;
     }
-    const int dataQty = split(lines[0], ',').size() - shift;  // Количество значений - id - label
-    const int bsz = (qty > 0 ? qty : lines.size());
+    const int dataQty = static_cast<int>(split(lines[0], ',').size() - shift);  // Количество значений - id - label
+    const int bsz = static_cast<int>(qty > 0 ? qty : lines.size());
     *data = new float[bsz * dataQty];
     *label = new uint8_t[bsz];
     std::vector<uint32_t> ign;
@@ -234,7 +237,7 @@ void TrainingData::readWineData(float **data, uint8_t **label, int qty, unsigned
     m_sizeData->h = 1;
 
     m_sizeLabel->bsz = bsz;
-    m_sizeLabel->w = answerDict.size();
+    m_sizeLabel->w = static_cast<unsigned int>(answerDict.size());
     m_sizeLabel->h = 1;
     m_sizeLabel->ch = 1;
 
@@ -332,7 +335,7 @@ void TrainingData::readTitanicData(float **data, uint8_t **label, int qty, unsig
     std::vector<float> embarked = doc.GetColumn<float>("Embarked", embarkedFunc);
 
   //  const unsigned int bsz = static_cast<unsigned int>(age.size());
-    const unsigned int bsz = (qty > 0 ? qty : age.size());
+    const unsigned int bsz = static_cast<int>(qty > 0 ? qty : age.size());
     const int dataQty = 6;
     unsigned int begin = bsz * step % age.size(), fullDataCount = 0;;
 
