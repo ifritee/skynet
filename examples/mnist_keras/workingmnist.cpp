@@ -24,7 +24,7 @@ namespace mnist {
     if (isTraining) {
       int modelID = createModel();
       addInput(modelID, "Input", "D1");
-      addDense(modelID, "D1", "D2", 800);
+      addDense(modelID, "D1", "D2", 200);
       addDense(modelID, "D2", "LS", classCnt);
       addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
       //=================================

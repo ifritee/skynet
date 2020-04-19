@@ -42,7 +42,11 @@ void TrainingData::readBikeData(bool isDay, float ** data, float ** label, int q
     std::vector<uint32_t> ign;
     ign.push_back(0);
     ign.push_back(1);
-    setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
+    if (setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step) == false) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "Read data from file is failure";
+      return;
+    }
     m_sizeData->bsz = bsz;
     m_sizeData->ch = 1;
     m_sizeData->w = dataQty;
@@ -75,10 +79,18 @@ void TrainingData::readBostonData(float **data, float **label, int qty, unsigned
     *data = new float[bsz * dataQty];
     std::vector<uint32_t> ign;
     if(label == nullptr) {
-      setDatafromStrings(lines, *data, (float * )(nullptr), labelIndex, ign, bsz, step);
+      if (setDatafromStrings(lines, *data, (float * )(nullptr), labelIndex, ign, bsz, step) == false) {
+        m_lastStatus = STATUS_FAILURE;
+        m_lastError = "Read data from file is failure";
+        return;
+      }
     } else {
       *label = new float[bsz];
-      setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step);
+      if (setDatafromStrings(lines, *data, *label, labelIndex, ign, bsz, step) == false) {
+        m_lastStatus = STATUS_FAILURE;
+        m_lastError = "Read data from file is failure";
+        return;
+      }
     }
 
     m_sizeData->bsz = bsz;
@@ -126,7 +138,11 @@ void TrainingData::readBreastData(int flag, float **data, uint8_t **label, int q
     *label = new uint8_t[bsz];
     std::vector<uint32_t> ign;
     ign.push_back(id);
-    setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
+    if (setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step) == false) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "Read data from file is failure";
+      return;
+    }
     m_sizeData->bsz = bsz;
     m_sizeData->ch = 1;
     m_sizeData->w = dataQty;
@@ -164,7 +180,11 @@ void TrainingData::readIrisData(float **data, uint8_t **label, int qty, unsigned
     *data = new float[bsz * dataQty];
     *label = new uint8_t[bsz];
     std::vector<uint32_t> ign;
-    setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
+    if (setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step) == false) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "Read data from file is failure";
+      return;
+    }
     m_sizeData->bsz = bsz;
     m_sizeData->ch = 1;
     m_sizeData->w = dataQty;
@@ -203,7 +223,11 @@ void TrainingData::readWineData(float **data, uint8_t **label, int qty, unsigned
     *data = new float[bsz * dataQty];
     *label = new uint8_t[bsz];
     std::vector<uint32_t> ign;
-    setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step);
+    if (setDatafromStrings(lines, *data, *label, labelIndex, ign, answerDict, bsz, step) == false) {
+      m_lastStatus = STATUS_FAILURE;
+      m_lastError = "Read data from file is failure";
+      return;
+    }
     m_sizeData->bsz = bsz;
     m_sizeData->ch = 1;
     m_sizeData->w = dataQty;
@@ -383,7 +407,7 @@ std::vector<std::string> TrainingData::split(const string & s, char d)
   return tokens;
 }
 
-void TrainingData::setDatafromStrings(const std::vector<std::string> & lines, float * datas, float * labels,
+bool TrainingData::setDatafromStrings(const std::vector<std::string> & lines, float * datas, float * labels,
                                       unsigned int labIndex, const std::vector<uint32_t> & ign, int qty, unsigned int step)
 {
   int dataCount = 0, labelCount = 0, begin = qty * step % lines.size(), fullDataCount = 0;
@@ -418,9 +442,13 @@ void TrainingData::setDatafromStrings(const std::vector<std::string> & lines, fl
       num = 0;
     }
   }
+  if(labels != nullptr && labelCount == 0) {
+    return false;
+  }
+  return true;
 }
 
-void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *datas,
+bool TrainingData::setDatafromStrings(const std::vector<string> &lines, float *datas,
                                       uint8_t *labels, unsigned int labIndex, const std::vector<uint32_t> &ign,
                                       std::map<std::string, uint8_t> & answer, int qty, unsigned int step)
 {
@@ -436,7 +464,7 @@ void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *d
         } else if (i == labIndex) { // Метки
           if(tokens[i] != "") {
             if(answer.find(tokens[i]) == answer.end()) {
-              return;
+              return false;
             }
             labels[labelCount++] = answer[tokens[i] ];
           }
@@ -458,5 +486,6 @@ void TrainingData::setDatafromStrings(const std::vector<string> &lines, float *d
       num = 0;
     }
   }
+  return true;
 }
 

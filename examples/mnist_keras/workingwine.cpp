@@ -23,8 +23,8 @@ namespace wine {
     //----- Создание модели -----
     int modelID = createModel();
     addInput(modelID, "Input", "D1");
-    addDense(modelID, "D1", "D2", 100);
-    addDense(modelID, "D2", "D3", 300);
+    addDense(modelID, "D1", "D2", 300);
+    addDense(modelID, "D2", "D3", 10);
     addDense(modelID, "D3", "LS", 3);
     addLossFunction(modelID, "LS", "Output", LOSS_SOFTMAX_CROSS_ENTROPY);
     //=================================
@@ -36,13 +36,14 @@ namespace wine {
     //=================================
 
     LayerSize layerDataSize, layerLabelSize;
-    float * data = nullptr; uint8_t * label = nullptr;
+    float * data = nullptr;
+    uint8_t * label = nullptr;
     wineTrainData("../data/03_Wine/wine.data", &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
     //----- Тренировка -----
     if (isTraining) {
 
       float accuracySum = 0.f;
-      const int epoche = 300, reset = 10;
+      const int epoche = 3000, reset = 10;
 
       for(int i = 0; i < epoche; ++i) {
         if(i % reset == 0) {

@@ -52,9 +52,9 @@ private:
    */
   std::vector<std::string> split(const std::string & s, char d);
 
-  void setDatafromStrings(const std::vector<std::string> &lines, float * datas, float * labels, unsigned int labIndex,
+  bool setDatafromStrings(const std::vector<std::string> &lines, float * datas, float * labels, unsigned int labIndex,
                           const std::vector<uint32_t> &ign, int qty, unsigned int step);
-  void setDatafromStrings(const std::vector<std::string> &lines, float * datas, uint8_t * labels, unsigned int labIndex,
+  bool setDatafromStrings(const std::vector<std::string> &lines, float * datas, uint8_t * labels, unsigned int labIndex,
                           const std::vector<uint32_t> &ign, std::map<std::string, uint8_t> & answer,int qty, unsigned int step);
 };
 
