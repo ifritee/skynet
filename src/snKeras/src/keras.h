@@ -286,7 +286,7 @@ KERAS_EXPORT Status evaluate(int id, float * data, LayerSize dataSize, unsigned 
 KERAS_EXPORT Status forecasting(int id, float * data, LayerSize dataSize, float * label, LayerSize labelsSize);
 
 /**
- * @brief run Производит пасчет одного данного по обученой модели
+ * @brief run Производит расчет одного данного по обученой модели
  * @param id Итендификатор сети
  * @param data Данные для расчета
  * @param dataSize Размеры данных

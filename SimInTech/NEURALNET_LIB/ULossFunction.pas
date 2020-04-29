@@ -16,7 +16,7 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(id : Integer); override;
+    function addLayerToModel(id : Integer) : Boolean; override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -60,14 +60,16 @@ begin
   end;
 end;
 
-procedure TLossFunction.addLayerToModel(id : Integer);
+function TLossFunction.addLayerToModel(id : Integer) : Boolean;
 var
   returnCode: TStatus;
 begin
+  Result := True;
   if (id = m_modelID) AND (LayersFromJSON = False) then begin
     returnCode := addLossFunction(id, PAnsiChar(shortName), PAnsiChar(nodes), m_lossType);
     if returnCode <> STATUS_OK then begin
       ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
+      Result := False;
       Exit;
     end;
   end;
@@ -106,7 +108,6 @@ begin
       isCreate := False;
     end;
     f_GoodStep: begin
-//      if isCreate = False then begin
       if U[0].FCount > 1 then begin
         m_modelID := Round(U[0].Arr^[0]);
         rootIndex := Round(U[0].Arr^[1]);
@@ -124,7 +125,6 @@ begin
           Y[0].Arr^[3] := U[0].Arr^[3];
         end;
       end;
-//      end;
     end;
   end
 end;

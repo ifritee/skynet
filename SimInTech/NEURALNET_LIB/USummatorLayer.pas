@@ -15,7 +15,7 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(id : Integer); override;
+    function addLayerToModel(id : Integer) : Boolean; override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -62,16 +62,18 @@ begin
   end;
 end;
 
-procedure TSummatorLayer.addLayerToModel(id : Integer);
+function TSummatorLayer.addLayerToModel(id : Integer) : Boolean;
 var
   returnCode: TStatus;
 begin
+  Result := True;
   if (id = m_modelID) AND (LayersFromJSON = False) then begin
     returnCode := addSummator(id, PAnsiChar(shortName),
                               PAnsiChar(nodes),
                               m_sumType);
     if returnCode <> STATUS_OK then begin
       ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
+      Result := False;
       Exit;
     end;
   end;
@@ -80,7 +82,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TSummatorLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
 end;
 
 function TSummatorLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

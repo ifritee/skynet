@@ -32,13 +32,13 @@ type
      m_fLabelPoint: array of Single;   /// Метки для
      m_id: Integer;
 
-     m_datasetType: NativeInt;  /// Тип набора
-     m_sendDataType : NativeInt;
+     m_datasetType: Cardinal;  /// Тип набора
+     m_sendDataType : Cardinal; /// Отправляемый тип (тренировочные или тестовые)
      m_trainData: String; /// Расположение тренировочных данных
      m_trainlabel: String;  /// Расположение тренировочных меток
      m_testData: String;  /// Расположение тестовых данных
      m_testLabel: String; /// Расположение тестовых меток
-     m_breastSorce: Integer; /// Источник информации о больных раком
+     m_breastSource: Cardinal; /// Источник информации о больных раком
      m_breastFile: String; /// Файл с данными о больных
      m_wine: String; /// Классификация вин
      m_iris: String; /// Классификация ирисов
@@ -50,6 +50,10 @@ type
      m_titanicTrain: String;  /// Выживет ли пассажир (тренировка)
      m_titanicTest: String; /// Выживет ли пассажир (тест)
      m_trainQty : Integer; /// Количество считываемых данны
+     m_lastDatasetType: TDataSetType; /// Сохраним последний тип
+     m_lastSendDataType : Cardinal; /// Сохраним последний тип данных
+     m_latestBreastSrc : Cardinal; /// Сохраним последний тип раковой опухоли
+     m_latestBikeTime : Cardinal; /// Сохраним последний тип набора проката велосипедов
 
      /// Проверка наличия файлов с датасетом
      Function checkFiles(): Boolean;
@@ -115,7 +119,7 @@ begin
       DataType:=dtString;
       Exit;
     end else if StrEqu(ParamName,'breast_src') then begin
-      Result:=NativeInt(@m_breastSorce);
+      Result:=NativeInt(@m_breastSource);
       DataType:=dtInteger;
       Exit;
     end else if StrEqu(ParamName,'wine') then begin
@@ -173,7 +177,7 @@ begin
           m_trainQty := 1000;
       end else if m_datasetType = Integer(dtBREAST) then begin
         breastTrainData(PAnsiChar(AnsiString(m_breastFile)),
-                        m_breastSorce + 1, @m_dataPoint, @m_labelPoint,
+                        m_breastSource + 1, @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,0,0);
         m_width := dataParam.w;
         m_height := dataParam.h;
@@ -219,7 +223,7 @@ begin
                       @m_dataPoint, @m_flabelPoint,
                       @dataParam, @labelParam, 0, 0);
         end else begin
-          bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), False,
+          bikeTrainData(PAnsiChar(AnsiString(m_bikeHour)), False,
                       @m_dataPoint, @m_flabelPoint,
                       @dataParam, @labelParam, 0, 0);
         end;
@@ -246,9 +250,7 @@ begin
       end;
       cY[0] := m_trainQty * m_width * m_height * m_depth; // Количество данных = количеству наборов * W * H
       cY[1] := m_trainQty; // Количество меток = количеству наборов
-      cY[2] := 1;
-      cY[3] := 1;
-      cY[4] := 1;
+      cY[2] := 3;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -271,6 +273,10 @@ begin
     end;
     f_InitState: begin
       m_stepNumber := 0;
+      m_lastDatasetType :=  TDataSetType(m_datasetType);
+      m_lastSendDataType := m_sendDataType;
+      m_latestBreastSrc := m_breastSource;
+      m_latestBikeTime := m_bikeTime;
       // Зануление выходных портов
       for I := 0 to cY.Count - 1 do begin
         cY.Arr^[I] := 0;
@@ -278,13 +284,23 @@ begin
           Y[I].Arr^[J] := 0;
         end;
       end;
-      if checkFiles = False then begin
+      if checkFiles = False then begin // Проверка на существование файлов
+        Result := r_Fail;
         Exit;
       end;
     end;
     f_GoodStep: begin
-      if m_datasetType = Integer(dtMNIST) then begin  // MNIST
-        if m_sendDataType = 0 then begin
+      if (m_lastDatasetType <> TDataSetType(m_datasetType)) OR
+         (m_lastSendDataType <> m_sendDataType) OR
+         (m_latestBreastSrc <> m_breastSource) OR
+         (m_latestBikeTime <> m_bikeTime) then
+      begin
+        ErrorEvent(txtDS_NotEqualsLoadSet, msWarning, VisualObject);
+        Result := r_Fail;
+        Exit;
+      end;
+      if m_lastDatasetType = dtMNIST then begin  // MNIST
+        if m_lastSendDataType = 0 then begin
           returnCode := mnistTrainData(PAnsiChar(AnsiString(m_trainData)),
                                     PAnsiChar(AnsiString(m_trainlabel)),
                                     @m_dataPoint, @m_labelPoint,
@@ -299,26 +315,26 @@ begin
                                     m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
         end;
-      end else if m_datasetType = Integer(dtBREAST) then begin // BREAST (Опухоль)
+      end else if m_lastDatasetType = dtBREAST then begin // BREAST (Опухоль)
           returnCode := breastTrainData(PAnsiChar(AnsiString(m_breastFile)),
-                        m_breastSorce + 1, @m_dataPoint, @m_labelPoint,
+                        m_breastSource + 1, @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,
                         m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
-      end else if m_datasetType = Integer(dtWINE) then begin // WINE (Классификация вин)
+      end else if m_lastDatasetType = dtWINE then begin // WINE (Классификация вин)
           returnCode := wineTrainData(PAnsiChar(AnsiString(m_wine)),
                         @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,
                         m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
-      end else if m_datasetType = Integer(dtIRIS) then begin // WINE (Классификация вин)
+      end else if m_lastDatasetType = dtIRIS then begin // WINE (Классификация вин)
           returnCode := irisTrainData(PAnsiChar(AnsiString(m_iris)),
                         @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,
                         m_trainQty, m_stepNumber);
           dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
-      end else if m_datasetType = Integer(dtBOSTON) then begin //
-      if m_sendDataType = 0 then begin
+      end else if m_lastDatasetType = dtBOSTON then begin //
+      if m_lastSendDataType = 0 then begin
           returnCode := bostonTrainData(PAnsiChar(AnsiString(m_bostonTrain)),
                           @m_dataPoint, @m_fLabelPoint,
                           @dataParam, @labelParam, m_trainQty, m_stepNumber);
@@ -328,19 +344,19 @@ begin
                           @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end;
         dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
-      end else if m_datasetType = Integer(dtBIKE) then begin // WINE (Классификация вин)
+      end else if m_lastDatasetType = dtBIKE then begin // WINE (Классификация вин)
         if m_bikeTime = 0 then begin
           returnCode := bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), True,
                       @m_dataPoint, @m_flabelPoint,
                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end else begin
-          returnCode := bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), False,
+          returnCode := bikeTrainData(PAnsiChar(AnsiString(m_bikeHour)), False,
                       @m_dataPoint, @m_flabelPoint,
                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
         end;
         dataLength := dataParam.bsz * dataParam.w * dataParam.h * dataParam.ch;
-      end else if m_datasetType = Integer(dtTITANIC) then begin // TITANIC (Выживет ли пассажир)
-        if m_sendDataType = 0 then begin
+      end else if m_lastDatasetType = dtTITANIC then begin // TITANIC (Выживет ли пассажир)
+        if m_lastSendDataType = 0 then begin
           returnCode := titanicTrainData(PAnsiChar(AnsiString(m_titanicTrain)),
                                       @m_dataPoint, @m_labelPoint,
                                       @dataParam, @labelParam, m_trainQty, m_stepNumber);
@@ -353,31 +369,32 @@ begin
       end;
       if returnCode <> STATUS_OK then begin
         ErrorEvent(txtDS_NotLoaded, msError, VisualObject);
-      Exit;
+        Result := r_Fail;
+        Exit;
       end;
 
-        for I := 0 to dataLength - 1 do
-          Y[0].Arr^[I] := m_dataPoint[I];
-        if (m_datasetType = Integer(dtBOSTON)) OR (m_datasetType = Integer(dtBIKE)) then begin
-          if m_sendDataType = 0 then begin
-            for I := 0 to labelParam.bsz - 1 do
-              Y[1].Arr^[I] := m_fLabelPoint[I];
-          end;
-        end else begin
-          if (m_datasetType = Integer(dtTITANIC)) AND (m_sendDataType = 1) then begin
-
-          end else begin
-            for I := 0 to labelParam.bsz - 1 do
-              Y[1].Arr^[I] := m_labelPoint[I];
-          end;
+      for I := 0 to dataLength - 1 do
+        Y[0].Arr^[I] := m_dataPoint[I];
+      if (m_lastDatasetType = dtBOSTON) OR (m_lastDatasetType = dtBIKE) then begin
+        if m_lastSendDataType = 0 then begin
+          for I := 0 to labelParam.bsz - 1 do
+            Y[1].Arr^[I] := m_fLabelPoint[I];
         end;
-        Y[2].Arr^[0] := m_width;
-        Y[3].Arr^[0] := m_height;
-        Y[4].Arr^[0] := m_depth;
+      end else begin
+        if (m_lastDatasetType = dtTITANIC) AND (m_lastSendDataType = 1) then begin
+
+        end else begin
+          for I := 0 to labelParam.bsz - 1 do
+            Y[1].Arr^[I] := m_labelPoint[I];
+        end;
+      end;
+      Y[2].Arr^[0] := m_width;
+      Y[2].Arr^[1] := m_height;
+      Y[2].Arr^[2] := m_depth;
       inc(m_stepNumber);
     end;
     f_Stop: begin
-      if (m_datasetType = Integer(dtBOSTON)) OR (m_datasetType = Integer(dtBIKE)) then begin
+      if (m_lastDatasetType = dtBOSTON) OR (m_lastDatasetType = dtBIKE) then begin
         freeTrainDataF(@m_dataPoint, @m_flabelPoint);
       end else begin
         freeTrainData(@m_dataPoint, @m_labelPoint);
@@ -389,23 +406,57 @@ end;
   Function TDataSet.checkFiles(): Boolean;
   begin
     Result := True;
-    if m_datasetType = 0 then begin  // MNIST
+    if m_datasetType = Integer(dtMNIST) then begin  // MNIST
       if m_sendDataType = 0  then begin
-        if not FileExists(m_trainData) AND not FileExists(m_trainlabel) then begin
-          ErrorEvent('MNIST files with train is not exist!', msError, VisualObject);
+        if (FileExists(m_trainData) = False) OR (FileExists(m_trainlabel) = False) then begin
+          ErrorEvent(txtDS_MNISTTrainNF, msError, VisualObject);
           Result := False;
         end;
       end else begin
-        if not FileExists(m_testData) AND not FileExists(m_testLabel) then begin
-          ErrorEvent('MNIST files with test is not exist!', msError, VisualObject);
+        if (FileExists(m_testData) = False) OR (FileExists(m_testLabel) = False) then begin
+          ErrorEvent(txtDS_MNISTTestNF, msError, VisualObject);
           Result := False;
         end;
       end;
-    end else if m_datasetType = 1 then begin // BREAST (Опухоль)
+    end else if m_datasetType = Integer(dtBREAST) then begin // BREAST (Опухоль)
       if not FileExists(m_breastFile) then begin
-        ErrorEvent('MNIST files with train is not exist!', msError, VisualObject);
+        ErrorEvent(txtDS_BreastTrainNF, msError, VisualObject);
         Result := False;
       end;
+    end else if m_datasetType = Integer(dtWINE) then begin // wine (Вино)
+      if not FileExists(m_wine) then begin
+        ErrorEvent(txtDS_WineTrainNF, msError, VisualObject);
+        Result := False;
+      end;
+    end else if m_datasetType = Integer(dtIRIS) then begin // iris (Ирисы Фишера)
+      if not FileExists(m_iris) then begin
+        ErrorEvent(txtDS_IrisTrainNF, msError, VisualObject);
+        Result := False;
+      end;
+    end else if m_datasetType = Integer(dtBOSTON) then begin // Boston (цена квартиры)
+      if (FileExists(m_bostonTrain) = False) AND (m_sendDataType = 0) then begin
+        ErrorEvent(txtDS_BostonTrainNF, msError, VisualObject);
+        Result := False;
+      end else if (FileExists(m_bostonTest) = False) AND (m_sendDataType = 1) then begin
+        ErrorEvent(txtDS_BostonTrainNF, msError, VisualObject);
+        Result := False;
+      end;
+    end else if m_datasetType = Integer(dtBIKE) then begin // Bike (прокат великов)
+      if (FileExists(m_bikeDay) = False) AND (m_bikeTime = 0) then begin
+        ErrorEvent(txtDS_BikeTrainNF, msError, VisualObject);
+        Result := False;
+      end else if (FileExists(m_bikeHour) = False) AND (m_bikeTime = 1) then begin
+        ErrorEvent(txtDS_BikeTrainNF, msError, VisualObject);
+        Result := False;
+      end;
+    end else if m_datasetType = Integer(dtTITANIC) then begin // Titanic (Пассажиры Титаника)
+    if (FileExists(m_titanicTrain) = False) AND (m_sendDataType = 0) then begin
+      ErrorEvent(txtDS_TitanicTrainNF, msError, VisualObject);
+      Result := False;
+    end else if (FileExists(m_titanicTest) = False) AND (m_sendDataType = 1) then begin
+      ErrorEvent(txtDS_TitanicTrainNF, msError, VisualObject);
+      Result := False;
+    end;
     end;
   end;
 end.

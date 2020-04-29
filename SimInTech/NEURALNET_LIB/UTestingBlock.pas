@@ -18,13 +18,10 @@ type
 
   strict private
     stepCount: NativeInt; // Счетчик шагов
-    m_workType : NativeInt;
-
-    m_crossOut: NativeInt;
-    m_fileLoad: String;
     m_id : Integer;
+    m_workType : Cardinal;
+    m_resultQty, m_maxQty: Integer; // Количество ответов
     m_label: array of Byte;
-    m_maxQty: Integer; // Максимальное кол-во элементов в посылке
   end;
 
 implementation
@@ -34,6 +31,7 @@ constructor  TTestingBlock.Create;
 begin
   inherited;
   m_workType := 0;
+  m_resultQty := 1;
 end;
 
 destructor   TTestingBlock.Destroy;
@@ -45,16 +43,12 @@ function    TTestingBlock.GetParamID;
 begin
   Result:=inherited GetParamId(ParamName,DataType,IsConst);
   if Result = -1 then begin
-    if StrEqu(ParamName,'cross_out') then begin
-      Result:=NativeInt(@m_crossOut);
+    if StrEqu(ParamName,'result_qty') then begin
+      Result:=NativeInt(@m_resultQty);
       DataType:=dtInteger;
       Exit;
-    end else if StrEqu(ParamName,'file_load') then begin
-      Result:=NativeInt(@m_fileLoad);
-      DataType:=dtString;
-      Exit;
     end else if StrEqu(ParamName,'max_qty') then begin
-      Result:=NativeInt(@m_maxQty);
+      Result:=NativeInt(@fff);
       DataType:=dtInteger;
       Exit;
     end else if StrEqu(ParamName,'work_type') then begin
@@ -71,7 +65,7 @@ begin
   case Action of
     i_GetCount: begin
       cY[0] := m_maxQty;
-      cY[1] := 1;
+      cY[1] := m_resultQty;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -83,11 +77,12 @@ var
   i : NativeInt;
   p64: UInt64;
   datas, labels : TLayerSize;
-  returnCode : NativeInt;
+  returnCode: NativeInt;
   m_data: PDataArr; /// Данные, которые проходят через слои модели
-  accuracy : Single;
+  accuracy, calcLabel : Single;
   runResult : Integer;
-  labelPoint: array of Single;   /// Метки для
+  labelPoint, reciveLabels: array of Single;   /// Метки для
+  crossOut: Integer; /// Количество выходных нейронов
 begin
  Result:=0;
   case Action of
@@ -101,52 +96,78 @@ begin
 //    if stepCount = 0 then // Только для первого шага
       // Вход 0 - данные
       // Вход 1 - метки (Может и не быть)
-      // Вход 2 - ширина
-      // Вход 3 - высота
-      // Вход 4 - глубина
-      if cU.FCount = 5 then begin
+      // Вход 2 - ширина, высота, глубина
+      if cU.FCount = 3 then begin
         m_id := Round(U[0].Arr^[0]);
         p64 := Round(U[0].Arr^[1]);
         p64 := p64 shl 32;
         p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
         m_data := PDataArr(p64);
+        crossOut := Round(U[0].Arr^[3]);
         SetLength(m_label, U[1].Count);
+        SetLength(reciveLabels, U[1].Count);
         for I := 0 to Length(m_label) - 1 do begin
           m_label[I] := Round(U[1].Arr^[I]);
+          reciveLabels[I] := U[1].Arr^[I];
         end;
         datas.w := Round(U[2].Arr^[0]);
-        datas.h := Round(U[3].Arr^[0]);
-        datas.ch := Round(U[4].Arr^[0]);
+        datas.h := Round(U[2].Arr^[1]);
+        datas.ch := Round(U[2].Arr^[2]);
         datas.bsz := Length(m_label);
-        labels.w := m_crossOut;
+        labels.w := crossOut;
         labels.h := 1;
         labels.ch := 1;
         labels.bsz := Length(m_label);
-        if m_fileLoad.Length > 0 then begin
-          returnCode := loadWeight(m_id, PAnsiChar(AnsiString(m_fileLoad)));
-          if returnCode <> STATUS_OK then begin
-            ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
-            Exit;
-          end;
-        end else begin
-          ErrorEvent(txtNN_WeightOpen, msError, VisualObject);
-          Exit;
-        end;
         if m_workType = 0 then begin // Для сравнения с тестовыми значениями
-          returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
-          if returnCode <> STATUS_OK then begin
-            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
-            Exit;
+          if crossOut > 1 then begin // Для сравнения с набором из N элементов
+            returnCode := evaluate(m_id, @m_data^[0], datas, @m_label[0], labels, 2, accuracy);
+            if returnCode <> STATUS_OK then begin
+              ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+              Result := r_Fail;
+              Exit;
+            end;
+            Y[1].Arr^[0] := accuracy;
+          end else begin // Для стремления к тестовому значению
+            SetLength(labelPoint, datas.bsz);
+            returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
+            if returnCode <> STATUS_OK then begin
+              ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+              Result := r_Fail;
+              Exit;
+            end;
+            calcLabel := 0;
+            for I := 0 to datas.bsz - 1 do begin
+              calcLabel := calcLabel + abs( reciveLabels[i] - labelPoint[i]);
+            end;
+            Y[1].Arr^[0] := calcLabel / datas.bsz; //labelPoint[0];
           end;
-
-          Y[1].Arr^[0] := accuracy;
-        end else begin // Для определения значений
-          returnCode := evaluate(m_id, @m_data^[0], datas, Nil, labels, 2, accuracy, @m_label[0]);
-          if returnCode <> STATUS_OK then begin
-            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
-            Exit;
+        end else begin // Для определения значения из набора
+          if crossOut > 1 then begin // Для сравнения с набором из N элементов
+            returnCode := evaluate(m_id, @m_data^[0], datas, Nil, labels, 2, accuracy, @m_label[0]);
+            if returnCode <> STATUS_OK then begin
+              ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+              Result := r_Fail;
+              Exit;
+            end;
+            for I := 0 to m_resultQty - 1 do begin
+              if I >= datas.bsz then
+                Break;
+              Y[1].Arr^[i] := m_label[i];
+            end;
+          end else begin
+            SetLength(labelPoint, datas.bsz);
+            returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
+            if returnCode <> STATUS_OK then begin
+              ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+              Result := r_Fail;
+              Exit;
+            end;
+            for I := 0 to m_resultQty - 1 do begin
+              if I >= datas.bsz then
+                Break;
+              Y[1].Arr^[i] := labelPoint[i];
+            end;
           end;
-          Y[1].Arr^[0] := m_label[0];
         end;
         if Length(m_data^) <= m_maxQty then begin
           for I := 0 to Length(m_data^) - 1 do begin
@@ -154,56 +175,51 @@ begin
           end;
         end else begin
           ErrorEvent(txtNN_DataSize, msError, VisualObject);
-        end;
-      end else if cU.FCount = 4 then begin
-        m_id := Round(U[0].Arr^[0]);
-        if m_id = -1 then begin
-          ErrorEvent(txtNN_NCreated, msError, VisualObject);
+          Result := r_Fail;
           Exit;
         end;
-
-        p64 := Round(U[0].Arr^[1]);
-        p64 := p64 shl 32;
-        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
-        m_data := PDataArr(p64);
-        datas.w := Round(U[1].Arr^[0]);
-        datas.h := Round(U[2].Arr^[0]);
-        datas.ch := Round(U[3].Arr^[0]);
-        datas.bsz := 1;  // Работа проводится только по 1 элементу
-        labels.w := m_crossOut;
-        labels.h := 1;
-        labels.ch := 1;
-        labels.bsz := 1;  // Работа проводится только по 1 элементу
-        if m_fileLoad.Length > 0 then begin
-          returnCode := loadWeight(m_id, PAnsiChar(AnsiString(m_fileLoad)));
-          if returnCode <> STATUS_OK then begin
-            ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
-            Exit;
-          end;
-        end else begin
-          ErrorEvent(txtNN_WeightOpen, msError, VisualObject);
-          Exit;
-        end;
-        if m_crossOut = 1 then begin
-          SetLength(labelPoint, datas.bsz);
-          returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
-          if returnCode <> STATUS_OK then begin
-            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
-            Exit;
-          end;
-          Y[1].Arr^[0] := labelPoint[0];
-        end else begin
-          returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
-          if returnCode <> STATUS_OK then begin
-            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
-            Exit;
-          end;
-          Y[1].Arr^[0] := runResult;
-        end;
-
-        for I := 0 to Length(m_data^) - 1 do begin
-          Y[0].Arr^[I] := m_data^[I];
-        end;
+//      end else if cU.FCount = 2 then begin
+//        m_id := Round(U[0].Arr^[0]);
+//        if m_id = -1 then begin
+//          ErrorEvent(txtNN_NCreated, msError, VisualObject);
+//          Result := r_Fail;
+//          Exit;
+//        end;
+//
+//        p64 := Round(U[0].Arr^[1]);
+//        p64 := p64 shl 32;
+//        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
+//        m_data := PDataArr(p64);
+//        datas.w := Round(U[1].Arr^[0]);
+//        datas.h := Round(U[1].Arr^[1]);
+//        datas.ch := Round(U[1].Arr^[2]);
+//        datas.bsz := 1;  // Работа проводится только по 1 элементу
+//        labels.w := crossOut;
+//        labels.h := 1;
+//        labels.ch := 1;
+//        labels.bsz := 1;  // Работа проводится только по 1 элементу
+//        if crossOut = 1 then begin
+//          SetLength(labelPoint, datas.bsz);
+//          returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
+//          if returnCode <> STATUS_OK then begin
+//            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+//            Result := r_Fail;
+//            Exit;
+//          end;
+//          Y[1].Arr^[0] := labelPoint[0];
+//        end else begin
+//          returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
+//          if returnCode <> STATUS_OK then begin
+//            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
+//            Result := r_Fail;
+//            Exit;
+//          end;
+//          Y[1].Arr^[0] := runResult;
+//        end;
+//
+//        for I := 0 to Length(m_data^) - 1 do begin
+//          Y[0].Arr^[I] := m_data^[I];
+//        end;
       end;
 
       inc(stepCount);

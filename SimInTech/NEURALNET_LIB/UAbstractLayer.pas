@@ -19,7 +19,7 @@ type
     function getLayerNumber(): NativeInt;
     function getShortName(): AnsiString;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(id : Integer); virtual; abstract;
+    function addLayerToModel(id : Integer): Boolean; virtual; abstract;
 
     // Добавляет очередную ноду связи к слою
     procedure appendNode(nodeName: AnsiString);

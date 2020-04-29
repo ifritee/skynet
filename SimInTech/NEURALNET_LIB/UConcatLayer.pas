@@ -15,7 +15,7 @@ type
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
     // Добавляет данный слой в модель
-    procedure addLayerToModel(id : Integer); override;
+    function addLayerToModel(id : Integer) : Boolean; override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -55,20 +55,26 @@ begin
       Result:=NativeInt(@m_outputQty);
       DataType:=dtInteger;
       Exit;
+    end else if StrEqu(ParamName,'input_qty') then begin
+      Result:=NativeInt(@m_inputQty);
+      DataType:=dtInteger;
+      Exit;
     end;
   end;
 end;
 
-procedure TConcatLayer.addLayerToModel(id : Integer);
+function TConcatLayer.addLayerToModel(id : Integer) : Boolean;
 var
   returnCode: TStatus;
 begin
+  Result := True;
   if (id = m_modelID)  AND (LayersFromJSON = False) then begin
     returnCode := addConcat(id, PAnsiChar(shortName),
                             PAnsiChar(nodes),
                             PAnsiChar(m_ccNodes));
     if returnCode <> STATUS_OK then begin
       ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
+      Result := False;
       Exit;
     end;
   end;
@@ -77,8 +83,8 @@ end;
 //----- Редактирование свойств блока -----
 procedure TConcatLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_inputQty - 1,  pmInput,  PortType, sdLeft,  'inport_1');
-  SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
+  SetCondPortCount(VisualObject, m_inputQty,  pmInput,  PortType, sdLeft,  'input');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
 end;
 
 function TConcatLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

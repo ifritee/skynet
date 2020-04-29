@@ -22,15 +22,10 @@ type
 
   strict private
     stepCount: NativeInt; // Счетчик шагов
-
-    m_crossOut: NativeInt;
     m_learningRate : double;
-
     m_label: array of Byte;
     m_fLabel: array of Single;
-
     m_lastDataType : Integer;
-
     m_id : Integer;
   end;
 
@@ -52,11 +47,7 @@ function    TTrainingBlock.GetParamID;
 begin
   Result:=inherited GetParamId(ParamName,DataType,IsConst);
   if Result = -1 then begin
-    if StrEqu(ParamName,'cross_out') then begin
-      Result:=NativeInt(@m_crossOut);
-      DataType:=dtInteger;
-      Exit;
-    end else if StrEqu(ParamName,'learning_rate') then begin
+    if StrEqu(ParamName,'learning_rate') then begin
       Result:=NativeInt(@m_learningRate);
       DataType:=dtDouble;
       Exit;
@@ -87,7 +78,7 @@ var
   p64: UInt64;
   accuracy : Single;
   m_data: PDataArr; /// Данные, которые проходят через слои модели
-
+  crossOut: Integer; /// Количество выходных нейронов
   datas, labels : TLayerSize;
   returnCode : NativeInt;
 begin
@@ -101,41 +92,47 @@ begin
       m_lastDataType := 0;
     end;
     f_GoodStep: begin
-//      if stepCount = 0 then // Только для первого шага
-//      begin
-        // Вход 0 - данные
-        // Вход 1 - метки
-      if cU.FCount <> 5 then begin
+      // Вход 0 - данные
+      // Вход 1 - метки
+      if cU.FCount <> 3 then begin
         ErrorEvent(txtNN_DataSize, msError, VisualObject);
+        Result := r_Fail;
         Exit;
       end;
       m_id := Round(U[0].Arr^[0]);
       if m_id = -1 then begin
         ErrorEvent(txtNN_NCreated, msError, VisualObject);
+        Result := r_Fail;
         Exit;
       end;
       p64 := Round(U[0].Arr^[1]);
       p64 := p64 shl 32;
       p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
       m_data := PDataArr(p64);
+      crossOut := Round(U[0].Arr^[3]);
       SetLength(m_label, U[1].Count);
       SetLength(m_flabel, U[1].Count);
+      if crossOut <= 0 then begin
+        ErrorEvent(txtNN_CrossOutFail, msError, VisualObject);
+        Result := r_Fail;
+        Exit;
+      end;
       for I := 0 to Length(m_label) - 1 do begin
-        if m_crossOut = 1 then begin
+        if crossOut = 1 then begin
           m_flabel[I] := U[1].Arr^[I];
         end else begin
           m_label[I] := Round(U[1].Arr^[I]);
         end;
       end;
       datas.w := Round(U[2].Arr^[0]);
-      datas.h := Round(U[3].Arr^[0]);
-      datas.ch := Round(U[4].Arr^[0]);
+      datas.h := Round(U[2].Arr^[1]);
+      datas.ch := Round(U[2].Arr^[2]);
       datas.bsz := Length(m_label);
-      labels.w := m_crossOut;
+      labels.w := crossOut;
       labels.h := 1;
       labels.ch := 1;
       labels.bsz := Length(m_label);
-      if m_crossOut = 1 then begin
+      if crossOut = 1 then begin
         fitOneValue(m_id, @m_data^[0], datas, @m_flabel[0], labels, 1, m_learningRate, accuracy);
         accuracy := 1.0 - accuracy;
       end else begin

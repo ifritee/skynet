@@ -15,8 +15,10 @@ type
     function       InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;override;
     function       RunFunc(var at,h : RealType;Action:Integer):NativeInt;override;
     function       GetParamID(const ParamName:string;var DataType:TDataType;var IsConst: boolean):NativeInt;override;
+    // Загрузка весов (только) после формирования сети
+    procedure NetLoadWeight();
     // Добавляет данный слой в модель
-    procedure addLayerToModel(id : Integer); override;
+    function addLayerToModel(id : Integer) : Boolean; override;
     // Функция для обеспечения изменения визуальных параметров блока
     procedure EditFunc(Props:TList;
                        SetPortCount:TSetPortCount;
@@ -26,7 +28,8 @@ type
   strict private
     stepCount: NativeInt; // Счетчик шагов
     m_outputQty: NativeInt;// Количество связей с другими слоями
-    m_netFile : String; // Файл с описанием сети
+    m_loadNetFile : String; // Файл с описанием сети
+    m_loadWeightFile : String; /// Файл с весами
     m_isSaveNet : Boolean; // Флаг сохранения сети по окончании работы
     m_saveWeightFile : String; // Файл расчитанных весов
     m_saveNetFile : String; // Файл сохранения состояния сети
@@ -64,8 +67,12 @@ begin
       Result:=NativeInt(@LayersFromJSON);
       DataType:=dtBool;
       Exit;
-    end else if StrEqu(ParamName,'net_file') then begin
-      Result:=NativeInt(@m_netFile);
+    end else if StrEqu(ParamName,'load_weight_file') then begin
+      Result:=NativeInt(@m_loadWeightFile);
+      DataType:=dtString;
+      Exit;
+    end  else if StrEqu(ParamName,'load_net_file') then begin
+      Result:=NativeInt(@m_loadNetFile);
       DataType:=dtString;
       Exit;
     end else if StrEqu(ParamName,'is_save_net') then begin
@@ -85,21 +92,29 @@ begin
   end
 end;
 
+procedure TInputLayer.NetLoadWeight;
+begin
+  if (FileExists(m_loadWeightFile) = True) then begin// Если он существует
+   loadWeight(m_modelID, PAnsiChar(AnsiString(m_loadWeightFile)));
+  end;
+end;
+
 //----- Редактирование свойств блока -----
 procedure TInputLayer.EditFunc;
 begin
-//  SetCondPortCount(VisualObject, fAbonentsQty,  pmInput,  PortType, sdLeft,  'inport_1');
-  SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
 end;
 
-procedure TInputLayer.addLayerToModel(id : Integer);
+function TInputLayer.addLayerToModel(id : Integer) : Boolean;
 var
   returnCode: TStatus;
 begin
+  Result := True;
   if (id = m_modelID) AND (LayersFromJSON = False) then begin
     returnCode := addInput(id, PAnsiChar(shortName), PAnsiChar(nodes));
     if returnCode <> STATUS_OK then begin
       ErrorEvent(txtNN_ModelNotAdded + String(shortName), msError, VisualObject);
+      Result := False;
       Exit;
     end;
   end;
@@ -136,8 +151,11 @@ var
   J : Integer;
   p64: UInt64;
   returnCode : TStatus;
+  netFile, weightFile: String;
 begin
   Result:=0;
+  netFile := '';
+  weightFile := '';
   case Action of
     f_UpdateOuts: begin
 
@@ -145,16 +163,22 @@ begin
     f_InitState: begin
       stepCount:= 0;
       nodes := '';
-    if LayersFromJSON = True then begin
-      m_modelID:= createModel(PAnsiChar(AnsiString(m_netFile)),'');
-    end else begin
-      m_modelID:= createModel('','');
-    end;
-    // Проверим состояние создания модели
-    if m_modelID = -1 then begin
-      ErrorEvent(txtNN_NCreated, msError, VisualObject);
-      Exit;
-    end;
+      if LayersFromJSON = True then begin // Если используем JSON файл сети
+        if (FileExists(m_loadNetFile) = True) then begin// Если он существует
+          netFile := m_loadNetFile;
+        end else begin
+          ErrorEvent(txtNN_NetFileNotFound, msError, VisualObject);
+          Result := r_Fail;
+          Exit;
+        end;
+      end;
+      m_modelID:= createModel(PAnsiChar(AnsiString(netFile)), '');
+      // Проверим состояние создания модели
+      if m_modelID = -1 then begin
+        ErrorEvent(txtNN_NCreated, msError, VisualObject);
+        Result := r_Fail;
+        Exit;
+      end;
     end;
     f_GoodStep: begin
       for J := 0 to cY.Count - 1 do begin
@@ -174,7 +198,7 @@ begin
         returnCode := saveModel(m_modelID, PAnsiChar(AnsiString(m_saveNetFile)),
                                 PAnsiChar(AnsiString(m_saveWeightFile)));
         if returnCode <> STATUS_OK then begin
-          ErrorEvent(txtNN_WeightSave, msError, VisualObject);
+          ErrorEvent(txtNN_ModelSave, msError, VisualObject);
           Exit;
         end;
       end;

@@ -26,7 +26,7 @@ namespace bike {
     //----- Загрузка сета --------------
     LayerSize layerDataSize, layerLabelSize;
     float * data = nullptr, * label = nullptr;  // Используем указатели на указатели
-    Status retStatus = bikeTrainData("../data/07_bike/day.csv", true, &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
+    Status retStatus = bikeTrainData("../data/07_bike/hour.csv", false, &data, &label, &layerDataSize, &layerLabelSize, 0, 0);
     if(retStatus != STATUS_OK) {
       char errBuffer[1024];
       dsLastError(errBuffer, sizeof (errBuffer));
