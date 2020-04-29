@@ -14,6 +14,7 @@
     <ClCompile Include="..\..\src\snKeras\src\dataset.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\dllmain.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\keras.cpp" />
+    <ClCompile Include="..\..\src\snKeras\src\lodepng.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\mnistset.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\snNet.cpp" />
     <ClCompile Include="..\..\src\snKeras\src\snOperator.cpp" />
@@ -24,6 +25,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\snKeras\src\dataset.h" />
     <ClInclude Include="..\..\src\snKeras\src\keras.h" />
+    <ClInclude Include="..\..\src\snKeras\src\lodepng.h" />
     <ClInclude Include="..\..\src\snKeras\src\mnistset.h" />
     <ClInclude Include="..\..\src\snKeras\src\rapidcsv.h" />
     <ClInclude Include="..\..\src\snKeras\src\snkeras_global.h" />
