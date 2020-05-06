@@ -37,7 +37,7 @@ type
     m_dilate: NativeInt;  //
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
   end;
 
 implementation
@@ -137,7 +137,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TConvolutionLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TConvolutionLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

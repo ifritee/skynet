@@ -27,7 +27,7 @@ type
     m_outputQty: NativeInt;// Количество связей с другими слоями
     m_sumType : Integer; // Тип суммирования
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
   end;
 
 implementation
@@ -82,7 +82,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TSummatorLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TSummatorLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

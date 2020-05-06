@@ -28,7 +28,7 @@ type
     m_lossType: NativeInt; // Тип функции потерь
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
 
   end;
 
@@ -78,7 +78,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TLossFunction.EditFunc;
 begin
-//  SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'outport_1');
+//  SetCondPortCount(VisualObject, m_outputQty - 1, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TLossFunction.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

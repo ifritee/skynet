@@ -48,7 +48,7 @@ begin
       DataType:=dtInteger;
       Exit;
     end else if StrEqu(ParamName,'max_qty') then begin
-      Result:=NativeInt(@fff);
+      Result:=NativeInt(@m_maxQty);
       DataType:=dtInteger;
       Exit;
     end else if StrEqu(ParamName,'work_type') then begin

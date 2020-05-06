@@ -31,7 +31,7 @@ type
     m_h : Integer;
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
   end;
 
 implementation
@@ -101,7 +101,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TCropLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TCropLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
