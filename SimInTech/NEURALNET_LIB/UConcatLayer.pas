@@ -28,7 +28,7 @@ type
     m_inputQty:  NativeInt;// Количество объединяемых слоев
     m_ccNodes: AnsiString; // Объединяемые ноды
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
   end;
 
 implementation
@@ -83,8 +83,8 @@ end;
 //----- Редактирование свойств блока -----
 procedure TConcatLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_inputQty,  pmInput,  PortType, sdLeft,  'input');
-  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
+  SetCondPortCount(VisualObject, m_inputQty,  pmInput,  PortType, sdLeft,  'in');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TConcatLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;

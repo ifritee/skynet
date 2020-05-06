@@ -36,7 +36,7 @@ type
     m_data: array of Single;  /// Данные, которые проходят через слои модели
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
 
  end;
 
@@ -102,7 +102,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TInputLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TInputLayer.addLayerToModel(id : Integer) : Boolean;

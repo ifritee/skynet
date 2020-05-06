@@ -30,7 +30,7 @@ type
     m_poolType: NativeInt; // Тип объединения
 
   const
-    PortType = 0; // Тип создаваемых портов (под математическую связь)
+    PortType = 18300; // Тип создаваемых портов (под нейронную связь)
   end;
 
 implementation
@@ -97,7 +97,7 @@ end;
 //----- Редактирование свойств блока -----
 procedure TPoolingLayer.EditFunc;
 begin
-  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'output');
+  SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
 function TPoolingLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
