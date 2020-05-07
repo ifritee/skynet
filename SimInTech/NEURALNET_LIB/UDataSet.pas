@@ -169,13 +169,13 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      if m_datasetType = Integer(dtMNIST) then begin
+      if m_datasetType = Cardinal(dtMNIST) then begin
         m_width := 28;
         m_height := 28;
         m_depth := 1;
         if m_trainQty = 0 then
           m_trainQty := 1000;
-      end else if m_datasetType = Integer(dtBREAST) then begin
+      end else if m_datasetType = Cardinal(dtBREAST) then begin
         breastTrainData(PAnsiChar(AnsiString(m_breastFile)),
                         m_breastSource + 1, @m_dataPoint, @m_labelPoint,
                         @dataParam, @labelParam,0,0);
@@ -184,7 +184,7 @@ begin
         m_depth := dataParam.ch;
         if m_trainQty = 0 then
           m_trainQty := dataParam.bsz;
-      end else if m_datasetType = Integer(dtWINE) then begin
+      end else if m_datasetType = Cardinal(dtWINE) then begin
         wineTrainData(PAnsiChar(AnsiString(m_wine)),
                       @m_dataPoint, @m_labelPoint,
                       @dataParam, @labelParam,0,0);
@@ -193,7 +193,7 @@ begin
         m_depth := dataParam.ch;
         if m_trainQty = 0 then
           m_trainQty := dataParam.bsz;
-      end else if m_datasetType = Integer(dtIRIS) then begin
+      end else if m_datasetType = Cardinal(dtIRIS) then begin
         irisTrainData(PAnsiChar(AnsiString(m_iris)),
                       @m_dataPoint, @m_labelPoint,
                       @dataParam, @labelParam,0,0);
@@ -202,7 +202,7 @@ begin
         m_depth := dataParam.ch;
         if m_trainQty = 0 then
           m_trainQty := dataParam.bsz;
-      end else if m_datasetType = Integer(dtBOSTON) then begin
+      end else if m_datasetType = Cardinal(dtBOSTON) then begin
         if m_sendDataType = 0 then begin
           bostonTrainData(PAnsiChar(AnsiString(m_bostonTrain)),
                           @m_dataPoint, @m_flabelPoint,
@@ -217,7 +217,7 @@ begin
         m_depth := dataParam.ch;
         if m_trainQty = 0 then
           m_trainQty := dataParam.bsz;
-      end else if m_datasetType = Integer(dtBIKE) then begin
+      end else if m_datasetType = Cardinal(dtBIKE) then begin
         if m_bikeTime = 0 then begin
           bikeTrainData(PAnsiChar(AnsiString(m_bikeDay)), True,
                       @m_dataPoint, @m_flabelPoint,
@@ -406,7 +406,7 @@ end;
   Function TDataSet.checkFiles(): Boolean;
   begin
     Result := True;
-    if m_datasetType = Integer(dtMNIST) then begin  // MNIST
+    if m_datasetType = Cardinal(dtMNIST) then begin  // MNIST
       if m_sendDataType = 0  then begin
         if (FileExists(m_trainData) = False) OR (FileExists(m_trainlabel) = False) then begin
           ErrorEvent(txtDS_MNISTTrainNF, msError, VisualObject);
@@ -418,22 +418,22 @@ end;
           Result := False;
         end;
       end;
-    end else if m_datasetType = Integer(dtBREAST) then begin // BREAST (Опухоль)
+    end else if m_datasetType = Cardinal(dtBREAST) then begin // BREAST (Опухоль)
       if not FileExists(m_breastFile) then begin
         ErrorEvent(txtDS_BreastTrainNF, msError, VisualObject);
         Result := False;
       end;
-    end else if m_datasetType = Integer(dtWINE) then begin // wine (Вино)
+    end else if m_datasetType = Cardinal(dtWINE) then begin // wine (Вино)
       if not FileExists(m_wine) then begin
         ErrorEvent(txtDS_WineTrainNF, msError, VisualObject);
         Result := False;
       end;
-    end else if m_datasetType = Integer(dtIRIS) then begin // iris (Ирисы Фишера)
+    end else if m_datasetType = Cardinal(dtIRIS) then begin // iris (Ирисы Фишера)
       if not FileExists(m_iris) then begin
         ErrorEvent(txtDS_IrisTrainNF, msError, VisualObject);
         Result := False;
       end;
-    end else if m_datasetType = Integer(dtBOSTON) then begin // Boston (цена квартиры)
+    end else if m_datasetType = Cardinal(dtBOSTON) then begin // Boston (цена квартиры)
       if (FileExists(m_bostonTrain) = False) AND (m_sendDataType = 0) then begin
         ErrorEvent(txtDS_BostonTrainNF, msError, VisualObject);
         Result := False;
@@ -441,7 +441,7 @@ end;
         ErrorEvent(txtDS_BostonTrainNF, msError, VisualObject);
         Result := False;
       end;
-    end else if m_datasetType = Integer(dtBIKE) then begin // Bike (прокат великов)
+    end else if m_datasetType = Cardinal(dtBIKE) then begin // Bike (прокат великов)
       if (FileExists(m_bikeDay) = False) AND (m_bikeTime = 0) then begin
         ErrorEvent(txtDS_BikeTrainNF, msError, VisualObject);
         Result := False;
@@ -449,7 +449,7 @@ end;
         ErrorEvent(txtDS_BikeTrainNF, msError, VisualObject);
         Result := False;
       end;
-    end else if m_datasetType = Integer(dtTITANIC) then begin // Titanic (Пассажиры Титаника)
+    end else if m_datasetType = Cardinal(dtTITANIC) then begin // Titanic (Пассажиры Титаника)
     if (FileExists(m_titanicTrain) = False) AND (m_sendDataType = 0) then begin
       ErrorEvent(txtDS_TitanicTrainNF, msError, VisualObject);
       Result := False;

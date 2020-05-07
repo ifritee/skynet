@@ -13,6 +13,8 @@ const
 
   UNN_SIZE_WITHDATA = 4; // Размер данных выходного порта (с данными)
 
+  UNN_MAX_LAYER_OUT = 3; // Максимальное количество выходных портов для слоев
+
 implementation
 
 end.

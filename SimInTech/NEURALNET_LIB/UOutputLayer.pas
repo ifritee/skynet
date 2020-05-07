@@ -161,7 +161,7 @@ begin
                 end;
               end;
             end;
-            if isInputWas = False then begin
+            if isInputWas = False then begin // Защита от отсутствия inputLayer
               ErrorEvent(txtNN_NoInputLayer, msError, VisualObject);
               Result := r_Fail;
               Exit;

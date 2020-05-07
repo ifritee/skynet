@@ -80,7 +80,6 @@ var
   m_data: PDataArr; /// Данные, которые проходят через слои модели
   crossOut: Integer; /// Количество выходных нейронов
   datas, labels : TLayerSize;
-  returnCode : NativeInt;
 begin
   Result:=0;
   case Action of

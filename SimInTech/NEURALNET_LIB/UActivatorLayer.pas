@@ -24,7 +24,7 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_outputQty: Integer;// Количество связей с другими слоями
     m_activate: NativeInt; // Метод активации
   const
     PortType = 18300; // Тип создаваемых портов (под нейронную связь)
@@ -32,7 +32,7 @@ type
 
 implementation
 
-uses keras, NN_Texts, UNNConstants;
+uses keras, NN_Texts, UNNConstants, DataObjts;
 
 constructor  TActivatorLayer.Create;
 begin
@@ -82,7 +82,16 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TActivatorLayer.EditFunc;
+var
+  Data : TData;
+  pOutputQty : PInteger;
 begin
+  Data := TEvalData(FindVar(Props, 'output_qty'));
+  if m_outputQty > UNN_MAX_LAYER_OUT then begin
+    m_outputQty := UNN_MAX_LAYER_OUT;
+    pOutputQty := Data.Data;
+    pOutputQty^ := m_outputQty;
+  end;
   SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 

@@ -80,7 +80,6 @@ var
   returnCode: NativeInt;
   m_data: PDataArr; /// Данные, которые проходят через слои модели
   accuracy, calcLabel : Single;
-  runResult : Integer;
   labelPoint, reciveLabels: array of Single;   /// Метки для
   crossOut: Integer; /// Количество выходных нейронов
 begin
@@ -178,48 +177,6 @@ begin
           Result := r_Fail;
           Exit;
         end;
-//      end else if cU.FCount = 2 then begin
-//        m_id := Round(U[0].Arr^[0]);
-//        if m_id = -1 then begin
-//          ErrorEvent(txtNN_NCreated, msError, VisualObject);
-//          Result := r_Fail;
-//          Exit;
-//        end;
-//
-//        p64 := Round(U[0].Arr^[1]);
-//        p64 := p64 shl 32;
-//        p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
-//        m_data := PDataArr(p64);
-//        datas.w := Round(U[1].Arr^[0]);
-//        datas.h := Round(U[1].Arr^[1]);
-//        datas.ch := Round(U[1].Arr^[2]);
-//        datas.bsz := 1;  // Работа проводится только по 1 элементу
-//        labels.w := crossOut;
-//        labels.h := 1;
-//        labels.ch := 1;
-//        labels.bsz := 1;  // Работа проводится только по 1 элементу
-//        if crossOut = 1 then begin
-//          SetLength(labelPoint, datas.bsz);
-//          returnCode := keras.forecasting(m_id, @m_data^[0], datas, @labelPoint[0], labels);
-//          if returnCode <> STATUS_OK then begin
-//            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
-//            Result := r_Fail;
-//            Exit;
-//          end;
-//          Y[1].Arr^[0] := labelPoint[0];
-//        end else begin
-//          returnCode := keras.run(m_id, @m_data^[0], datas, labels, runResult);
-//          if returnCode <> STATUS_OK then begin
-//            ErrorEvent(txtNN_TestCrash, msError, VisualObject);
-//            Result := r_Fail;
-//            Exit;
-//          end;
-//          Y[1].Arr^[0] := runResult;
-//        end;
-//
-//        for I := 0 to Length(m_data^) - 1 do begin
-//          Y[0].Arr^[I] := m_data^[I];
-//        end;
       end;
 
       inc(stepCount);

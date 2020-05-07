@@ -24,7 +24,7 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_outputQty: Integer;// Количество связей с другими слоями
     m_kernel : NativeInt; // Размер квадратной маски
     m_stride: NativeInt; // Шаг маски
     m_poolType: NativeInt; // Тип объединения
@@ -35,7 +35,7 @@ type
 
 implementation
 
-uses keras, NN_Texts, UNNConstants;
+uses keras, NN_Texts, UNNConstants, DataObjts;
 
 constructor  TPoolingLayer.Create;
 begin
@@ -96,7 +96,16 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TPoolingLayer.EditFunc;
+var
+  Data : TData;
+  pOutputQty : PInteger;
 begin
+  Data := TEvalData(FindVar(Props, 'output_qty'));
+  if m_outputQty > UNN_MAX_LAYER_OUT then begin
+    m_outputQty := UNN_MAX_LAYER_OUT;
+    pOutputQty := Data.Data;
+    pOutputQty^ := m_outputQty;
+  end;
   SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 

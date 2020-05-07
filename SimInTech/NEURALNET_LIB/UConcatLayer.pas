@@ -24,15 +24,15 @@ type
 
   private
     isCreate: Boolean;
-    m_outputQty: NativeInt;// Количество связей с другими слоями
-    m_inputQty:  NativeInt;// Количество объединяемых слоев
+    m_outputQty: Integer;// Количество связей с другими слоями
+    m_inputQty:  Integer;// Количество объединяемых слоев
     m_ccNodes: AnsiString; // Объединяемые ноды
   const
     PortType = 18300; // Тип создаваемых портов (под нейронную связь)
   end;
 
 implementation
-  uses keras, NN_Texts, UNNConstants;
+  uses keras, NN_Texts, UNNConstants, DataObjts;
 
 constructor  TConcatLayer.Create;
 begin
@@ -82,7 +82,22 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TConcatLayer.EditFunc;
+var
+  Data : TData;
+  pOutputQty, pInputQty : PInteger;
 begin
+  Data := TEvalData(FindVar(Props, 'output_qty'));
+  if m_outputQty > UNN_MAX_LAYER_OUT then begin
+    m_outputQty := UNN_MAX_LAYER_OUT;
+    pOutputQty := Data.Data;
+    pOutputQty^ := m_outputQty;
+  end;
+  Data := TEvalData(FindVar(Props, 'input_qty'));
+  if m_inputQty > UNN_MAX_LAYER_OUT then begin
+    m_inputQty := UNN_MAX_LAYER_OUT;
+    pInputQty := Data.Data;
+    pInputQty^ := m_inputQty;
+  end;
   SetCondPortCount(VisualObject, m_inputQty,  pmInput,  PortType, sdLeft,  'in');
   SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
@@ -123,9 +138,9 @@ begin
       for I := 0 to cU.FCount - 1 do begin
         m_modelID := Round(U[I].Arr^[0]);
         rootIndex := Round(U[I].Arr^[1]);
+        rootLayer := TAbstractLayer(LayersDict[rootIndex]);
         if ((rootIndex >= 0) AND (rootIndex < LayersDict.Count)) then begin
           if isCreate = False then begin
-            rootLayer := TAbstractLayer(LayersDict[rootIndex]);
             rootLayer.appendNode(shortName);
           end;
           if Length(m_ccNodes) > 0 then begin

@@ -27,7 +27,7 @@ type
 
   strict private
     stepCount: NativeInt; // Счетчик шагов
-    m_outputQty: NativeInt;// Количество связей с другими слоями
+    m_outputQty: Integer;// Количество связей с другими слоями
     m_loadNetFile : String; // Файл с описанием сети
     m_loadWeightFile : String; /// Файл с весами
     m_isSaveNet : Boolean; // Флаг сохранения сети по окончании работы
@@ -42,7 +42,7 @@ type
 
 implementation
 
-uses keras, NN_Texts, UNNConstants;
+uses keras, NN_Texts, UNNConstants, DataObjts;
 
 constructor  TInputLayer.Create;
 begin
@@ -101,7 +101,16 @@ end;
 
 //----- Редактирование свойств блока -----
 procedure TInputLayer.EditFunc;
+var
+  Data : TData;
+  pOutputQty : PInteger;
 begin
+  Data := TEvalData(FindVar(Props, 'output_qty'));
+  if m_outputQty > UNN_MAX_LAYER_OUT then begin
+    m_outputQty := UNN_MAX_LAYER_OUT;
+    pOutputQty := Data.Data;
+    pOutputQty^ := m_outputQty;
+  end;
   SetCondPortCount(VisualObject, m_outputQty, pmOutput, PortType, sdRight, 'out');
 end;
 
