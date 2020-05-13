@@ -236,6 +236,8 @@
       </MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
       <AdditionalOptions>/arch:AVX</AdditionalOptions>
+      <OmitFramePointers>false</OmitFramePointers>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -273,7 +275,7 @@
       </Defines>
     </CudaCompile>
     <Lib>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(OutDir);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);E:\skynet\mswin\VS12\Release\x64;E:\skynet\third_party\win_libs\x64</AdditionalLibraryDirectories>
       <AdditionalDependencies>libopenblas.lib; snSimd.lib</AdditionalDependencies>
     </Lib>
     <CudaLink>
@@ -339,8 +341,8 @@
       </Defines>
     </CudaCompile>
     <Lib>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);$(OutDir);</AdditionalLibraryDirectories>
-      <AdditionalDependencies>snSimd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories);E:\skynet\mswin\VS12\Release\x64;E:\skynet\third_party\win_libs\win32</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libopenblas.lib; snSimd.lib</AdditionalDependencies>
     </Lib>
     <CudaLink>
       <PerformDeviceLink>true</PerformDeviceLink>
