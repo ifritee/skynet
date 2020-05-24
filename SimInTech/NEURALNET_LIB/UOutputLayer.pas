@@ -111,7 +111,7 @@ begin
   Result:=0;
   case Action of
     i_GetCount: begin
-      cY[0] := 4;
+      cY[0] := UNN_SIZE_WITHDATA;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -187,7 +187,7 @@ begin
               Result := r_Fail;
               Exit;
             end;
-            ErrorEvent(String(netJSON), msInfo, VisualObject);
+//            ErrorEvent(String(netJSON), msInfo, VisualObject);
           end;
         end;
       end;
@@ -195,6 +195,9 @@ begin
       if U[0].FCount = UNN_SIZE_WITHDATA then begin
         Y[0].Arr^[1] := U[0].Arr^[2];
         Y[0].Arr^[2] := U[0].Arr^[3];
+        Y[0].Arr^[4] := U[0].Arr^[4];
+        Y[0].Arr^[5] := U[0].Arr^[5];
+        Y[0].Arr^[6] := U[0].Arr^[6];
       end;
       Y[0].Arr^[3] := m_units;
     end;

@@ -34,6 +34,9 @@ type
     m_saveWeightFile : String; // Файл расчитанных весов
     m_saveNetFile : String; // Файл сохранения состояния сети
     m_data: array of Single;  /// Данные, которые проходят через слои модели
+    m_width: Integer;  /// Ширина тензора
+    m_height: Integer; /// Высота тензора
+    m_depth: Integer; /// Глубина тензора
 
   const
     PortType = 18300; // Тип создаваемых портов (под нейронную связь)
@@ -87,15 +90,32 @@ begin
       Result:=NativeInt(@m_saveNetFile);
       DataType:=dtString;
       Exit;
+    end else if StrEqu(ParamName,'width') then begin
+      Result:=NativeInt(@m_width);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'height') then begin
+      Result:=NativeInt(@m_height);
+      DataType:=dtInteger;
+      Exit;
+    end else if StrEqu(ParamName,'depth') then begin
+      Result:=NativeInt(@m_depth);
+      DataType:=dtInteger;
+      Exit;
     end;
-
   end
 end;
 
 procedure TInputLayer.NetLoadWeight;
+var
+  returnStatus: TStatus;
 begin
   if (FileExists(m_loadWeightFile) = True) then begin// Если он существует
-   loadWeight(m_modelID, PAnsiChar(AnsiString(m_loadWeightFile)));
+   returnStatus := loadWeight(m_modelID, PAnsiChar(AnsiString(m_loadWeightFile)));
+   if returnStatus <> STATUS_OK then begin
+     ErrorEvent(txtNN_WeightLoad, msError, VisualObject);
+     Exit;
+   end;
   end;
 end;
 
@@ -201,6 +221,9 @@ begin
         p64 := UInt64(@m_data);
         Y[0].Arr^[2] := p64 shr 32;
         Y[0].Arr^[3] := (p64 shl 32) shr 32;
+        Y[0].Arr^[4] := m_width;
+        Y[0].Arr^[5] := m_height;
+        Y[0].Arr^[6] := m_depth;
     end;
     f_Stop: begin
       if (m_isSaveNet = True) AND (m_modelID >= 0) then begin

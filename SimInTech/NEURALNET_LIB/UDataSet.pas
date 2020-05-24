@@ -248,9 +248,10 @@ begin
         if m_trainQty = 0 then
           m_trainQty := dataParam.bsz;
       end;
+      ErrorEvent('width: ' + IntToStr(m_width) + ' height: ' + IntToStr(m_height) + ' depth: ' + IntToStr(m_depth), msInfo, VisualObject);
       cY[0] := m_trainQty * m_width * m_height * m_depth; // Количество данных = количеству наборов * W * H
       cY[1] := m_trainQty; // Количество меток = количеству наборов
-      cY[2] := 3;
+//      cY[2] := 3;
     end;
   else
     Result:=inherited InfoFunc(Action,aParameter);
@@ -388,9 +389,9 @@ begin
             Y[1].Arr^[I] := m_labelPoint[I];
         end;
       end;
-      Y[2].Arr^[0] := m_width;
-      Y[2].Arr^[1] := m_height;
-      Y[2].Arr^[2] := m_depth;
+//      Y[2].Arr^[0] := m_width;
+//      Y[2].Arr^[1] := m_height;
+//      Y[2].Arr^[2] := m_depth;
       inc(m_stepNumber);
     end;
     f_Stop: begin

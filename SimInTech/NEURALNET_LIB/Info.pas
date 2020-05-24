@@ -42,6 +42,7 @@ uses Blocks,
      UDenseLayer,
      UTrainingBlock,
      UTestingBlock,
+     UWorkModeBlock,
      ULossFunction,
      USummatorLayer,
      UResizeLayer,
@@ -78,7 +79,7 @@ type
   //    в соответствии с этой таблицей создаются соответсвующие run-объекты   //
   //**************************************************************************//
 const
-  ClassTable:array[0..15] of TClassRecord =
+  ClassTable:array[0..16] of TClassRecord =
   (
     //Блоки для работы с нейросетью
     (Name:'TDataSet'; RunClass:TDataSet),
@@ -87,6 +88,7 @@ const
     (Name:'TDenseLayer'; RunClass:TDenseLayer),
     (Name:'TTrainingBlock'; RunClass:TTrainingBlock),
     (Name:'TTestingBlock'; RunClass:TTestingBlock),
+    (Name:'TWorkModeBlock'; RunClass:TWorkModeBlock),
     (Name:'TLossFunction'; RunClass:TLossFunction),
     (Name:'TActivatorLayer'; RunClass:TActivatorLayer),
     (Name:'TConcatLayer'; RunClass:TConcatLayer),

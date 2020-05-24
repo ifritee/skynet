@@ -103,15 +103,16 @@ begin
         p64 := p64 OR UInt64(Round(U[0].Arr^[2]));
         m_data := PDataArr(p64);
         crossOut := Round(U[0].Arr^[3]);
+        ///------
         SetLength(m_label, U[1].Count);
         SetLength(reciveLabels, U[1].Count);
         for I := 0 to Length(m_label) - 1 do begin
           m_label[I] := Round(U[1].Arr^[I]);
           reciveLabels[I] := U[1].Arr^[I];
         end;
-        datas.w := Round(U[2].Arr^[0]);
-        datas.h := Round(U[2].Arr^[1]);
-        datas.ch := Round(U[2].Arr^[2]);
+        datas.w := Round(U[0].Arr^[4]);
+        datas.h := Round(U[0].Arr^[5]);
+        datas.ch := Round(U[0].Arr^[6]);
         datas.bsz := Length(m_label);
         labels.w := crossOut;
         labels.h := 1;

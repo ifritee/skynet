@@ -57,7 +57,7 @@ destructor  TAbstractLayer.Destroy;
 begin
   inherited;
 //  dec(LayerCount);
-  LayersDict[layerNumber] := Nil;;
+  LayersDict[layerNumber] := Nil;
 end;
 
 function TAbstractLayer.getLayerNumber(): NativeInt;

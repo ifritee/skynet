@@ -93,7 +93,7 @@ begin
     f_GoodStep: begin
       // Вход 0 - данные
       // Вход 1 - метки
-      if cU.FCount <> 3 then begin
+      if cU.FCount <> 2 then begin
         ErrorEvent(txtNN_DataSize, msError, VisualObject);
         Result := r_Fail;
         Exit;
@@ -123,9 +123,9 @@ begin
           m_label[I] := Round(U[1].Arr^[I]);
         end;
       end;
-      datas.w := Round(U[2].Arr^[0]);
-      datas.h := Round(U[2].Arr^[1]);
-      datas.ch := Round(U[2].Arr^[2]);
+      datas.w := Round(U[0].Arr^[4]);
+      datas.h := Round(U[0].Arr^[5]);
+      datas.ch := Round(U[0].Arr^[6]);
       datas.bsz := Length(m_label);
       labels.w := crossOut;
       labels.h := 1;

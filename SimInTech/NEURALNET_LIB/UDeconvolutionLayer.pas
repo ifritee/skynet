@@ -146,7 +146,7 @@ begin
     i_GetCount: begin
       for I := 0 to m_outputQty - 1 do
         cY[I] := 2;
-      cY[0] := 4;
+      cY[0] := UNN_SIZE_WITHDATA;
     end;
   else
     Result:=inherited InfoFunc(Action, aParameter);
@@ -186,6 +186,9 @@ begin
         if U[0].FCount = UNN_SIZE_WITHDATA then begin
           Y[0].Arr^[2] := U[0].Arr^[2];
           Y[0].Arr^[3] := U[0].Arr^[3];
+          Y[0].Arr^[4] := U[0].Arr^[4];
+          Y[0].Arr^[5] := U[0].Arr^[5];
+          Y[0].Arr^[6] := U[0].Arr^[6];
         end;
       end;
     end;
