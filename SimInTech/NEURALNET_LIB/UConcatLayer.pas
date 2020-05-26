@@ -37,7 +37,6 @@ implementation
 constructor  TConcatLayer.Create;
 begin
   inherited;
-  shortName := AnsiString('CC' + IntToStr(getLayerNumber));
   isCreate := False;
 end;
 
@@ -107,6 +106,7 @@ var
   I : Integer;
 begin
   Result:=0;
+  shortName := AnsiString(UnikPath^);
   case Action of
     i_GetCount: begin
       for I := 0 to m_outputQty - 1 do

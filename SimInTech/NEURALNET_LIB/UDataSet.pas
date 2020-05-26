@@ -248,7 +248,7 @@ begin
         if m_trainQty = 0 then
           m_trainQty := dataParam.bsz;
       end;
-      ErrorEvent('width: ' + IntToStr(m_width) + ' height: ' + IntToStr(m_height) + ' depth: ' + IntToStr(m_depth), msInfo, VisualObject);
+//      ErrorEvent('width: ' + IntToStr(m_width) + ' height: ' + IntToStr(m_height) + ' depth: ' + IntToStr(m_depth), msInfo, VisualObject);
       cY[0] := m_trainQty * m_width * m_height * m_depth; // Количество данных = количеству наборов * W * H
       cY[1] := m_trainQty; // Количество меток = количеству наборов
 //      cY[2] := 3;

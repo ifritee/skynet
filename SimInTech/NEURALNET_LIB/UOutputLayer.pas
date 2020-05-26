@@ -36,8 +36,6 @@ uses keras, UNNConstants, NN_Texts, UInputLayer;
 constructor TOutputLayer.Create;
 begin
   inherited;
-  shortName := 'OD' + IntToStr(getLayerNumber);
-  m_lfName := 'OLF' + IntToStr(getLayerNumber);
   isCreate := False;
 end;
 
@@ -109,6 +107,8 @@ end;
 function TOutputLayer.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
 begin
   Result:=0;
+  shortName := 'DOutput';
+  m_lfName := 'LFOutput';
   case Action of
     i_GetCount: begin
       cY[0] := UNN_SIZE_WITHDATA;

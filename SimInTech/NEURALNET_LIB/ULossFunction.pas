@@ -38,7 +38,6 @@ implementation
 constructor TLossFunction.Create;
 begin
   inherited;
-  shortName := AnsiString('LF' + IntToStr(getLayerNumber));
   isCreate := False;
 end;
 
@@ -84,6 +83,7 @@ end;
 function TLossFunction.InfoFunc(Action: integer;aParameter: NativeInt):NativeInt;
 begin
   Result:=0;
+  shortName := AnsiString(UnikPath^);
   case Action of
     i_GetCount: begin
       cY[0] := UNN_SIZE_WITHDATA;

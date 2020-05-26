@@ -40,7 +40,6 @@ uses keras, NN_Texts, UNNConstants, DataObjts;
 constructor  TCropLayer.Create;
 begin
   inherited;
-  shortName := AnsiString('CRP' + IntToStr(getLayerNumber));
   isCreate := False;
 end;
 
@@ -118,6 +117,7 @@ var
   I : Integer;
 begin
   Result:=0;
+  shortName := AnsiString(UnikPath^);
   case Action of
     i_GetCount: begin
       for I := 0 to m_outputQty - 1 do
