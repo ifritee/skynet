@@ -218,15 +218,16 @@ begin
       for J := 0 to Length(m_data) - 1 do begin
         m_data[J] := U[0].Arr^[J];
       end;
-        p64 := UInt64(@m_data);
-        Y[0].Arr^[2] := p64 shr 32;
-        Y[0].Arr^[3] := (p64 shl 32) shr 32;
-        Y[0].Arr^[4] := m_width;
-        Y[0].Arr^[5] := m_height;
-        Y[0].Arr^[6] := m_depth;
+      p64 := UInt64(@m_data);
+      Y[0].Arr^[2] := p64 shr 32;
+      Y[0].Arr^[3] := (p64 shl 32) shr 32;
+      Y[0].Arr^[4] := m_width;
+      Y[0].Arr^[5] := m_height;
+      Y[0].Arr^[6] := m_depth;
+      inc(stepCount);
     end;
     f_Stop: begin
-      if (m_isSaveNet = True) AND (m_modelID >= 0) then begin
+      if (m_isSaveNet = True) AND (m_modelID >= 0) AND (stepCount > 0) then begin
         returnCode := saveModel(m_modelID, PAnsiChar(AnsiString(m_saveNetFile)),
                                 PAnsiChar(AnsiString(m_saveWeightFile)));
         if returnCode <> STATUS_OK then begin
